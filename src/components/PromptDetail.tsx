@@ -18,6 +18,7 @@ import {
   parseBody,
   substituteBody,
 } from "@/lib/variables";
+import { AutoGrowTextarea } from "./AutoGrowTextarea";
 import { Markdown } from "./Markdown";
 import { RunHistory } from "./RunHistory";
 import {
@@ -569,12 +570,16 @@ export function PromptDetail({
                       {variable.label}
                     </label>
                     {variable.multiline ? (
-                      <textarea
+                      // F-night-5 — multiline inputs auto-grow with content
+                      // up to ~480px (then the textarea takes over scroll).
+                      // Manual resize handle still works.
+                      <AutoGrowTextarea
                         id={`var-${variable.name}`}
                         value={values[variable.name] ?? ""}
                         onChange={(event) => setValue(variable.name, event.target.value)}
                         placeholder={variable.placeholder}
-                        rows={5}
+                        minRows={5}
+                        maxHeightPx={480}
                         className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
                       />
                     ) : (
