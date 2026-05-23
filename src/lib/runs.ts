@@ -5,6 +5,12 @@
 // The per-prompt key shape (set up in library.ts under PER_PROMPT_PREFIXES)
 // means deleting a prompt wipes its history in one removeItem call via
 // `purgePromptStorage` — we never have to walk a global blob to clean up.
+//
+// Writes go through library.ts's `writeJSON` so quota / private-mode failures
+// surface to the same top-of-page banner as the rest of the app, rather than
+// silently dropping a run.
+
+import { writeJSON } from "./library";
 
 export type RunStatus = "completed" | "aborted" | "errored";
 
@@ -86,18 +92,14 @@ export function loadRuns(promptId: string): StoredRun[] {
 }
 
 /**
- * Persist this prompt's run history. Silently swallows write failures the
- * same way the rest of `library.ts` does — the storage write-failure handler
- * registered in HomeClient surfaces these via the top-of-page banner.
+ * Persist this prompt's run history. Routes through `writeJSON` so quota /
+ * private-mode failures surface to the storage write-failure handler in
+ * HomeClient (which shows the top-of-page banner). Returning void keeps
+ * the caller API simple — callers don't have to plumb the result anywhere
+ * because the banner handles user-facing recovery already.
  */
 export function saveRuns(promptId: string, runs: StoredRun[]): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(key(promptId), JSON.stringify(runs));
-  } catch {
-    /* Quota / disabled — the user already sees a banner from writeJSON-backed
-       paths; not worth a second one for the history table. */
-  }
+  writeJSON(key(promptId), runs);
 }
 
 /**

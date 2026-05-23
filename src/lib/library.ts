@@ -64,7 +64,10 @@ function readJSON<T>(key: string, fallback: T): T {
   }
 }
 
-function writeJSON(key: string, value: unknown): StorageWriteResult {
+// Exported so feature modules (e.g. runs.ts) can route through the same
+// write-failure surface instead of swallowing quota errors silently and
+// leaving the user wondering where their data went.
+export function writeJSON(key: string, value: unknown): StorageWriteResult {
   if (typeof window === "undefined") {
     return { ok: false, reason: "unavailable", error: null };
   }
