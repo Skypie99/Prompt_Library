@@ -217,3 +217,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 2
 - F-n2-3: a "?" icon button in the Header is the discoverable companion to the existing keyboard binding. Both paths reach the same modal; sighted users find the button, keyboard users press the key.
 - F-n2-4: × clear buttons should be `tabIndex={-1}` so they don't bloat the keyboard tab order — focused users can Cmd-A + Delete or Esc + reset just as easily.
+
+### Cycle 3
+- F-n2-5/6: meta-key prefix avoids the "do we hijack a digit keystroke?" tension. Cmd+1..9 in the palette opens the Nth result; bare digits still type into the search input.
+- F-n2-6: when there's no query, "recent first" beats "alphabetical" — the user just opened the palette to get back to something.
