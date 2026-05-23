@@ -13,6 +13,7 @@ import {
   clearRuns,
   formatRelativeTime,
   generateRunId,
+  loadAllRunCounts,
   loadRuns,
   removeRun,
   saveRuns,
@@ -207,5 +208,54 @@ describe("runs storage — SSR safety", () => {
   it("clearRuns is a no-op when window is undefined", () => {
     // Should not throw.
     expect(() => clearRuns("anything")).not.toThrow();
+  });
+});
+
+// ---- loadAllRunCounts (F-fast-2) -------------------------------------------
+
+describe("loadAllRunCounts (F-fast-2)", () => {
+  beforeEach(() => installFakeStorage());
+  afterEach(() => uninstallFakeStorage());
+
+  it("returns an empty Map when nothing is stored", () => {
+    expect(loadAllRunCounts().size).toBe(0);
+  });
+
+  it("returns count per prompt for stored runs", () => {
+    globalThis.localStorage.setItem(
+      "promptlib:runs:p-1",
+      JSON.stringify([{ id: "r1" }, { id: "r2" }, { id: "r3" }]),
+    );
+    globalThis.localStorage.setItem(
+      "promptlib:runs:p-2",
+      JSON.stringify([{ id: "r4" }]),
+    );
+    const counts = loadAllRunCounts();
+    expect(counts.get("p-1")).toBe(3);
+    expect(counts.get("p-2")).toBe(1);
+    expect(counts.size).toBe(2);
+  });
+
+  it("ignores corrupt entries silently", () => {
+    globalThis.localStorage.setItem("promptlib:runs:bad", "{not valid json");
+    globalThis.localStorage.setItem(
+      "promptlib:runs:good",
+      JSON.stringify([{ id: "ok" }]),
+    );
+    const counts = loadAllRunCounts();
+    expect(counts.get("good")).toBe(1);
+    expect(counts.has("bad")).toBe(false);
+  });
+
+  it("ignores non-promptlib:runs:* keys", () => {
+    installFakeStorage(); // ensure fresh storage so the other keys exist
+    globalThis.localStorage.setItem("other:key", JSON.stringify([1, 2]));
+    globalThis.localStorage.setItem("promptlib:favorites", JSON.stringify(["x"]));
+    expect(loadAllRunCounts().size).toBe(0);
+  });
+
+  it("returns empty when window is undefined (SSR-safe)", () => {
+    uninstallFakeStorage();
+    expect(loadAllRunCounts().size).toBe(0);
   });
 });

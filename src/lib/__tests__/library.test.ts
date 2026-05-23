@@ -5,8 +5,47 @@
  * docs/PROPOSAL_TESTING.md.
  */
 
-import { slugify, generateId, mergePrompts, RECENT_CAP } from "../library";
+import {
+  formatBytes,
+  generateId,
+  getStorageUsage,
+  mergePrompts,
+  RECENT_CAP,
+  slugify,
+} from "../library";
 import type { Prompt } from "../types";
+
+// In-memory localStorage stub used by the storage-usage tests below.
+// Identical to the pattern in runs.test.ts / values.test.ts so the whole
+// pure-logic suite is jsdom-agnostic.
+function installFakeStorage(): void {
+  const store = new Map<string, string>();
+  const stub = {
+    getItem: (k: string) => store.get(k) ?? null,
+    setItem: (k: string, v: string) => {
+      store.set(k, String(v));
+    },
+    removeItem: (k: string) => {
+      store.delete(k);
+    },
+    clear: () => store.clear(),
+    key: (i: number) => Array.from(store.keys())[i] ?? null,
+    get length() {
+      return store.size;
+    },
+  };
+  // @ts-expect-error — test stub
+  globalThis.window = { localStorage: stub };
+  // @ts-expect-error — test stub
+  globalThis.localStorage = stub;
+}
+
+function uninstallFakeStorage(): void {
+  // @ts-expect-error
+  delete globalThis.window;
+  // @ts-expect-error
+  delete globalThis.localStorage;
+}
 
 function makePrompt(overrides: Partial<Prompt> = {}): Prompt {
   return {
@@ -125,5 +164,79 @@ describe("RECENT_CAP", () => {
   it("is a positive integer (UI assumes a small fixed cap)", () => {
     expect(Number.isInteger(RECENT_CAP)).toBe(true);
     expect(RECENT_CAP).toBeGreaterThan(0);
+  });
+});
+
+// ---- getStorageUsage + formatBytes (F-fast-3) ------------------------------
+
+describe("getStorageUsage (F-fast-3)", () => {
+  beforeEach(() => installFakeStorage());
+  afterEach(() => uninstallFakeStorage());
+
+  it("returns zero-bucket totals when nothing is stored", () => {
+    const usage = getStorageUsage();
+    expect(usage.totalBytes).toBe(0);
+    expect(usage.promptsWithSubKeys).toBe(0);
+    expect(usage.buckets.every((b) => b.bytes === 0)).toBe(true);
+  });
+
+  it("buckets userPrompts, runs, values, favorites, settings correctly", () => {
+    globalThis.localStorage.setItem("promptlib:userPrompts", "[]");
+    globalThis.localStorage.setItem("promptlib:favorites", "[]");
+    globalThis.localStorage.setItem("promptlib:recent", "[]");
+    globalThis.localStorage.setItem("promptlib:runs:p1", "[]");
+    globalThis.localStorage.setItem("promptlib:values:p1", "{}");
+    globalThis.localStorage.setItem("promptlib:apiKey", "sk-test");
+    globalThis.localStorage.setItem("promptlib:model", "claude-opus-4-7");
+    globalThis.localStorage.setItem("promptlib:maxTokens", "2048");
+    globalThis.localStorage.setItem("promptlib:theme", "dark");
+    globalThis.localStorage.setItem("promptlib:schemaVersion", "1");
+
+    const usage = getStorageUsage();
+    expect(usage.totalBytes).toBeGreaterThan(0);
+    expect(usage.promptsWithSubKeys).toBe(1);
+
+    const byLabel = new Map(usage.buckets.map((b) => [b.label, b.bytes]));
+    expect(byLabel.get("Prompts (custom)")! > 0).toBe(true);
+    expect(byLabel.get("Run history")! > 0).toBe(true);
+    expect(byLabel.get("Saved variable values")! > 0).toBe(true);
+    expect(byLabel.get("Favorites + Recent")! > 0).toBe(true);
+    expect(byLabel.get("Settings (API key, model, tokens)")! > 0).toBe(true);
+    expect(byLabel.get("App state (theme, schema, onboarding)")! > 0).toBe(true);
+  });
+
+  it("ignores keys outside the promptlib: namespace", () => {
+    globalThis.localStorage.setItem("foreign:key", "X".repeat(1000));
+    expect(getStorageUsage().totalBytes).toBe(0);
+  });
+
+  it("returns zero buckets when window is undefined (SSR-safe)", () => {
+    uninstallFakeStorage();
+    const usage = getStorageUsage();
+    expect(usage.totalBytes).toBe(0);
+    expect(usage.buckets.length).toBeGreaterThan(0); // shape preserved
+  });
+});
+
+describe("formatBytes (F-fast-3)", () => {
+  it("formats sub-1KB as bytes", () => {
+    expect(formatBytes(500)).toBe("500 B");
+  });
+
+  it("formats sub-10KB with one decimal", () => {
+    expect(formatBytes(2 * 1024)).toBe("2.0 KB");
+    expect(formatBytes(3500)).toMatch(/3\.4 KB/);
+  });
+
+  it("formats 10KB+ as integer KB", () => {
+    expect(formatBytes(15 * 1024)).toBe("15 KB");
+  });
+
+  it("formats sub-10MB with one decimal", () => {
+    expect(formatBytes(2 * 1024 * 1024)).toBe("2.0 MB");
+  });
+
+  it("formats 10MB+ as integer MB", () => {
+    expect(formatBytes(12 * 1024 * 1024)).toBe("12 MB");
   });
 });
