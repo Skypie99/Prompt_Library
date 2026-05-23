@@ -93,6 +93,26 @@ Quality rails:
 
 ---
 
-## Loop 4 — F4 Keyboard shortcuts overlay  (stretch)
+## Loop 4 — F4 Keyboard shortcuts overlay  ✅ done (stretch)
+
+| Role | Output |
+|---|---|
+| Quinn + Dani | `specs/F4-shortcuts-overlay.md` |
+| Shamus | `ShortcutsModal` (one driving constant array, aria-labelled rows, focus-on-open, backdrop close); HomeClient `?` binding with typing-target guard; Esc resets `shortcutsOpen` |
+| Steve / Alex | aria-modal + aria-labelledby, sr-friendly key names via `prettyForA11y`, focus-visible ring on close button, focus moves to close button on open |
+| Dana | n/a |
+| Dana audit | n/a |
+
+**Decisions made:**
+
+- **No persistent "?" hint button** in the UI — the existing pattern is "discover by trying," matching the `⌘K` kbd hint already shown in the search button. Keeping the surface uncluttered.
+- **Both `⌘` and `Ctrl` variants shown** so mac and windows users both see what to press.
+- **Typing-target guard on `?`** — if the user is in an input/textarea/contenteditable, the question mark is just a question mark.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Final sweep — Peter (perf) → Gary (tests/CI) → Morgan (briefing)
 
 _(in progress)_

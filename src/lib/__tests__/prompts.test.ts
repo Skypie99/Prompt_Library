@@ -10,7 +10,7 @@
  *    means the chip order would flip every render that re-derives.
  */
 
-import { seedPrompts, getCategories } from "../prompts";
+import { seedPrompts, getCategories, getTags } from "../prompts";
 import type { Prompt } from "../types";
 
 function makePrompt(overrides: Partial<Prompt> = {}): Prompt {
@@ -90,5 +90,59 @@ describe("getCategories", () => {
     const cats = getCategories(seedPrompts);
     expect(new Set(cats).size).toBe(cats.length);
     expect([...cats].sort()).toEqual(cats);
+  });
+});
+
+describe("getTags (F3)", () => {
+  it("returns [] for an empty list", () => {
+    expect(getTags([])).toEqual([]);
+  });
+
+  it("returns [] when no prompt has any tag", () => {
+    expect(getTags([makePrompt({ tags: [] })])).toEqual([]);
+  });
+
+  it("sorts by frequency (most-used first)", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["alpha", "beta"] }),
+      makePrompt({ id: "b", tags: ["alpha"] }),
+      makePrompt({ id: "c", tags: ["beta"] }),
+      makePrompt({ id: "d", tags: ["alpha"] }),
+    ];
+    expect(getTags(prompts)).toEqual(["alpha", "beta"]);
+  });
+
+  it("breaks ties alphabetically (stable order between renders)", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["zebra"] }),
+      makePrompt({ id: "b", tags: ["apple"] }),
+      makePrompt({ id: "c", tags: ["mango"] }),
+    ];
+    expect(getTags(prompts)).toEqual(["apple", "mango", "zebra"]);
+  });
+
+  it("drops empty / whitespace-only tags (data hygiene)", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["good", "", "   "] }),
+    ];
+    expect(getTags(prompts)).toEqual(["good"]);
+  });
+
+  it("dedupes across prompts (each unique tag appears once)", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["one", "two"] }),
+      makePrompt({ id: "b", tags: ["one", "two"] }),
+    ];
+    const result = getTags(prompts);
+    expect(new Set(result).size).toBe(result.length);
+    expect(result).toEqual(["one", "two"]);
+  });
+
+  it("trims whitespace before counting", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["work"] }),
+      makePrompt({ id: "b", tags: [" work "] }),
+    ];
+    expect(getTags(prompts)).toEqual(["work"]);
   });
 });
