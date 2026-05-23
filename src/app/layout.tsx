@@ -20,6 +20,8 @@ export const metadata: Metadata = {
 //     lands in dark mode by default.
 // The toggle still writes an explicit preference the moment the user clicks
 // it, at which point we stop following the system.
+// "system" is stored as the ABSENCE of the key (or the literal string
+// "system"). Either path falls through to matchMedia. F-n2-9.
 const noFlashTheme = `(function(){try{var s=localStorage.getItem('promptlib:theme');if(s==='dark'){document.documentElement.classList.add('dark');return;}if(s==='light'){return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark');}}catch(e){}})();`;
 
 export default function RootLayout({
