@@ -10,7 +10,7 @@
  *    means the chip order would flip every render that re-derives.
  */
 
-import { seedPrompts, getCategories, getTags } from "../prompts";
+import { seedPrompts, getCategories, getTags, getTagsWithCounts } from "../prompts";
 import type { Prompt } from "../types";
 
 function makePrompt(overrides: Partial<Prompt> = {}): Prompt {
@@ -144,5 +144,53 @@ describe("getTags (F3)", () => {
       makePrompt({ id: "b", tags: [" work "] }),
     ];
     expect(getTags(prompts)).toEqual(["work"]);
+  });
+});
+
+describe("getTagsWithCounts (F-eve-2)", () => {
+  it("returns [] for an empty list", () => {
+    expect(getTagsWithCounts([])).toEqual([]);
+  });
+
+  it("carries the count for each tag", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["alpha", "beta"] }),
+      makePrompt({ id: "b", tags: ["alpha"] }),
+      makePrompt({ id: "c", tags: ["alpha"] }),
+    ];
+    expect(getTagsWithCounts(prompts)).toEqual([
+      { tag: "alpha", count: 3 },
+      { tag: "beta", count: 1 },
+    ]);
+  });
+
+  it("orders by count desc, alphabetical tie-break (same as getTags)", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["zebra"] }),
+      makePrompt({ id: "b", tags: ["apple"] }),
+      makePrompt({ id: "c", tags: ["mango"] }),
+    ];
+    expect(getTagsWithCounts(prompts).map((t) => t.tag)).toEqual([
+      "apple",
+      "mango",
+      "zebra",
+    ]);
+  });
+
+  it("getTags and getTagsWithCounts agree on tag order", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["one", "two"] }),
+      makePrompt({ id: "b", tags: ["one"] }),
+      makePrompt({ id: "c", tags: ["three"] }),
+    ];
+    expect(getTags(prompts)).toEqual(getTagsWithCounts(prompts).map((t) => t.tag));
+  });
+
+  it("drops empty tags and trims whitespace consistently with getTags", () => {
+    const prompts = [
+      makePrompt({ id: "a", tags: ["work", "", "   "] }),
+      makePrompt({ id: "b", tags: [" work "] }),
+    ];
+    expect(getTagsWithCounts(prompts)).toEqual([{ tag: "work", count: 2 }]);
   });
 });

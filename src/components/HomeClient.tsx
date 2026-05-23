@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Prompt } from "@/lib/types";
-import { getCategories, getTags } from "@/lib/prompts";
+import { getCategories, getTagsWithCounts } from "@/lib/prompts";
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_MODEL,
@@ -138,7 +138,8 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   }, [allPrompts]);
 
   const categories = useMemo(() => getCategories(allPrompts), [allPrompts]);
-  const tags = useMemo(() => getTags(allPrompts), [allPrompts]);
+  // F-eve-2 — each entry now carries its count for the TagChips badge.
+  const tags = useMemo(() => getTagsWithCounts(allPrompts), [allPrompts]);
 
   // Intersection of category + tag filters. Either, both, or neither can be
   // active. When neither is set, we show everything. After filtering, sort
@@ -158,7 +159,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // silently clear the filter so the user doesn't end up stuck on an empty
   // grid forever.
   useEffect(() => {
-    if (activeTag && !tags.includes(activeTag)) setActiveTag(null);
+    if (activeTag && !tags.some((t) => t.tag === activeTag)) setActiveTag(null);
   }, [activeTag, tags]);
 
   const favoritePrompts = useMemo(

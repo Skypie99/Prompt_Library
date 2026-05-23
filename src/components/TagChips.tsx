@@ -3,8 +3,15 @@
 import clsx from "clsx";
 import { useState } from "react";
 
+// F-eve-2 — each entry carries its count so the chip can show "#tag · N".
+// The count is also surfaced to screen readers via aria-label.
+export interface TagChipEntry {
+  tag: string;
+  count: number;
+}
+
 interface TagChipsProps {
-  tags: string[];
+  tags: TagChipEntry[];
   /** null means "no tag selected". */
   active: string | null;
   onSelect: (tag: string | null) => void;
@@ -23,7 +30,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
 
   return (
     <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
-      {visible.map((tag) => {
+      {visible.map(({ tag, count }) => {
         const isActive = tag === active;
         return (
           <button
@@ -31,6 +38,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
             type="button"
             onClick={() => onSelect(isActive ? null : tag)}
             aria-pressed={isActive}
+            aria-label={`Filter by #${tag}, ${count} ${count === 1 ? "prompt" : "prompts"}`}
             className={clsx(
               "rounded-full border px-3 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
               isActive
@@ -38,7 +46,20 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
                 : "border-border bg-cream text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300",
             )}
           >
-            #{tag}
+            <span>#{tag}</span>
+            {/* Count is visible to sighted users; aria-hidden because the
+                aria-label above already spells it out for screen readers. */}
+            <span
+              aria-hidden
+              className={clsx(
+                // Inactive count uses ink-muted (not ink-soft) so 10px text
+                // clears AA contrast on bg-cream / dark on bg-night.
+                "ml-1.5 text-[10px] font-normal tabular-nums",
+                isActive ? "text-white/80" : "text-ink-muted dark:text-paper-muted",
+              )}
+            >
+              {count}
+            </span>
           </button>
         );
       })}
@@ -47,7 +68,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-coral-600 hover:underline dark:text-paper-muted dark:hover:text-coral-300"
+          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-coral-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
         >
           +{hiddenCount} more
         </button>
@@ -57,7 +78,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
         <button
           type="button"
           onClick={() => setExpanded(false)}
-          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-coral-600 hover:underline dark:text-paper-muted dark:hover:text-coral-300"
+          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-coral-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
         >
           Show fewer
         </button>

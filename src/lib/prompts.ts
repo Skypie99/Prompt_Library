@@ -17,6 +17,14 @@ export function getCategories(prompts: Prompt[]): string[] {
  * tags are dropped — they're a data hygiene problem, not a filter option.
  */
 export function getTags(prompts: Prompt[]): string[] {
+  return getTagsWithCounts(prompts).map((t) => t.tag);
+}
+
+/**
+ * Same ordering as `getTags` but carries the count alongside each tag, so
+ * the UI can render "#analysis · 5" without recomputing. Used by F-eve-2.
+ */
+export function getTagsWithCounts(prompts: Prompt[]): { tag: string; count: number }[] {
   const counts = new Map<string, number>();
   for (const p of prompts) {
     for (const tag of p.tags) {
@@ -30,5 +38,5 @@ export function getTags(prompts: Prompt[]): string[] {
       if (b[1] !== a[1]) return b[1] - a[1]; // higher count first
       return a[0].localeCompare(b[0]); // alphabetical tie-break
     })
-    .map(([tag]) => tag);
+    .map(([tag, count]) => ({ tag, count }));
 }
