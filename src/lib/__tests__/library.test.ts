@@ -59,10 +59,13 @@ describe("generateId", () => {
     expect(id.startsWith("my-cool-prompt-")).toBe(true);
   });
 
-  it("appends a short alphanumeric suffix", () => {
+  it("appends a collision-safe suffix (UUID or long base36)", () => {
     const id = generateId("Test");
     const suffix = id.replace(/^test-/, "");
-    expect(suffix).toMatch(/^[a-z0-9]{1,5}$/);
+    // crypto.randomUUID() → 36 chars with 4 hyphens; fallback → 16 base-36
+    // chars. Either way: at least 16 chars and only [a-z0-9-].
+    expect(suffix.length).toBeGreaterThanOrEqual(16);
+    expect(suffix).toMatch(/^[a-z0-9-]+$/);
   });
 
   it("falls back to 'prompt' when the title produces no slug", () => {

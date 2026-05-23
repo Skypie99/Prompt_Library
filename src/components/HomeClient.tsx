@@ -18,10 +18,13 @@ import {
   loadRecent,
   loadUserPrompts,
   mergePrompts,
+  purgePromptStorage,
+  runStorageMigrations,
   saveFavorites,
   saveOnboarded,
   saveRecent,
   saveUserPrompts,
+  setStorageWriteFailureHandler,
 } from "@/lib/library";
 import { Header } from "./Header";
 import { PromptGrid } from "./PromptGrid";
@@ -68,13 +71,33 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
 
   useEffect(() => {
+    // Migrate the on-disk shape BEFORE any reader runs, so v0 -> v1 keys are
+    // in place when loadUserPrompts() etc. start looking for them. Idempotent
+    // and synchronous — fine to run inline.
+    runStorageMigrations();
+
+    // Surface write failures (quota exceeded, private mode, disabled storage)
+    // as a top-of-page banner instead of silently dropping the user's edit.
+    setStorageWriteFailureHandler((result) => {
+      const msg =
+        result.reason === "quota"
+          ? "Your browser ran out of room to save changes. Delete some prompts or favorites to make space."
+          : "Couldn't save changes to this browser. Your edits may not survive a reload.";
+      setStorageWarning(msg);
+    });
+
     setSettings(loadSettings());
     setUserPrompts(loadUserPrompts());
     setFavorites(loadFavorites());
     setRecent(loadRecent());
     setShowOnboarding(!loadOnboarded());
+
+    return () => {
+      setStorageWriteFailureHandler(null);
+    };
   }, []);
 
   // ---- Derived data ----
@@ -163,6 +186,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       saveRecent(next);
       return next;
     });
+    // Wipe any per-prompt storage (future: run history, saved variable
+    // values) so deleted prompts don't leave orphaned localStorage entries
+    // accumulating forever.
+    purgePromptStorage(id);
     setActivePrompt(null);
   }, []);
 
@@ -230,6 +257,23 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   return (
     <div className="min-h-screen">
       <Header onOpenSearch={() => setPaletteOpen(true)} onOpenSettings={() => openSettings()} />
+
+      {storageWarning && (
+        <div
+          role="alert"
+          className="border-b border-coral-300 bg-coral-50 px-6 py-3 text-sm text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200"
+        >
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
+            <span>{storageWarning}</span>
+            <button
+              onClick={() => setStorageWarning(null)}
+              className="rounded-md border border-coral-300 px-2 py-1 text-xs font-medium hover:bg-coral-100 dark:border-coral-500/40 dark:hover:bg-coral-500/20"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="mx-auto max-w-5xl px-6">
         {/* Hero */}
