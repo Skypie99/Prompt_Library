@@ -21,6 +21,17 @@ import {
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
 import { Markdown } from "./Markdown";
 import { RunHistory } from "./RunHistory";
+
+// F-night-7 — local copy of the "is the user typing right now?" check
+// used by HomeClient's global shortcuts. Inlined here so PromptDetail
+// stays self-contained; lives in two places intentionally because the
+// alternative (a shared util import) crosses domains for two lines.
+function isTypingTarget(event: KeyboardEvent): boolean {
+  const el = event.target as HTMLElement | null;
+  if (!el) return false;
+  const tag = el.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
+}
 import {
   CheckIcon,
   CloseIcon,
@@ -378,6 +389,14 @@ export function PromptDetail({
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
       if (!running) handleRun();
+      return;
+    }
+    // F-night-7 — "s" toggles favorite on the active prompt. Only when
+    // NOT typing in a field, so writing "stuff" into a variable doesn't
+    // accidentally star/unstar the prompt.
+    if (event.key === "s" && !isTypingTarget(event.nativeEvent)) {
+      event.preventDefault();
+      onToggleFavorite();
     }
   }
 
@@ -430,7 +449,7 @@ export function PromptDetail({
 
           <div className="flex shrink-0 items-center gap-1">
             <HeaderButton
-              label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              label={isFavorite ? "Remove from favorites (s)" : "Add to favorites (s)"}
               active={isFavorite}
               onClick={onToggleFavorite}
             >
