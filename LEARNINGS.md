@@ -245,3 +245,11 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 9
 - F-n2-17: adding a single-letter shortcut is now a four-touch recipe — handler in HomeClient with typing-target guard, entry in SHORTCUTS array, optional "(n)" hint in a tooltip, optional addition to per-shortcut docstring. Recipe scales.
 - F-n2-18: AND-combining filters in one memo (`filter((r) => statusCheck && timeCheck && ...)`) beats nesting filter calls — readable, single pass, easy to add the next filter.
+
+### Cycle 10
+- F-n2-19: visual consistency across surfaces (cards + palette) using the same `categoryColor` hash. The user's "this is a writing prompt" pattern recognition transfers between contexts for free.
+- F-n2-20: heuristic-based sample fill ("topic" → "shipping a beta", "date" → "May 23") gives authors a "what would this look like" view without forcing them to invent a variable schema upfront. Cheap, pleasant, no data model change.
+
+---
+
+Final note: throughout these 10 cycles, every per-feature commit kept the typecheck green. No FAIL_FAST events, no BLOCKER events, no decisions deferred to Sky. The pattern of "small, visible, independent, reversible" features is now well-rehearsed.
