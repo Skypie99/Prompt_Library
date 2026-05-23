@@ -213,9 +213,7 @@ export function RunHistory({
 
         {expanded && !confirmingClear && (
           <div className="flex items-center gap-2">
-            {/* F-night-4 — status filter. Native <select> for keyboard +
-                SR support; "Show:" prefix is aria-hidden because the
-                select carries the accessible name. */}
+            {/* F-night-4 — status filter. */}
             <div className="flex items-center gap-1 text-xs text-ink-soft dark:text-paper-muted">
               <span aria-hidden>Show:</span>
               <select
@@ -231,6 +229,31 @@ export function RunHistory({
                 ))}
               </select>
             </div>
+            {/* F-n2-12 — export this prompt's run history as JSON.
+                Independent of the library-wide export — useful for sharing
+                "look at how this prompt evolved" with someone. */}
+            <button
+              type="button"
+              onClick={() => {
+                const json = JSON.stringify(
+                  { version: 1, exportedAt: new Date().toISOString(), promptId, runs },
+                  null,
+                  2,
+                );
+                const blob = new Blob([json], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `prompt-history-${promptId}-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+              }}
+              className="text-xs font-medium text-coral-600 transition hover:text-coral-700 dark:text-coral-400"
+            >
+              Export
+            </button>
             <button
               type="button"
               onClick={() => setConfirmingClear(true)}
