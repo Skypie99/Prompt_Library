@@ -86,6 +86,23 @@ Quality rails (same as AM):
 
 ---
 
-## Loop 4 — F8 Better empty states  (stretch)
+## Loop 4 — F8 Better empty states  ✅ done (stretch)
+
+| Role | Output |
+|---|---|
+| Quinn + Dani | (spec inline; small change) |
+| Shamus | `src/components/EmptyHint.tsx` (reusable soft empty tile); HomeClient logic for "show Favorites empty when user has engaged but hasn't favorited" and the symmetric Recent variant |
+| Steve / Alex | Empty hints don't take user actions (just info); icon is aria-hidden; copy uses real "no" emoji-free text |
+
+**Decisions made:**
+- **Brand-new users see no empty hints** — OnboardingHint handles the cold-start case; stacking would be noise.
+- **Hints only appear after the user has DONE something** — so "you haven't favorited" is helpful guidance, not nagging.
+- **No new tokens** — reused border-dashed + cream/40 + ink colors.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Loop 5 — F9 Respect `prefers-color-scheme` on first visit  (stretch)
 
 _(in progress)_

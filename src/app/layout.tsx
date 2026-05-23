@@ -11,9 +11,16 @@ export const metadata: Metadata = {
   description: "Search, customize, and run your prompts with Claude in seconds.",
 };
 
-// Runs before first paint to apply the saved theme, avoiding a flash of the
-// wrong colors on reload. Default is light unless the user chose dark.
-const noFlashTheme = `(function(){try{if(localStorage.getItem('promptlib:theme')==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`;
+// Runs before first paint to apply the right theme, avoiding a flash of the
+// wrong colors on reload.
+//   - If the user has previously chosen a theme (the toggle stores 'dark' or
+//     'light'), honor that choice — it's authoritative.
+//   - Otherwise (first visit, or storage cleared), fall back to the OS-level
+//     `prefers-color-scheme` so a user with dark mode set on their machine
+//     lands in dark mode by default.
+// The toggle still writes an explicit preference the moment the user clicks
+// it, at which point we stop following the system.
+const noFlashTheme = `(function(){try{var s=localStorage.getItem('promptlib:theme');if(s==='dark'){document.documentElement.classList.add('dark');return;}if(s==='light'){return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark');}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
