@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import type { Density } from "@/lib/density";
+import { categoryColor } from "@/lib/categoryColor";
 import { countBodyVariables } from "@/lib/variables";
 import { StarIcon } from "./icons";
 
@@ -37,6 +38,9 @@ export function PromptCard({
   // render. Across a 50-prompt grid that's 50 walks once, not on every
   // hover or unrelated state change.
   const variableCount = useMemo(() => countBodyVariables(prompt.body), [prompt.body]);
+  // F-night-11 — deterministic per-category color for the 3px left stripe.
+  // Pure derived; memo because the categoryColor call hashes the string.
+  const catColor = useMemo(() => categoryColor(prompt.category), [prompt.category]);
   // The card itself is the click target; the star is a nested control, so we
   // use a div with button semantics (a real <button> can't contain a button).
   function handleKeyDown(event: React.KeyboardEvent) {
@@ -53,10 +57,24 @@ export function PromptCard({
       onClick={onOpen}
       onKeyDown={handleKeyDown}
       className={clsx(
-        "group relative flex h-full cursor-pointer flex-col rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-coral-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-coral-300 dark:border-night-border dark:bg-night-surface dark:hover:border-coral-500/40",
+        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-coral-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-coral-300 dark:border-night-border dark:bg-night-surface dark:hover:border-coral-500/40",
         isCompact ? "p-3.5" : "p-5",
       )}
     >
+      {/* F-night-11 — 3px left stripe in the category's deterministic
+          color. Aria-hidden because the category chip already names the
+          category — this is a sighted-user-only scanning signal, not
+          new information. */}
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 w-[3px] dark:hidden"
+        style={{ backgroundColor: catColor.light }}
+      />
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 hidden w-[3px] dark:block"
+        style={{ backgroundColor: catColor.dark }}
+      />
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="inline-flex w-fit items-center rounded-full bg-coral-50 px-2.5 py-0.5 text-xs font-medium text-coral-700 dark:bg-coral-500/15 dark:text-coral-300">
