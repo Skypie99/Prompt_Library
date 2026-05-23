@@ -233,3 +233,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 6
 - F-n2-11: optional fields (`label?`) on stored shapes are forward-compatible — old runs without the field load fine, new ones get the value. No migration. Inline edit with autoFocus + onBlur/Enter commit is the canonical "edit in place" pattern.
 - F-n2-12: per-prompt history export uses the same Blob + object URL + setTimeout-revoke trick as the library-wide export. Tiny scope (~20 lines), big "share this with someone" value.
+
+### Cycle 7
+- F-n2-13: parallel-walk pattern. `loadAllLastRunIsos` is a structural copy of `loadAllRunCounts` (same prefix walk, different per-key extraction). Once you have two of these, a generic `walkPromptlibKeys(prefix, extract)` is worth it. Not yet — still rule of three.
+- F-n2-14: "show only when different" is the right filter for offered actions. Don't offer a no-op fill, and don't show absent-history affordances.
