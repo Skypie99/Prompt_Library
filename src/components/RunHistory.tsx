@@ -15,6 +15,7 @@ import {
   ChevronIcon,
   ClockIcon,
   CopyIcon,
+  PlayIcon,
   RotateCcwIcon,
   TrashIcon,
 } from "./icons";
@@ -27,6 +28,10 @@ interface RunHistoryProps {
   onChange: (next: StoredRun[]) => void;
   /** Hydrate the live variable form with this run's values. Does NOT run. */
   onRestoreInputs: (values: Record<string, string>) => void;
+  /** F-eve-4 — restore THIS run's values AND immediately re-run with them.
+   *  Optional: parent passes `undefined` while a run is already in flight
+   *  so the button auto-disables. */
+  onRunAgain?: (values: Record<string, string>) => void;
 }
 
 // Same "tick on a timer so relative times stay fresh" pattern you'd reach
@@ -58,6 +63,7 @@ export function RunHistory({
   runs,
   onChange,
   onRestoreInputs,
+  onRunAgain,
 }: RunHistoryProps) {
   const [expanded, setExpanded] = useState(false);
   const [openRunId, setOpenRunId] = useState<string | null>(null);
@@ -247,6 +253,21 @@ export function RunHistory({
                           <RotateCcwIcon className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">Restore</span>
                         </button>
+                        {/* F-eve-4 — Restore + Run in one click. Hidden
+                            when onRunAgain isn't provided (e.g. another
+                            run is already in flight). */}
+                        {onRunAgain && (
+                          <button
+                            type="button"
+                            onClick={() => onRunAgain(run.values)}
+                            aria-label="Restore these inputs and run again"
+                            title="Run again with these inputs"
+                            className="flex items-center gap-1 rounded-md border border-coral-300 bg-coral-50 px-2 py-1 text-xs font-medium text-coral-700 transition hover:bg-coral-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-300 dark:hover:bg-coral-500/20 dark:focus-visible:ring-offset-night"
+                          >
+                            <PlayIcon className="h-3 w-3" aria-hidden />
+                            <span className="hidden sm:inline">Run again</span>
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => handleCopyResponse(run)}

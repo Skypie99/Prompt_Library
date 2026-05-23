@@ -135,6 +135,16 @@ export function ClockIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// Small play triangle — used for "Run again" in run-history rows (F-eve-4).
+// Solid fill so it reads as a primary "go" action even at small sizes.
+export function PlayIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M6 4.5a1 1 0 0 1 1.5-.87l12 7.5a1 1 0 0 1 0 1.74l-12 7.5A1 1 0 0 1 6 19.5v-15Z" />
+    </svg>
+  );
+}
+
 // 2x2 grid — used for the "comfortable" (roomy) grid density state.
 export function GridLargeIcon(props: SVGProps<SVGSVGElement>) {
   return (

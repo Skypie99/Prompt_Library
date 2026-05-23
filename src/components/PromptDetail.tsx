@@ -149,6 +149,10 @@ export function PromptDetail({
   const responseCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  // F-eve-4 — used to scroll the response panel into view when "Run again"
+  // is triggered from the history panel below it; otherwise the user stays
+  // looking at History and doesn't see the new stream above.
+  const responsePanelRef = useRef<HTMLDivElement>(null);
 
   const variables = useMemo(() => (prompt ? extractVariables(prompt) : []), [prompt]);
   const segments = useMemo(() => (prompt ? parseBody(prompt.body) : []), [prompt]);
@@ -231,7 +235,11 @@ export function PromptDetail({
     responseCopyTimer.current = setTimeout(() => setResponseCopied(false), 1500);
   }
 
-  async function handleRun() {
+  // Core run logic, parameterized on the values to use. Extracted so that
+  // "Run again" from the history panel (F-eve-4) can call the run with a
+  // restored values set without waiting for the React re-render that would
+  // otherwise leave handleRun's closure on stale state.
+  async function runWithValues(valuesToUse: Record<string, string>) {
     // No key yet → send the user to Settings with a helpful nudge.
     if (!settings.apiKey) {
       onOpenSettings("Add your Anthropic API key to run prompts live.");
@@ -249,9 +257,12 @@ export function PromptDetail({
     // Capture-the-moment so the persisted run reflects what was sent even if
     // the user edits values mid-stream (they shouldn't, but the cost of being
     // defensive is one local const).
-    const sentPrompt = finalText;
+    // finalText computed FROM valuesToUse — not the stale closure value —
+    // so callers can pass a different set (e.g. from history) and have the
+    // sent prompt match.
+    const sentPrompt = substituteBody(prompt.body, valuesToUse);
     const sentModel = settings.model;
-    const sentValues = { ...values };
+    const sentValues = { ...valuesToUse };
 
     // Buffer chunks here so we can persist the partial even if the component
     // unmounts before our finally runs (e.g. user closes the modal).
@@ -311,6 +322,11 @@ export function PromptDetail({
     }
   }
 
+  // Public wrapper for the button binding — uses current state.
+  function handleRun() {
+    void runWithValues(values);
+  }
+
   // Called from the history panel — drop a past run's values straight into
   // the live form. Does NOT auto-run; user decides whether to re-run.
   // Persists too — restored values become the new in-flight draft, so the
@@ -328,6 +344,30 @@ export function PromptDetail({
     },
     [prompt],
   );
+
+  // F-eve-4 — "Run again" from history: restore values into the form AND
+  // immediately trigger the run with those exact values (no waiting on
+  // React state to flush). Persists too, like handleRestoreInputs, so the
+  // restored set IS the new draft. Then scroll the response panel into
+  // view — the trigger was inside History (below the response), so without
+  // a scroll the user wouldn't see the new stream.
+  // Not memoized: runWithValues closes over per-render state (settings,
+  // prompt, etc.) and we want each invocation to use the latest values.
+  function handleRunAgain(restored: Record<string, string>) {
+    const next = { ...restored };
+    setValues(next);
+    if (prompt) saveValues(prompt.id, next);
+    void runWithValues(next);
+    // Defer the scroll until the response panel has rendered (it's gated
+    // on `showResponsePanel`, which becomes true the moment setRunning(true)
+    // commits inside runWithValues).
+    requestAnimationFrame(() => {
+      responsePanelRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }
 
   function handleStop() {
     abortRef.current?.abort();
@@ -628,7 +668,10 @@ export function PromptDetail({
 
             {/* Response / error */}
             {showResponsePanel && (
-              <div className="mt-5 border-t border-border pt-4 dark:border-night-border">
+              <div
+                ref={responsePanelRef}
+                className="mt-5 border-t border-border pt-4 dark:border-night-border"
+              >
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-xs font-medium uppercase tracking-wider text-ink-soft">
                     Response
@@ -679,6 +722,7 @@ export function PromptDetail({
               runs={runs}
               onChange={setRuns}
               onRestoreInputs={handleRestoreInputs}
+              onRunAgain={running ? undefined : handleRunAgain}
             />
           </div>
         </div>
