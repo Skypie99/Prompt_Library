@@ -620,15 +620,17 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           )}
         </section>
 
-        {/* F-n2-2 — quiet stats line at the bottom. Pure derived counts;
-            gives the user a sense of "how much library do I have" without
-            needing to open Settings. */}
+        {/* F-n2-2 — quiet stats line + F-n2-16 — version + privacy note. */}
         {(() => {
           const totalRuns = Array.from(runCounts.values()).reduce((a, b) => a + b, 0);
           return (
             <footer className="border-t border-border/50 py-6 text-center text-xs text-ink-soft dark:border-night-border/50 dark:text-paper-muted">
               <span aria-label={`Library stats: ${allPrompts.length} prompts, ${favorites.length} favorites, ${totalRuns} total runs`}>
                 {allPrompts.length} prompts · {favorites.length} favorites · {totalRuns} total runs
+              </span>
+              <span aria-hidden className="mx-2">·</span>
+              <span>
+                Prompt Library v0.1 · All data stays in this browser
               </span>
             </footer>
           );
