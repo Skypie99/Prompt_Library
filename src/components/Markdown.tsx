@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { parseMarkdown, type BlockNode, type InlineNode } from "@/lib/markdown";
 
 interface MarkdownProps {
@@ -53,11 +53,7 @@ function Block({ node }: { node: BlockNode }) {
         </p>
       );
     case "code-block":
-      return (
-        <pre className="my-3 overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
-          <code>{node.value}</code>
-        </pre>
-      );
+      return <CodeBlock value={node.value} />;
     case "list":
       return node.ordered ? (
         <ol className="my-2 list-decimal space-y-1 pl-5 text-sm leading-relaxed text-ink dark:text-paper">
@@ -81,6 +77,54 @@ function Block({ node }: { node: BlockNode }) {
         </ul>
       );
   }
+}
+
+// F-night-3 — code block with a hover-visible copy button. Pulled out
+// of the block switch so it can hold its own "copied" state without
+// hoisting it into the renderer. Falls back to the legacy execCommand
+// path for old browsers; both paths swallow failure silently because a
+// copy that doesn't work shouldn't break the response render.
+function CodeBlock({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  async function handleCopy() {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = value;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard blocked — silent: the code is still visible to read */
+    }
+  }
+
+  return (
+    <div className="group/code relative my-3">
+      <pre className="overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 pr-12 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
+        <code>{value}</code>
+      </pre>
+      <button
+        type="button"
+        onClick={handleCopy}
+        aria-label={copied ? "Code copied" : "Copy code"}
+        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-0.5 text-[10px] font-medium text-ink-muted opacity-0 transition hover:border-coral-300 hover:text-coral-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-coral-300"
+      >
+        {copied ? "Copied" : "Copy"}
+      </button>
+    </div>
+  );
 }
 
 function Inline({ node }: { node: InlineNode }) {
