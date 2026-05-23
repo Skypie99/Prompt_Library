@@ -9,6 +9,7 @@ import {
   type StoredRun,
 } from "@/lib/runs";
 import { modelLabel } from "@/lib/settings";
+import { Markdown } from "./Markdown";
 import {
   CheckIcon,
   ChevronIcon,
@@ -333,14 +334,14 @@ export function RunHistory({
                             <div className="rounded-md border border-coral-300 bg-coral-50 px-2.5 py-2 text-xs text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200">
                               {run.errorMessage ?? "Run failed."}
                             </div>
+                          ) : run.response ? (
+                            <div className="break-words rounded-md border border-border bg-surface px-2.5 py-2 text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
+                              <Markdown source={run.response} />
+                            </div>
                           ) : (
-                            <pre className="whitespace-pre-wrap break-words rounded-md border border-border bg-surface px-2.5 py-2 font-sans text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
-                              {run.response || (
-                                <span className="italic text-ink-soft">
-                                  (no response received)
-                                </span>
-                              )}
-                            </pre>
+                            <div className="rounded-md border border-border bg-surface px-2.5 py-2 text-xs italic leading-relaxed text-ink-soft dark:border-night-border dark:bg-night">
+                              (no response received)
+                            </div>
                           )}
                         </div>
                       </div>

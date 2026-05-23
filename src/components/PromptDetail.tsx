@@ -18,6 +18,7 @@ import {
   parseBody,
   substituteBody,
 } from "@/lib/variables";
+import { Markdown } from "./Markdown";
 import { RunHistory } from "./RunHistory";
 import {
   CheckIcon,
@@ -580,8 +581,8 @@ export function PromptDetail({
                     )}
                   </div>
                 ) : (
-                  <div className="scrollbar-soft max-h-72 overflow-y-auto whitespace-pre-wrap break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
-                    {response}
+                  <div className="scrollbar-soft max-h-72 overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
+                    <Markdown source={response} />
                     {running && (
                       <span className="ml-0.5 inline-block animate-pulse font-semibold text-coral-500">
                         ▋

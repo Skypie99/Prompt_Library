@@ -26,6 +26,29 @@ Quality rails (same as AM):
 
 ---
 
-## Loop 1 — F5 Export / Import library
+## Loop 1 — F5 Export / Import library  ✅ done
+
+| Role | Output |
+|---|---|
+| Quinn + Dani | `specs/F5-export-import.md` |
+| Dana | `qa-reports/proposal-export-import-2026-05-23-pm.md` (envelope shape, what's in/out, rollback, privacy note) |
+| Shamus | `src/lib/transfer.ts` (~360 lines); `library.ts` additions (`listStoredPromptIdsByPrefix`, `wipeAllUserData`, public prefix export); SettingsModal Backup & Restore section with preview + merge/replace; HomeClient `refreshLibraryFromStorage` hook |
+| Steve | Verified apiKey/model/maxTokens never in export; ghost-key filtering at export build time; `isSeed: false` forced on import; replace requires inline confirm; replaced wasteful `buildExport()` call in render with a cheap `loadUserPrompts().length` read |
+| Alex | aria-label on file input; role="status" success / role="alert" error; focus-within ring on file picker label; consistent inline-confirm pattern matches existing delete-prompt UX |
+| Dana audit | No new keyspaces created — F5 read/writes only existing keys. Forward-compat point is the single `version` field; v2 would land as a `migrateFromV1ToV2()` block in transfer.ts. |
+
+**Decisions made:**
+
+- **Export omits API key, model, maxTokens** — apiKey for security (users may share the file), model/maxTokens because they're personal preferences, not library content.
+- **Default import mode is Merge** — additive, lowest-risk. Replace exists but requires inline confirm.
+- **Per-id runs/values are full-replace on import** — merging two runs lists for the same prompt would produce a confusing duplicate timeline. Full-replace per id is cleaner.
+- **Silent drop of corrupt sub-entries** — the preview tells the user how many were dropped, but a single bad run never blocks an otherwise valid import.
+- **Tip in the preview**: "export your current library first if you want to come back to it" — the one mitigation for Replace's irreversibility.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Loop 2 — F6 Markdown rendering of Claude responses
 
 _(in progress)_
