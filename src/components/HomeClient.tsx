@@ -138,8 +138,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   }, [allPrompts]);
 
   const categories = useMemo(() => getCategories(allPrompts), [allPrompts]);
-  // F-eve-2 — each entry now carries its count for the TagChips badge.
-  const tags = useMemo(() => getTagsWithCounts(allPrompts), [allPrompts]);
+  // F-eve-2 — each entry carries its count for the TagChips badge. Named
+  // `tagsWithCounts` (not just `tags`) so every call site below reads
+  // unambiguously as "this is the {tag, count}[] shape," not a string[].
+  const tagsWithCounts = useMemo(() => getTagsWithCounts(allPrompts), [allPrompts]);
 
   // Intersection of category + tag filters. Either, both, or neither can be
   // active. When neither is set, we show everything. After filtering, sort
@@ -159,8 +161,8 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // silently clear the filter so the user doesn't end up stuck on an empty
   // grid forever.
   useEffect(() => {
-    if (activeTag && !tags.some((t) => t.tag === activeTag)) setActiveTag(null);
-  }, [activeTag, tags]);
+    if (activeTag && !tagsWithCounts.some((t) => t.tag === activeTag)) setActiveTag(null);
+  }, [activeTag, tagsWithCounts]);
 
   const favoritePrompts = useMemo(
     () => favorites.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
@@ -439,7 +441,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         {showOnboarding && <OnboardingHint onDismiss={dismissOnboarding} />}
 
         <CategoryChips categories={categories} active={activeCategory} onSelect={setActiveCategory} />
-        <TagChips tags={tags} active={activeTag} onSelect={setActiveTag} />
+        <TagChips tags={tagsWithCounts} active={activeTag} onSelect={setActiveTag} />
 
         {/* Favorites: either the populated grid, or a soft "you haven't
             favorited anything" hint shown ONLY to users who've already
