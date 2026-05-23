@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+    @apply dark:bg-night dark:text-paper;
+  }
+
+  ::selection {
+    @apply bg-coral-200/60 text-ink;
+  }
+}
+
+@layer utilities {
+  /* Thin, warm scrollbars that match the palette. */
+  .scrollbar-soft {
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.coral.200") transparent;
+  }
+  .scrollbar-soft::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-soft::-webkit-scrollbar-thumb {
+    background-color: theme("colors.coral.200");
+    border-radius: 9999px;
+  }
+  .dark .scrollbar-soft {
+    scrollbar-color: theme("colors.night.border") transparent;
+  }
+  .dark .scrollbar-soft::-webkit-scrollbar-thumb {
+    background-color: theme("colors.night.border");
+  }
+}

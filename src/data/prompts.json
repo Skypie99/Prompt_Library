@@ -1,0 +1,45 @@
+[
+  {
+    "id": "explain-like-im-five",
+    "title": "Explain Like I'm Five",
+    "description": "Turn any complex topic into a simple, vivid explanation for any audience.",
+    "body": "Explain {{topic}} in simple terms that a {{audience}} could understand.\n\nUse one short, concrete analogy from everyday life, avoid jargon, and keep it under 150 words. End with a single sentence on why it matters.",
+    "variables": [
+      { "name": "topic", "label": "Topic to explain", "placeholder": "e.g. how vaccines work" },
+      { "name": "audience", "label": "Audience", "placeholder": "e.g. a curious 10-year-old" }
+    ],
+    "category": "Learning",
+    "tags": ["explainer", "teaching", "simplify"],
+    "createdAt": "2026-05-22",
+    "isSeed": true
+  },
+  {
+    "id": "cold-outreach-email",
+    "title": "Cold Outreach Email",
+    "description": "Draft a short, personable cold email that actually earns a reply.",
+    "body": "Write a concise cold outreach email to {{recipientName}} at {{company}}.\n\nThe one thing I want to land: {{valueProp}}\n\nKeep it under 120 words, lead with relevance to them (not me), use a warm but professional tone, and end with a single low-friction call to action. Then give me 2 subject line options.",
+    "variables": [
+      { "name": "recipientName", "label": "Recipient name", "placeholder": "e.g. Jordan" },
+      { "name": "company", "label": "Their company", "placeholder": "e.g. Northwind Labs" },
+      { "name": "valueProp", "label": "Core value proposition", "placeholder": "e.g. cut onboarding time in half" }
+    ],
+    "category": "Sales",
+    "tags": ["email", "outreach", "sales"],
+    "createdAt": "2026-05-22",
+    "isSeed": true
+  },
+  {
+    "id": "code-review-buddy",
+    "title": "Code Review Buddy",
+    "description": "Get a focused review of a snippet: bugs, readability, and one concrete fix.",
+    "body": "Review the following {{language}} code:\n\n{{code}}\n\nDo three things, in order:\n1. Call out any bugs or correctness issues.\n2. Note the single biggest readability or maintainability improvement.\n3. Show a revised version of the most important part.\n\nBe specific and skip generic advice.",
+    "variables": [
+      { "name": "language", "label": "Language", "placeholder": "e.g. TypeScript" },
+      { "name": "code", "label": "Code to review", "placeholder": "Paste your snippet here" }
+    ],
+    "category": "Engineering",
+    "tags": ["code", "review", "debugging"],
+    "createdAt": "2026-05-22",
+    "isSeed": true
+  }
+]
