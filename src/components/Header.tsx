@@ -8,11 +8,18 @@ import type { Density } from "@/lib/density";
 interface HeaderProps {
   onOpenSearch: () => void;
   onOpenSettings: () => void;
+  onOpenShortcuts: () => void;
   density: Density;
   onChangeDensity: (next: Density) => void;
 }
 
-export function Header({ onOpenSearch, onOpenSettings, density, onChangeDensity }: HeaderProps) {
+export function Header({
+  onOpenSearch,
+  onOpenSettings,
+  onOpenShortcuts,
+  density,
+  onChangeDensity,
+}: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-cream/80 backdrop-blur dark:border-night-border/70 dark:bg-night/80">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
@@ -37,6 +44,16 @@ export function Header({ onOpenSearch, onOpenSettings, density, onChangeDensity 
             </kbd>
           </button>
 
+          {/* F-n2-3 — discoverable help button that opens the shortcuts
+              modal. Same icon-button shape as the others; just a "?" glyph. */}
+          <button
+            onClick={onOpenShortcuts}
+            aria-label="Keyboard shortcuts"
+            title="Keyboard shortcuts (?)"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-coral-400 dark:focus-visible:ring-offset-night"
+          >
+            <span aria-hidden className="text-base font-semibold">?</span>
+          </button>
           <DensityToggle density={density} onChange={onChangeDensity} />
           <ThemeToggle />
 

@@ -366,6 +366,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       <Header
         onOpenSearch={() => setPaletteOpen(true)}
         onOpenSettings={() => openSettings()}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
         density={density}
         onChangeDensity={handleChangeDensity}
       />
