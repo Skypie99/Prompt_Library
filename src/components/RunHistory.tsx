@@ -6,6 +6,7 @@ import {
   clearRuns,
   formatRelativeTime,
   removeRun,
+  setRunLabel,
   type StoredRun,
 } from "@/lib/runs";
 import { modelLabel } from "@/lib/settings";
@@ -84,6 +85,9 @@ export function RunHistory({
   // switch is the right default so opening a different prompt doesn't
   // surprise you with a stale filter.
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  // F-n2-11 — inline-editing state for a single row's label.
+  const [editingLabelId, setEditingLabelId] = useState<string | null>(null);
+  const [labelDraft, setLabelDraft] = useState("");
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
 
@@ -102,7 +106,19 @@ export function RunHistory({
     setConfirmingClear(false);
     setCopiedRunId(null);
     setStatusFilter("all");
+    setEditingLabelId(null);
   }, [promptId]);
+
+  function startEditingLabel(run: StoredRun) {
+    setEditingLabelId(run.id);
+    setLabelDraft(run.label ?? "");
+  }
+  function commitLabel() {
+    if (editingLabelId === null) return;
+    const next = setRunLabel(promptId, editingLabelId, labelDraft);
+    onChange(next);
+    setEditingLabelId(null);
+  }
 
   const handleDeleteOne = useCallback(
     (runId: string) => {
@@ -283,7 +299,7 @@ export function RunHistory({
             const isOpen = openRunId === run.id;
             const isCopied = copiedRunId === run.id;
             return (
-              <li key={run.id} className="px-3 py-2.5">
+              <li key={run.id} className="group/row px-3 py-2.5">
                 <div className="flex items-start gap-2">
                   <span
                     aria-hidden
@@ -307,6 +323,47 @@ export function RunHistory({
                           {" · "}
                           {modelLabel(run.model)}
                         </span>
+                        {/* F-n2-11 — inline label edit. Click the label
+                            (or "+ label" placeholder) to edit; Enter/blur
+                            commits, Esc cancels. */}
+                        {editingLabelId === run.id ? (
+                          <input
+                            autoFocus
+                            value={labelDraft}
+                            onChange={(e) => setLabelDraft(e.target.value)}
+                            onBlur={commitLabel}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                commitLabel();
+                              } else if (e.key === "Escape") {
+                                e.preventDefault();
+                                setEditingLabelId(null);
+                              }
+                            }}
+                            aria-label="Run label"
+                            placeholder="e.g. first draft"
+                            className="ml-2 inline-block w-32 rounded border border-coral-300 bg-surface px-1 text-xs text-ink outline-none focus:border-coral-400 dark:border-coral-500/40 dark:bg-night dark:text-paper"
+                          />
+                        ) : run.label ? (
+                          <button
+                            type="button"
+                            onClick={() => startEditingLabel(run)}
+                            aria-label={`Edit label "${run.label}"`}
+                            className="ml-2 rounded bg-coral-50 px-1.5 py-0.5 text-[11px] text-coral-700 hover:bg-coral-100 dark:bg-coral-500/15 dark:text-coral-300 dark:hover:bg-coral-500/25"
+                          >
+                            {run.label}
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => startEditingLabel(run)}
+                            aria-label="Add a label to this run"
+                            className="ml-2 text-[11px] text-ink-soft underline-offset-2 opacity-0 transition hover:text-coral-600 hover:underline focus:opacity-100 group-hover/row:opacity-100 dark:text-paper-muted dark:hover:text-coral-300"
+                          >
+                            + label
+                          </button>
+                        )}
                       </div>
                       <div className="flex shrink-0 items-center gap-1">
                         <button

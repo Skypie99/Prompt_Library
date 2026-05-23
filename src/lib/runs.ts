@@ -30,6 +30,8 @@ export interface StoredRun {
   status: RunStatus;
   /** Human-facing error message; populated only when status === "errored". */
   errorMessage?: string;
+  /** F-n2-11 — optional user label for the run ("first draft", "with brand voice"). */
+  label?: string;
 }
 
 export const RUNS_PER_PROMPT_CAP = 10;
@@ -124,6 +126,23 @@ export function appendRun(promptId: string, run: StoredRun): StoredRun[] {
 /** Remove a single entry by id and return the new list. */
 export function removeRun(promptId: string, runId: string): StoredRun[] {
   const next = loadRuns(promptId).filter((r) => r.id !== runId);
+  saveRuns(promptId, next);
+  return next;
+}
+
+/**
+ * F-n2-11 — Update a single run's user label. Returns the new list so the
+ * caller can put it into state without re-loading from storage. An empty
+ * string clears the label.
+ */
+export function setRunLabel(
+  promptId: string,
+  runId: string,
+  label: string,
+): StoredRun[] {
+  const next = loadRuns(promptId).map((r) =>
+    r.id === runId ? { ...r, label: label.trim() || undefined } : r,
+  );
   saveRuns(promptId, next);
   return next;
 }
