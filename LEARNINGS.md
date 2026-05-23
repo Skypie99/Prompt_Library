@@ -213,3 +213,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 1
 - F-n2-1: native `title` attribute beats a custom popover for "show me the body on hover" — keyboard-focus accessible, no bundle weight, OS-native look.
 - F-n2-2: pure derived stats footer using the runCounts map already gathered for F-fast-2. Aria-label spells the categories so the dot separator doesn't get read as "twelve dot three".
+
+### Cycle 2
+- F-n2-3: a "?" icon button in the Header is the discoverable companion to the existing keyboard binding. Both paths reach the same modal; sighted users find the button, keyboard users press the key.
+- F-n2-4: × clear buttons should be `tabIndex={-1}` so they don't bloat the keyboard tab order — focused users can Cmd-A + Delete or Esc + reset just as easily.
