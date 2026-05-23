@@ -187,6 +187,10 @@ export function PromptDetail({
   const hasValues = filledCount > 0;
   const finalText = substituteBody(prompt.body, values);
   const showResponsePanel = running || response.length > 0 || error !== null;
+  // F-fast-1 — token estimate computed once per render so the value the
+  // visible text shows and the value the aria-label announces can't drift
+  // and so Math.ceil isn't called twice on every keystroke into a variable.
+  const tokenEstimate = Math.max(1, Math.ceil(finalText.length / 4));
 
   function setValue(name: string, value: string) {
     setValues((prev) => {
@@ -595,8 +599,10 @@ export function PromptDetail({
                 so callers see SHAPE not certainty; labelled "~" so nobody mistakes
                 it for the exact billable count from the API. */}
             <p className="mt-2 text-center text-xs text-ink-soft dark:text-paper-muted">
-              <span aria-label={`Estimated length: ${finalText.length} characters, about ${Math.max(1, Math.ceil(finalText.length / 4))} tokens`}>
-                ~{finalText.length.toLocaleString()} chars · ~{Math.max(1, Math.ceil(finalText.length / 4)).toLocaleString()} tokens
+              <span
+                aria-label={`Estimated length: ${finalText.length.toLocaleString()} characters, about ${tokenEstimate.toLocaleString()} tokens`}
+              >
+                ~{finalText.length.toLocaleString()} chars · ~{tokenEstimate.toLocaleString()} tokens
               </span>
               <span className="mx-2 text-ink-soft/60">·</span>
               {modelLabel(settings.model)} · <kbd className="font-sans">⌘↵</kbd> to run
