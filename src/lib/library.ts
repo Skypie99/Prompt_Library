@@ -239,6 +239,52 @@ export function generateId(title: string): string {
   return `${slugify(title)}-${suffix}`;
 }
 
+// ---------------------------------------------------------------------------
+// Per-prompt variable values (F2 — variable values persistence)
+// ---------------------------------------------------------------------------
+//
+// Remembers the in-flight {{variable}} values the user typed into a prompt's
+// detail form, so reopening the prompt lands you back where you were rather
+// than wiping the form. Keyed per prompt id so each prompt has its own
+// independent draft. Cleared by the Clear button in PromptDetail or by the
+// `purgePromptStorage(id)` cascade when the prompt itself is deleted.
+
+const VALUES_PREFIX = "promptlib:values:";
+
+function valuesKey(id: string): string {
+  return `${VALUES_PREFIX}${id}`;
+}
+
+function isStringRecord(value: unknown): value is Record<string, string> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  for (const v of Object.values(value)) {
+    if (typeof v !== "string") return false;
+  }
+  return true;
+}
+
+export function loadValues(promptId: string): Record<string, string> {
+  const data = readJSON<unknown>(valuesKey(promptId), {});
+  return isStringRecord(data) ? data : {};
+}
+
+export function saveValues(promptId: string, values: Record<string, string>): StorageWriteResult {
+  return writeJSON(valuesKey(promptId), values);
+}
+
+export function clearValues(promptId: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(valuesKey(promptId));
+  } catch {
+    /* unavailable — no-op. */
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Per-prompt storage cleanup
+// ---------------------------------------------------------------------------
+
 // Wipe every per-prompt storage entry for the given id. Call from the
 // `deletePrompt` action so feature keys (run history, saved variable values,
 // future per-prompt state) don't accumulate forever as ghost entries.

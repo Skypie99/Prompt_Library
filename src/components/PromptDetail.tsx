@@ -11,6 +11,7 @@ import {
   loadRuns,
   type StoredRun,
 } from "@/lib/runs";
+import { clearValues, loadValues, saveValues } from "@/lib/library";
 import {
   countFilled,
   extractVariables,
@@ -130,10 +131,10 @@ export function PromptDetail({
   const segments = useMemo(() => (prompt ? parseBody(prompt.body) : []), [prompt]);
 
   // Reset everything whenever a different prompt opens; abort any in-flight run;
-  // hydrate history; then focus the first field.
+  // hydrate persisted variable values + run history; then focus the first field.
   useEffect(() => {
     abortRef.current?.abort();
-    setValues({});
+    setValues(prompt ? loadValues(prompt.id) : {});
     setCopied(false);
     setConfirmingDelete(false);
     setRunning(false);
@@ -164,7 +165,13 @@ export function PromptDetail({
   const showResponsePanel = running || response.length > 0 || error !== null;
 
   function setValue(name: string, value: string) {
-    setValues((prev) => ({ ...prev, [name]: value }));
+    setValues((prev) => {
+      const next = { ...prev, [name]: value };
+      // Persist immediately so closing the modal mid-edit never loses input.
+      // Values are tiny; no debounce needed.
+      if (prompt) saveValues(prompt.id, next);
+      return next;
+    });
   }
 
   async function handleCopy() {
@@ -263,13 +270,21 @@ export function PromptDetail({
 
   // Called from the history panel — drop a past run's values straight into
   // the live form. Does NOT auto-run; user decides whether to re-run.
-  const handleRestoreInputs = useCallback((restored: Record<string, string>) => {
-    setValues({ ...restored });
-    // Move focus back to the variable area so the user can see what changed.
-    requestAnimationFrame(() => {
-      panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
-    });
-  }, []);
+  // Persists too — restored values become the new in-flight draft, so the
+  // next reopen sees them (matches the user's mental model: "I picked this
+  // run; these are my values now").
+  const handleRestoreInputs = useCallback(
+    (restored: Record<string, string>) => {
+      const next = { ...restored };
+      setValues(next);
+      if (prompt) saveValues(prompt.id, next);
+      // Move focus back to the variable area so the user can see what changed.
+      requestAnimationFrame(() => {
+        panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
+      });
+    },
+    [prompt],
+  );
 
   function handleStop() {
     abortRef.current?.abort();
@@ -416,7 +431,10 @@ export function PromptDetail({
                   </span>
                   {hasValues && (
                     <button
-                      onClick={() => setValues({})}
+                      onClick={() => {
+                        setValues({});
+                        if (prompt) clearValues(prompt.id);
+                      }}
                       className="font-medium text-coral-600 hover:text-coral-700 dark:text-coral-400"
                     >
                       Clear
