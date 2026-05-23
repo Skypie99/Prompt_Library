@@ -113,6 +113,16 @@ Quality rails:
 
 ---
 
-## Final sweep — Peter (perf) → Gary (tests/CI) → Morgan (briefing)
+## Final sweep — Peter (perf) → Gary (tests/CI) → Morgan (briefing)  ✅ done
 
-_(in progress)_
+| Role | Output |
+|---|---|
+| Peter | `qa-reports/perf-sweep-2026-05-23.md` — 127 kB First Load JS, all routes prerendered, memoization audit clean, 0 regressions |
+| Gary | `qa-reports/qa-sweep-2026-05-23-cycle.md` + 2 new tests + 1 extended (~32 new cases). Tests don't execute until Vitest install proposal lands |
+| Morgan | Briefing: `~/Documents/Claude/Agent Summarys /Access Map Summarys/2026-05-23_Continuous_Build_Report_PromptLibrary.md` |
+
+**Final state:**
+- 15 commits on `cycle/auto-2026-05-23` (10 this session + 5 inherited from `qa/auto-2026-05-23`).
+- 4 features shipped (F1, F2, F3, F4 stretch) + Peter perf sweep + Gary test sweep.
+- 0 decisions deferred to Sky.
+- Typecheck and full production build green.
