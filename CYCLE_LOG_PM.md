@@ -103,6 +103,22 @@ Quality rails (same as AM):
 
 ---
 
-## Loop 5 — F9 Respect `prefers-color-scheme` on first visit  (stretch)
+## Loop 5 — F9 Respect `prefers-color-scheme` on first visit  ✅ done (stretch)
+
+| Role | Output |
+|---|---|
+| Quinn + Dani | (spec inline) |
+| Shamus | `src/app/layout.tsx` no-flash script — fall back to `window.matchMedia('(prefers-color-scheme: dark)')` when no `promptlib:theme` is stored. The toggle remains authoritative once clicked. |
+| Steve / Alex | Inline JS still runs before first paint; no async, no React; matchMedia presence check guards old environments |
+
+**Decisions made:**
+- **Stored preference always wins** — only fall back to system when there's no stored preference.
+- **Don't listen for system theme changes mid-session** — out of scope; the first-paint behavior is the user-visible fix.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Final sweep — Peter (perf) → Gary (tests/CI) → Morgan (briefing)
 
 _(in progress)_
