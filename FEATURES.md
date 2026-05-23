@@ -12,7 +12,20 @@
 
 ## Up next (this cycle)
 
-### F1 — Run history per prompt  (M)
+### F2 — Variable values persistence  (S)  ← now next
+See section below.
+
+### F3 — Tag filter  (S)
+See section below.
+
+### F4 — Keyboard shortcuts overlay  (S) — stretch
+See section below.
+
+---
+
+## Done
+
+### F1 — Run history per prompt  (M)  ✅ landed on `cycle/auto-2026-05-23`
 **User story**
 As someone who uses the same prompt multiple times, I want to see my last few runs (input values + the response Claude gave) so I can compare results, copy a past response, or replay a prompt with the same inputs without retyping.
 
@@ -36,7 +49,7 @@ As someone who uses the same prompt multiple times, I want to see my last few ru
 **Dependencies** — None.
 **Out of scope** — Cross-prompt global history view; export/import (covered later).
 
-### F2 — Variable values persistence  (S)
+### F2 — Variable values persistence  (S)  — full spec
 **User story**
 When I reopen a prompt I worked on earlier, I want my last typed values still there so I can tweak one thing instead of retyping everything.
 
@@ -95,4 +108,4 @@ Press `?` (when not typing) → modal listing every shortcut (`⌘K`, `/`, `Esc`
 
 ## Done (most recent first)
 
-_(none yet on this cycle — see git log on `cycle/auto-2026-05-23`)_
+_See "Done" section above. Git log on `cycle/auto-2026-05-23` is canonical._
