@@ -564,7 +564,15 @@ export function PromptDetail({
               )}
             </div>
 
+            {/* F-fast-1 — at-a-glance size estimate of what we're about to send.
+                Token count is a rough rule-of-thumb (≈4 chars/token for English)
+                so callers see SHAPE not certainty; labelled "~" so nobody mistakes
+                it for the exact billable count from the API. */}
             <p className="mt-2 text-center text-xs text-ink-soft dark:text-paper-muted">
+              <span aria-label={`Estimated length: ${finalText.length} characters, about ${Math.max(1, Math.ceil(finalText.length / 4))} tokens`}>
+                ~{finalText.length.toLocaleString()} chars · ~{Math.max(1, Math.ceil(finalText.length / 4)).toLocaleString()} tokens
+              </span>
+              <span className="mx-2 text-ink-soft/60">·</span>
               {modelLabel(settings.model)} · <kbd className="font-sans">⌘↵</kbd> to run
             </p>
 
