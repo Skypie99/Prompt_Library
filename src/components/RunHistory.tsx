@@ -85,6 +85,8 @@ export function RunHistory({
   // switch is the right default so opening a different prompt doesn't
   // surprise you with a stale filter.
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  // F-n2-18 — "Last 24h" toggle. Per-session state; resets on prompt switch.
+  const [last24Only, setLast24Only] = useState(false);
   // F-n2-11 — inline-editing state for a single row's label.
   const [editingLabelId, setEditingLabelId] = useState<string | null>(null);
   const [labelDraft, setLabelDraft] = useState("");
@@ -106,6 +108,7 @@ export function RunHistory({
     setConfirmingClear(false);
     setCopiedRunId(null);
     setStatusFilter("all");
+    setLast24Only(false);
     setEditingLabelId(null);
   }, [promptId]);
 
@@ -160,16 +163,19 @@ export function RunHistory({
     }
   }, []);
 
-  // F-night-4 — apply the status filter BEFORE relative-time decoration.
-  // Filtering first keeps the formatter from running for entries the user
-  // can't see, which matters on a heavy prompt with the 30s tick re-running.
-  const filteredRuns = useMemo(
-    () =>
-      statusFilter === "all"
-        ? runs
-        : runs.filter((r) => r.status === statusFilter),
-    [runs, statusFilter],
-  );
+  // F-night-4 + F-n2-18 — apply status AND "last 24h" filters before
+  // relative-time decoration so the 30s tick doesn't format hidden entries.
+  const filteredRuns = useMemo(() => {
+    const cutoff = last24Only ? Date.now() - 24 * 60 * 60 * 1000 : null;
+    return runs.filter((r) => {
+      if (statusFilter !== "all" && r.status !== statusFilter) return false;
+      if (cutoff !== null) {
+        const t = new Date(r.ranAt).getTime();
+        if (!Number.isFinite(t) || t < cutoff) return false;
+      }
+      return true;
+    });
+  }, [runs, statusFilter, last24Only]);
 
   // Memoize one parsed Date per entry so we're not parsing on every tick.
   const entries = useMemo(
@@ -229,6 +235,20 @@ export function RunHistory({
                 ))}
               </select>
             </div>
+            {/* F-n2-18 — "Last 24h" toggle. Compact aria-pressed button. */}
+            <button
+              type="button"
+              onClick={() => setLast24Only((v) => !v)}
+              aria-pressed={last24Only}
+              className={clsx(
+                "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400",
+                last24Only
+                  ? "border-coral-500 bg-coral-500 text-white"
+                  : "border-border bg-surface text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300",
+              )}
+            >
+              Last 24h
+            </button>
             {/* F-n2-12 — export this prompt's run history as JSON.
                 Independent of the library-wide export — useful for sharing
                 "look at how this prompt evolved" with someone. */}
