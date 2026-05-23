@@ -33,6 +33,7 @@ import { TagChips } from "./TagChips";
 import { CommandPalette } from "./CommandPalette";
 import { PromptDetail } from "./PromptDetail";
 import { SettingsModal } from "./SettingsModal";
+import { EmptyHint } from "./EmptyHint";
 import { OnboardingHint } from "./OnboardingHint";
 import { PromptForm, type PromptFormValues } from "./PromptForm";
 import { ShortcutsModal } from "./ShortcutsModal";
@@ -358,8 +359,12 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         <CategoryChips categories={categories} active={activeCategory} onSelect={setActiveCategory} />
         <TagChips tags={tags} active={activeTag} onSelect={setActiveTag} />
 
-        {/* Favorites */}
-        {showCuratedSections && favoritePrompts.length > 0 && (
+        {/* Favorites: either the populated grid, or a soft "you haven't
+            favorited anything" hint shown ONLY to users who've already
+            engaged with the app (have at least one recent open or one
+            user-created prompt). New users see the OnboardingHint
+            instead — no point showing two intro tiles at once. */}
+        {showCuratedSections && favoritePrompts.length > 0 ? (
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
               <StarIcon filled className="h-5 w-5 text-coral-500" />
@@ -375,10 +380,29 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onSelectTag={setActiveTag}
             />
           </section>
-        )}
+        ) : showCuratedSections &&
+          favoritePrompts.length === 0 &&
+          (recent.length > 0 || userPrompts.length > 0) ? (
+          <section className="pt-10">
+            <div className="mb-4 flex items-center gap-2">
+              <StarIcon filled className="h-5 w-5 text-coral-500" />
+              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
+                Favorites
+              </h2>
+            </div>
+            <EmptyHint
+              icon={StarIcon}
+              heading="No favorites yet"
+              body="Click the ⭐ on any prompt to keep it at hand here."
+            />
+          </section>
+        ) : null}
 
-        {/* Recent */}
-        {showCuratedSections && recentPrompts.length > 0 && (
+        {/* Recent: populated grid, or a soft hint after the user has
+            favorited something but hasn't opened anything yet (rare —
+            the typical path is "open → favorite", not the reverse).
+            Pre-engagement: hide entirely, OnboardingHint covers it. */}
+        {showCuratedSections && recentPrompts.length > 0 ? (
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
               <ClockIcon className="h-5 w-5 text-coral-500" />
@@ -392,7 +416,19 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onSelectTag={setActiveTag}
             />
           </section>
-        )}
+        ) : showCuratedSections && recentPrompts.length === 0 && favorites.length > 0 ? (
+          <section className="pt-10">
+            <div className="mb-4 flex items-center gap-2">
+              <ClockIcon className="h-5 w-5 text-coral-500" />
+              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">Recent</h2>
+            </div>
+            <EmptyHint
+              icon={ClockIcon}
+              heading="Nothing here yet"
+              body="Prompts you open will show up here so they're easy to find again."
+            />
+          </section>
+        ) : null}
 
         {/* All prompts */}
         <section className="pb-24 pt-10">

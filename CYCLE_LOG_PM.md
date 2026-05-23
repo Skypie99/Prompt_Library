@@ -70,6 +70,22 @@ Quality rails (same as AM):
 
 ---
 
-## Loop 3 — F7 Customize seed → save as own
+## Loop 3 — F7 Customize seed → save as own  ✅ done
+
+| Role | Output |
+|---|---|
+| Quinn + Dani | (inline, the spec was small enough to stay in FEATURES.md + commit message) |
+| Shamus | WandIcon added; PromptDetail conditionally renders Customize (seed) vs Duplicate (user prompt); HomeClient `onCustomize` callback uses `(custom)` suffix instead of `(copy)` |
+| Steve / Alex | aria-label is explicit ("Customize — save as your own"); icon button has the existing focus-visible ring pattern |
+
+**Decisions made:**
+- **Replace Duplicate with Customize on seeds (not both)**. Two near-identical actions side-by-side would be confusing. Verb tells you what's happening.
+- **Different title suffix per action** — `(copy)` from Duplicate (the verb matches), `(custom)` from Customize (the verb matches). Tiny but a nice signal in the resulting prompt name.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Loop 4 — F8 Better empty states  (stretch)
 
 _(in progress)_
