@@ -18,6 +18,11 @@ interface PromptFormProps {
   initial: Prompt | null;
   /** Existing category names, offered in the combobox. */
   categories: string[];
+  /** F-night-6 — existing tag names from the user's library, offered as
+   *  one-click suggestions beneath the tag input. Already-added tags
+   *  are filtered out. Optional so the form still renders without a
+   *  suggestion source. */
+  suggestedTags?: string[];
   onCancel: () => void;
   onSubmit: (values: PromptFormValues) => void;
 }
@@ -25,7 +30,14 @@ interface PromptFormProps {
 const fieldClass =
   "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30";
 
-export function PromptForm({ mode, initial, categories, onCancel, onSubmit }: PromptFormProps) {
+export function PromptForm({
+  mode,
+  initial,
+  categories,
+  suggestedTags,
+  onCancel,
+  onSubmit,
+}: PromptFormProps) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [body, setBody] = useState(initial?.body ?? "");
@@ -182,6 +194,37 @@ export function PromptForm({ mode, initial, categories, onCancel, onSubmit }: Pr
                   className="min-w-[6rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink-soft dark:text-paper"
                 />
               </div>
+              {/* F-night-6 — suggested tags from the rest of the user's
+                  library, shown as one-click chips. Hidden when none
+                  remain to suggest (all already added). */}
+              {(() => {
+                const remaining = (suggestedTags ?? []).filter(
+                  (t) => !tags.includes(t),
+                );
+                if (remaining.length === 0) return null;
+                // Cap at 8 to keep the form compact.
+                const visible = remaining.slice(0, 8);
+                return (
+                  <div className="mt-1.5">
+                    <span className="text-[10px] uppercase tracking-wider text-ink-soft">
+                      Suggested
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {visible.map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => addTag(tag)}
+                          aria-label={`Add tag #${tag}`}
+                          className="rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+                        >
+                          #{tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

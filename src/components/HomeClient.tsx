@@ -656,6 +656,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           mode={form.mode}
           initial={form.initial}
           categories={categories}
+          suggestedTags={tagsWithCounts.map((t) => t.tag)}
           onCancel={() => setForm(null)}
           onSubmit={submitForm}
         />
