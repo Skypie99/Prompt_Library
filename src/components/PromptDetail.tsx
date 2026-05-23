@@ -602,13 +602,33 @@ export function PromptDetail({
                         className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
                       />
                     ) : (
-                      <input
-                        id={`var-${variable.name}`}
-                        value={values[variable.name] ?? ""}
-                        onChange={(event) => setValue(variable.name, event.target.value)}
-                        placeholder={variable.placeholder}
-                        className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
-                      />
+                      // F-n2-4 — single-line input with an inline × clear
+                      // button that appears once there's a value. Saves a
+                      // triple-click + delete for users iterating on a
+                      // value.
+                      <div className="relative">
+                        <input
+                          id={`var-${variable.name}`}
+                          value={values[variable.name] ?? ""}
+                          onChange={(event) => setValue(variable.name, event.target.value)}
+                          placeholder={variable.placeholder}
+                          className={clsx(
+                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30",
+                            (values[variable.name] ?? "") !== "" && "pr-8",
+                          )}
+                        />
+                        {(values[variable.name] ?? "") !== "" && (
+                          <button
+                            type="button"
+                            onClick={() => setValue(variable.name, "")}
+                            aria-label={`Clear ${variable.label}`}
+                            tabIndex={-1}
+                            className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-ink-soft transition hover:bg-cream hover:text-ink dark:hover:bg-night-border dark:hover:text-paper"
+                          >
+                            <span aria-hidden className="text-base leading-none">×</span>
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}
