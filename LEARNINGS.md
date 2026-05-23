@@ -4,6 +4,29 @@ _Started by Will on 2026-05-23 during the fastloop session. New entries on top; 
 
 ---
 
+## 2026-05-23 — Clean loop (post-eve sweep)
+
+### What the in-loop Alex+Gary pattern caught (cycle/auto-2026-05-23-eve)
+
+Every one of the four eve loops surfaced something a deferred end-sweep would have missed. Worth pinning:
+
+- **F-eve-1 sort dropdown** — Alex found the wrapping `<label>` was double-naming with the select's own `aria-label`. One redundant span, but real noise for screen readers.
+- **F-eve-2 tag counts** — at 10px on cream, `text-ink-soft` was ~3.5:1 (under AA). One color-token bump and it's ~6.7:1. Easy to miss in a perf/test end-sweep where contrast isn't the focus. Alex also found two missing focus-visible rings on "+N more" / "Show fewer" that had been carried for several iterations.
+- **F-eve-3 Resume pill** — `truncate` on a flex child without `min-w-0 flex-1` is one of the most common silent-overflow bugs. Long titles would have shipped without the clip.
+- **F-eve-4 Run again** — biggest catch: the button was *inside* the History panel (bottom of the right column); a click would kick off a stream the user couldn't see without scrolling up. Adding `responsePanelRef` + `scrollIntoView` on the run-again handler turned the feature from "technically works" to "obvious." Pure UX, but it's the kind of thing only somebody asking "what does this look like one second after the click?" notices.
+
+### What this loop tightened
+
+- **HomeClient `tags` → `tagsWithCounts`** — the F-eve-2 memo's shape changed from `string[]` to `{tag, count}[]` but the variable name stayed `tags`. Every call site now reads unambiguously.
+
+### Patterns confirmed (or reconfirmed)
+
+- **In-loop Alex + Gary is worth it for any feature with UI.** Each loop's review took maybe 5% of total feature time and caught a real defect every time. Deferring to one end-sweep would have batched these into a long fix queue and several would have shipped.
+- **Real fixes only, not ceremony.** When Peter scanned and found nothing this loop, that was logged as a green signal in the briefing, not as a hidden skipped step. "Nothing to change" is a real outcome.
+- **The `runWithValues(values)` refactor in PromptDetail** (F-eve-4) was a textbook React stale-closure escape: extract the side-effecting function to take an explicit parameter, then have the button binding pass current state. The wrapper `handleRun = () => runWithValues(values)` keeps the existing call sites untouched and avoids the `setValues + handleRun` race. Will reach for this pattern again.
+
+---
+
 ## 2026-05-23 — Clean loop (post-fastloop sweep)
 
 ### What got tightened
