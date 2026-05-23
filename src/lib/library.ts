@@ -328,6 +328,115 @@ export function listStoredPromptIdsByPrefix(prefix: string): string[] {
  *  in one place. */
 export const PER_PROMPT_PREFIXES_PUBLIC: readonly string[] = PER_PROMPT_PREFIXES;
 
+// ---------------------------------------------------------------------------
+// Storage usage readout (F-fast-3)
+// ---------------------------------------------------------------------------
+
+/**
+ * The shape returned by `getStorageUsage()` — a coarse breakdown of how
+ * much of the user's localStorage is taken up by this app. Rendered as a
+ * tiny readout in Settings so users can see "where my space is going" at
+ * a glance.
+ *
+ * `bytes` is a UTF-16 char-count approximation — `JSON.stringify(value)
+ * .length * 2`. Browser quotas are usually expressed in characters and
+ * not bytes, and the per-origin cap varies (5-10 MB), so we report a
+ * "~rough" total and don't try to claim a quota percentage.
+ */
+export interface StorageUsage {
+  totalBytes: number;
+  buckets: {
+    label: string;
+    bytes: number;
+  }[];
+  /** Number of distinct prompt ids that have any per-prompt sub-key. */
+  promptsWithSubKeys: number;
+}
+
+function approxByteSizeOf(key: string, value: string): number {
+  // localStorage stores strings as UTF-16 in most engines; the heuristic
+  // doubles char count. Add the key length too — it counts against quota.
+  return (key.length + value.length) * 2;
+}
+
+/**
+ * Walk every promptlib:* localStorage key once and bucket the byte cost
+ * into human-readable categories. SSR-safe. O(N) where N is the count of
+ * promptlib keys; cheap even for heavy users.
+ */
+export function getStorageUsage(): StorageUsage {
+  const buckets: Record<string, number> = {
+    "Prompts (custom)": 0,
+    "Run history": 0,
+    "Saved variable values": 0,
+    "Favorites + Recent": 0,
+    "Settings (API key, model, tokens)": 0,
+    "App state (theme, schema, onboarding)": 0,
+  };
+  const promptIdSet = new Set<string>();
+
+  if (typeof window === "undefined") {
+    return {
+      totalBytes: 0,
+      buckets: Object.entries(buckets).map(([label, bytes]) => ({ label, bytes })),
+      promptsWithSubKeys: 0,
+    };
+  }
+
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith("promptlib:")) continue;
+      const value = localStorage.getItem(key) ?? "";
+      const cost = approxByteSizeOf(key, value);
+
+      if (key === STORAGE_KEYS.userPrompts) {
+        buckets["Prompts (custom)"] += cost;
+      } else if (key.startsWith("promptlib:runs:")) {
+        buckets["Run history"] += cost;
+        promptIdSet.add(key.slice("promptlib:runs:".length));
+      } else if (key.startsWith("promptlib:values:")) {
+        buckets["Saved variable values"] += cost;
+        promptIdSet.add(key.slice("promptlib:values:".length));
+      } else if (key === STORAGE_KEYS.favorites || key === STORAGE_KEYS.recent) {
+        buckets["Favorites + Recent"] += cost;
+      } else if (
+        key === "promptlib:apiKey" ||
+        key === "promptlib:model" ||
+        key === "promptlib:maxTokens"
+      ) {
+        buckets["Settings (API key, model, tokens)"] += cost;
+      } else {
+        // Theme, schemaVersion, onboarded, and anything else under the
+        // promptlib: prefix that doesn't match the above.
+        buckets["App state (theme, schema, onboarding)"] += cost;
+      }
+    }
+  } catch {
+    /* localStorage unavailable */
+  }
+
+  const bucketList = Object.entries(buckets).map(([label, bytes]) => ({ label, bytes }));
+  const totalBytes = bucketList.reduce((sum, b) => sum + b.bytes, 0);
+
+  return {
+    totalBytes,
+    buckets: bucketList,
+    promptsWithSubKeys: promptIdSet.size,
+  };
+}
+
+/** Render bytes as "X KB" / "Y MB" with one decimal where useful. */
+export function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) {
+    const kb = bytes / 1024;
+    return kb >= 10 ? `${Math.round(kb)} KB` : `${kb.toFixed(1)} KB`;
+  }
+  const mb = bytes / (1024 * 1024);
+  return mb >= 10 ? `${Math.round(mb)} MB` : `${mb.toFixed(1)} MB`;
+}
+
 /**
  * Wipe ALL user-library data — `userPrompts`, `favorites`, `recent`, and
  * every per-prompt sub-key. Settings (apiKey/model/maxTokens), onboarded

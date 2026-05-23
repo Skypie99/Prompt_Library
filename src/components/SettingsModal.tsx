@@ -10,7 +10,7 @@ import {
   type ApplyImportResult,
   type ImportPreview,
 } from "@/lib/transfer";
-import { loadUserPrompts } from "@/lib/library";
+import { formatBytes, getStorageUsage, loadUserPrompts, type StorageUsage } from "@/lib/library";
 import { CloseIcon } from "./icons";
 
 interface SettingsModalProps {
@@ -56,6 +56,7 @@ export function SettingsModal({
   const [showKey, setShowKey] = useState(false);
   const [importState, setImportState] = useState<ImportState>({ kind: "idle" });
   const [userPromptCount, setUserPromptCount] = useState(0);
+  const [storageUsage, setStorageUsage] = useState<StorageUsage | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync the form to the saved settings each time the modal opens, and
@@ -72,14 +73,18 @@ export function SettingsModal({
       // call buildExport() — it walks every per-prompt sub-key, which is
       // wasteful for a display string.
       setUserPromptCount(loadUserPrompts().length);
+      // F-fast-3 — pull the storage breakdown once per open. Walks every
+      // promptlib:* key, which is cheap.
+      setStorageUsage(getStorageUsage());
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }, [open, settings]);
 
-  // Refresh the count after a successful import — it just changed.
+  // Refresh the count + usage after a successful import — both just changed.
   useEffect(() => {
     if (importState.kind === "success") {
       setUserPromptCount(loadUserPrompts().length);
+      setStorageUsage(getStorageUsage());
     }
   }, [importState]);
 
@@ -398,6 +403,40 @@ export function SettingsModal({
                 Imported {importState.result.promptsAdded} prompt(s),{" "}
                 {importState.result.favoritesAdded} favorite(s),{" "}
                 {importState.result.runsPromptsWritten} prompt(s) of history.
+              </div>
+            )}
+
+            {/* F-fast-3 — Storage usage readout. Tiny, on-by-default; lets
+                users see where their localStorage budget is going. */}
+            {storageUsage && (
+              <div className="mt-4 rounded-md border border-border bg-cream/40 p-3 dark:border-night-border dark:bg-night/40">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium uppercase tracking-wider text-ink-soft">
+                    Storage usage
+                  </span>
+                  <span
+                    className="text-xs font-medium text-ink dark:text-paper"
+                    aria-label={`Total storage used: about ${formatBytes(storageUsage.totalBytes)}`}
+                  >
+                    ~{formatBytes(storageUsage.totalBytes)}
+                  </span>
+                </div>
+                <ul className="mt-2 space-y-0.5 text-xs text-ink-muted dark:text-paper-muted">
+                  {storageUsage.buckets
+                    .filter((b) => b.bytes > 0)
+                    .map((b) => (
+                      <li key={b.label} className="flex items-center justify-between gap-3">
+                        <span>{b.label}</span>
+                        <span className="font-mono text-[11px] text-ink-soft dark:text-paper-muted">
+                          {formatBytes(b.bytes)}
+                        </span>
+                      </li>
+                    ))}
+                </ul>
+                <p className="mt-2 text-[11px] text-ink-soft dark:text-paper-muted">
+                  All stored in this browser. Typical browser quota is ~5–10 MB
+                  per site.
+                </p>
               </div>
             )}
           </div>
