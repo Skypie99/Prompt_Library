@@ -140,6 +140,12 @@ export function PromptCard({
           "mt-1.5 text-sm leading-relaxed text-ink-muted dark:text-paper-muted",
           isCompact ? "line-clamp-1" : "line-clamp-2",
         )}
+        // F-n2-1 — title attribute gives a native hover preview of the
+        // first ~240 chars of the body (browser-native tooltip; respects
+        // hover delay; keyboard users get it on focus). No custom popover
+        // — the native tooltip is accessible, doesn't add bundle weight,
+        // and matches the OS look.
+        title={prompt.body.length > 240 ? `${prompt.body.slice(0, 240).trim()}…` : prompt.body}
       >
         {prompt.description}
       </p>
