@@ -229,3 +229,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 5
 - F-n2-9: storing "system" as the ABSENCE of the localStorage key (instead of the literal string "system") meant zero changes to the no-flash script in layout.tsx — the script's existing fall-through to matchMedia already handled "missing key". The toggle stays the source of truth via removeItem.
 - F-n2-10: reuse the existing `wipeAllUserData` from F5 (Replace import). One scope definition for "what's user data," used by both Import-Replace and Reset.
+
+### Cycle 6
+- F-n2-11: optional fields (`label?`) on stored shapes are forward-compatible — old runs without the field load fine, new ones get the value. No migration. Inline edit with autoFocus + onBlur/Enter commit is the canonical "edit in place" pattern.
+- F-n2-12: per-prompt history export uses the same Blob + object URL + setTimeout-revoke trick as the library-wide export. Tiny scope (~20 lines), big "share this with someone" value.
