@@ -45,6 +45,13 @@ export function isSafeUrl(href: string): boolean {
   return SAFE_PROTOCOL_RE.test(href.trim());
 }
 
+// F-night-10 — bare-URL auto-link regex. Matches a leading http:// or
+// https:// followed by any URL-y characters, EXCEPT trailing sentence
+// punctuation (. , ; : ! ? ) > '" ]) which stays as literal text so
+// "see https://example.com." doesn't link the period. Conservative on
+// purpose: better to under-link than to swallow visible punctuation.
+const BARE_URL_RE = /^https?:\/\/[^\s<>"`']+?(?=[.,;:!?)\]>'"]*(?:\s|$))/;
+
 // ---- inline parser ---------------------------------------------------------
 
 // Walk a single line / segment, emitting inline nodes. Tracks position so
@@ -78,6 +85,21 @@ export function parseInline(input: string): InlineNode[] {
         continue;
       }
       // unterminated — fall through, treat as literal
+    }
+
+    // ---- bare URL auto-link (F-night-10) ----
+    // When we hit "h" check whether the next chars form an http(s):// URL.
+    // Captures only the URL itself; surrounding punctuation (trailing . , ; :
+    // ! ?) stays as literal text so "see foo.com." doesn't link the period.
+    if (ch === "h") {
+      const match = BARE_URL_RE.exec(input.slice(i));
+      // Re-anchor: the regex starts with /^/ so ensure match.index === 0.
+      if (match && match.index === 0 && isSafeUrl(match[0])) {
+        flush();
+        out.push({ type: "link", href: match[0], children: [{ type: "text", value: match[0] }] });
+        i += match[0].length;
+        continue;
+      }
     }
 
     // ---- link: [text](url) ----

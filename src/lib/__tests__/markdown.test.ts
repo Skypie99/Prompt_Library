@@ -151,3 +151,53 @@ describe("parseMarkdown — blocks", () => {
     expect(blocks[0].type).toBe("paragraph");
   });
 });
+
+describe("auto-link bare URLs (F-night-10)", () => {
+  it("turns a bare https URL into a link node", () => {
+    const result = parseInline("see https://example.com for details");
+    const link = result.find((n) => n.type === "link");
+    expect(link).toBeDefined();
+    if (link && link.type === "link") {
+      expect(link.href).toBe("https://example.com");
+    }
+  });
+
+  it("turns a bare http URL into a link node", () => {
+    const result = parseInline("http://example.com");
+    expect(result[0]).toMatchObject({ type: "link", href: "http://example.com" });
+  });
+
+  it("does NOT swallow trailing punctuation into the href", () => {
+    const result = parseInline("see https://example.com.");
+    const link = result.find((n) => n.type === "link");
+    expect(link).toMatchObject({ href: "https://example.com" });
+    // The trailing "." should be in a text node after the link.
+    const lastText = result[result.length - 1];
+    if (lastText.type === "text") expect(lastText.value.endsWith(".")).toBe(true);
+  });
+
+  it("does NOT swallow trailing parenthesis (parenthetical URLs)", () => {
+    const result = parseInline("(see https://example.com)");
+    const link = result.find((n) => n.type === "link");
+    expect(link).toMatchObject({ href: "https://example.com" });
+  });
+
+  it("does NOT convert protocol-less URLs (no scheme = no link)", () => {
+    const result = parseInline("example.com is the place");
+    expect(result.some((n) => n.type === "link")).toBe(false);
+  });
+
+  it("explicit [text](url) syntax still takes priority over auto-link", () => {
+    // An explicit link with a different display text should win — the
+    // bare-URL pass runs on the "h" branch, but "[" branch sits earlier
+    // when we encounter "[".
+    const result = parseInline("[click here](https://example.com)");
+    const link = result.find((n) => n.type === "link");
+    expect(link).toBeDefined();
+    if (link && link.type === "link") {
+      // The visible children should still be "click here", not the URL.
+      expect(link.href).toBe("https://example.com");
+      expect(link.children[0]).toMatchObject({ type: "text", value: "click here" });
+    }
+  });
+});
