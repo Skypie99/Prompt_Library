@@ -28,6 +28,14 @@ import {
 } from "@/lib/library";
 import { loadAllRunCounts } from "@/lib/runs";
 import { DEFAULT_DENSITY, loadDensity, saveDensity, type Density } from "@/lib/density";
+import {
+  DEFAULT_SORT,
+  SORT_LABELS,
+  loadSort,
+  saveSort,
+  sortPrompts,
+  type SortMode,
+} from "@/lib/sort";
 import { Header } from "./Header";
 import { PromptGrid } from "./PromptGrid";
 import { CategoryChips } from "./CategoryChips";
@@ -84,6 +92,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const [runCounts, setRunCounts] = useState<Map<string, number>>(() => new Map());
   // F-fast-5 — grid density. Defaults to comfortable to match prior layout.
   const [density, setDensity] = useState<Density>(DEFAULT_DENSITY);
+  // F-eve-1 — sort mode for the All prompts grid. Defaults to "newest"
+  // (the same createdAt-desc order the app has always used).
+  const [sortMode, setSortMode] = useState<SortMode>(DEFAULT_SORT);
 
   useEffect(() => {
     // Migrate the on-disk shape BEFORE any reader runs, so v0 -> v1 keys are
@@ -107,6 +118,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setRecent(loadRecent());
     setRunCounts(loadAllRunCounts());
     setDensity(loadDensity());
+    setSortMode(loadSort());
     setShowOnboarding(!loadOnboarded());
 
     return () => {
@@ -129,14 +141,18 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const tags = useMemo(() => getTags(allPrompts), [allPrompts]);
 
   // Intersection of category + tag filters. Either, both, or neither can be
-  // active. When neither is set, we show everything.
+  // active. When neither is set, we show everything. After filtering, sort
+  // by the user's chosen mode (F-eve-1). Stable: filter first (small set)
+  // then sort the small set, so the sort cost scales with the visible grid,
+  // not the full library.
   const visiblePrompts = useMemo(() => {
-    return allPrompts.filter((p) => {
+    const filtered = allPrompts.filter((p) => {
       if (activeCategory && p.category !== activeCategory) return false;
       if (activeTag && !p.tags.includes(activeTag)) return false;
       return true;
     });
-  }, [allPrompts, activeCategory, activeTag]);
+    return sortPrompts(filtered, sortMode, runCounts);
+  }, [allPrompts, activeCategory, activeTag, sortMode, runCounts]);
 
   // If the active tag stops existing (e.g. last prompt with it was deleted),
   // silently clear the filter so the user doesn't end up stuck on an empty
@@ -221,6 +237,12 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const handleChangeDensity = useCallback((next: Density) => {
     setDensity(next);
     saveDensity(next);
+  }, []);
+
+  // F-eve-1 — flip sort mode and persist. Stable callback for the dropdown.
+  const handleChangeSort = useCallback((next: SortMode) => {
+    setSortMode(next);
+    saveSort(next);
   }, []);
 
   const deletePrompt = useCallback((id: string) => {
@@ -479,6 +501,25 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               <span className="hidden text-sm text-ink-muted sm:inline dark:text-paper-muted">
                 {visiblePrompts.length} {visiblePrompts.length === 1 ? "prompt" : "prompts"}
               </span>
+              {/* F-eve-1 — sort dropdown. Native <select> for full keyboard
+                  + screen-reader support; the visible "Sort:" prefix is
+                  aria-hidden because the select itself carries the
+                  accessible name via aria-label. */}
+              <div className="flex items-center gap-1.5 text-xs text-ink-soft dark:text-paper-muted">
+                <span aria-hidden>Sort:</span>
+                <select
+                  value={sortMode}
+                  onChange={(event) => handleChangeSort(event.target.value as SortMode)}
+                  aria-label="Sort prompts"
+                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs text-ink transition hover:border-coral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper dark:focus-visible:ring-offset-night"
+                >
+                  {(Object.keys(SORT_LABELS) as SortMode[]).map((mode) => (
+                    <option key={mode} value={mode}>
+                      {SORT_LABELS[mode]}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button
                 onClick={() => setForm({ mode: "create", initial: null })}
                 className="flex items-center gap-1.5 rounded-md border border-coral-300 bg-coral-50 px-3 py-1.5 text-sm font-medium text-coral-700 transition hover:bg-coral-100 active:scale-95 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-300 dark:hover:bg-coral-500/20"
