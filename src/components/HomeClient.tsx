@@ -187,6 +187,18 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     saveOnboarded();
   }, []);
 
+  // Called by SettingsModal after a successful F5 import. Re-reads every
+  // library-side keyspace from localStorage so the home grid reflects the
+  // imported data immediately (no refresh needed). Settings stay as-is —
+  // import never touches apiKey / model / maxTokens.
+  const refreshLibraryFromStorage = useCallback(() => {
+    setUserPrompts(loadUserPrompts());
+    setFavorites(loadFavorites());
+    setRecent(loadRecent());
+    // Close any open prompt — its id may have been overwritten by Replace mode.
+    setActivePrompt(null);
+  }, []);
+
   const deletePrompt = useCallback((id: string) => {
     setUserPrompts((prev) => {
       const next = prev.filter((p) => p.id !== id);
@@ -463,6 +475,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         notice={settingsNotice}
         onClose={() => setSettingsOpen(false)}
         onSave={updateSettings}
+        onLibraryImported={refreshLibraryFromStorage}
       />
 
       {form && (

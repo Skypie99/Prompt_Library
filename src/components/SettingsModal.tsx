@@ -1,7 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEFAULT_MAX_TOKENS, MODELS, type Settings } from "@/lib/settings";
+import {
+  applyImport,
+  defaultExportFilename,
+  exportToJson,
+  parseImport,
+  type ApplyImportResult,
+  type ImportPreview,
+} from "@/lib/transfer";
+import { loadUserPrompts } from "@/lib/library";
 import { CloseIcon } from "./icons";
 
 interface SettingsModalProps {
@@ -11,23 +20,68 @@ interface SettingsModalProps {
   notice: string | null;
   onClose: () => void;
   onSave: (next: Settings) => void;
+  /** Called after a successful import so HomeClient re-reads from storage. */
+  onLibraryImported?: () => void;
 }
 
-export function SettingsModal({ open, settings, notice, onClose, onSave }: SettingsModalProps) {
+type ImportState =
+  | { kind: "idle" }
+  | { kind: "error"; message: string }
+  | {
+      kind: "preview";
+      preview: ImportPreview;
+      /** Parsed (validated, normalized) data — kept here so applyImport
+       *  has it on hand without re-parsing the raw file. */
+      data: ReturnType<typeof parseImport> extends infer R
+        ? R extends { ok: true; data: infer D }
+          ? D
+          : never
+        : never;
+      /** True once the user clicked Replace and we're awaiting confirm. */
+      confirmingReplace: boolean;
+    }
+  | { kind: "success"; result: ApplyImportResult };
+
+export function SettingsModal({
+  open,
+  settings,
+  notice,
+  onClose,
+  onSave,
+  onLibraryImported,
+}: SettingsModalProps) {
   const [apiKey, setApiKey] = useState("");
   const [model, setModel] = useState(settings.model);
   const [maxTokens, setMaxTokens] = useState(String(settings.maxTokens));
   const [showKey, setShowKey] = useState(false);
+  const [importState, setImportState] = useState<ImportState>({ kind: "idle" });
+  const [userPromptCount, setUserPromptCount] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync the form to the saved settings each time the modal opens.
+  // Sync the form to the saved settings each time the modal opens, and
+  // reset any in-flight import state so a closed-then-reopened modal is
+  // a clean slate.
   useEffect(() => {
     if (open) {
       setApiKey(settings.apiKey);
       setModel(settings.model);
       setMaxTokens(String(settings.maxTokens));
       setShowKey(false);
+      setImportState({ kind: "idle" });
+      // One cheap read for the "N custom prompts in this browser" line. Don't
+      // call buildExport() — it walks every per-prompt sub-key, which is
+      // wasteful for a display string.
+      setUserPromptCount(loadUserPrompts().length);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }, [open, settings]);
+
+  // Refresh the count after a successful import — it just changed.
+  useEffect(() => {
+    if (importState.kind === "success") {
+      setUserPromptCount(loadUserPrompts().length);
+    }
+  }, [importState]);
 
   if (!open) return null;
 
@@ -38,6 +92,62 @@ export function SettingsModal({ open, settings, notice, onClose, onSave }: Setti
       : DEFAULT_MAX_TOKENS;
     onSave({ apiKey: apiKey.trim(), model, maxTokens: safeMax });
     onClose();
+  }
+
+  function handleExport() {
+    const json = exportToJson();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = defaultExportFilename();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    // Release the blob URL after a tick so the browser has time to start
+    // the download. Avoids the "URL.revokeObjectURL too early" gotcha.
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function handleFileChosen(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onerror = () => {
+      setImportState({
+        kind: "error",
+        message: "Couldn't read that file. Try again or pick a different one.",
+      });
+    };
+    reader.onload = () => {
+      const text = typeof reader.result === "string" ? reader.result : "";
+      const result = parseImport(text);
+      if (!result.ok) {
+        setImportState({ kind: "error", message: result.message });
+      } else {
+        setImportState({
+          kind: "preview",
+          preview: result.preview,
+          data: result.data,
+          confirmingReplace: false,
+        });
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function handleApplyMerge() {
+    if (importState.kind !== "preview") return;
+    const result = applyImport(importState.data, "merge");
+    setImportState({ kind: "success", result });
+    onLibraryImported?.();
+  }
+
+  function handleApplyReplace() {
+    if (importState.kind !== "preview") return;
+    const result = applyImport(importState.data, "replace");
+    setImportState({ kind: "success", result });
+    onLibraryImported?.();
   }
 
   return (
@@ -53,13 +163,13 @@ export function SettingsModal({ open, settings, notice, onClose, onSave }: Setti
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
           >
             <CloseIcon className="h-[18px] w-[18px]" />
           </button>
         </div>
 
-        <div className="space-y-5 px-6 py-5">
+        <div className="scrollbar-soft max-h-[70vh] space-y-5 overflow-y-auto px-6 py-5">
           {notice && (
             <div className="rounded-md border border-coral-300 bg-coral-50 px-3 py-2 text-sm text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200">
               {notice}
@@ -145,6 +255,152 @@ export function SettingsModal({ open, settings, notice, onClose, onSave }: Setti
           >
             Get an API key from the Anthropic Console →
           </a>
+
+          {/* ---- Backup / Restore ---- */}
+          <div className="border-t border-border pt-5 dark:border-night-border">
+            <div className="mb-1 text-xs font-medium uppercase tracking-wider text-ink-soft">
+              Backup &amp; Restore
+            </div>
+            <p className="mb-3 text-xs text-ink-muted dark:text-paper-muted">
+              This file contains your prompts and run history (but never your API key). Keep it as
+              private as you&apos;d keep your notes.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleExport}
+                className="rounded-md bg-coral-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-coral-600 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
+              >
+                Export library
+              </button>
+
+              <label className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-within:ring-2 focus-within:ring-coral-400 dark:border-night-border dark:bg-night dark:text-paper-muted">
+                Import library
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={handleFileChosen}
+                  className="sr-only"
+                  aria-label="Choose a library JSON file to import"
+                />
+              </label>
+
+              <span className="text-xs text-ink-soft dark:text-paper-muted">
+                {userPromptCount} custom prompt{userPromptCount === 1 ? "" : "s"} in this browser
+              </span>
+            </div>
+
+            {/* Import status */}
+            {importState.kind === "error" && (
+              <div
+                role="alert"
+                className="mt-3 rounded-md border border-coral-300 bg-coral-50 px-3 py-2 text-sm text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200"
+              >
+                {importState.message}
+              </div>
+            )}
+
+            {importState.kind === "preview" && (
+              <div className="mt-3 rounded-md border border-border bg-cream/50 p-3 dark:border-night-border dark:bg-night/40">
+                <div className="text-sm font-medium text-ink dark:text-paper">
+                  This file contains:
+                </div>
+                <ul className="mt-1 text-xs text-ink-muted dark:text-paper-muted">
+                  <li>• {importState.preview.userPromptCount} custom prompt(s)</li>
+                  <li>• {importState.preview.favoritesCount} favorite(s)</li>
+                  <li>• {importState.preview.recentCount} recent entry(ies)</li>
+                  <li>• {importState.preview.runsCount} run(s) of history</li>
+                  <li>
+                    • saved variable values for {importState.preview.valuesPromptCount} prompt(s)
+                  </li>
+                  {importState.preview.exportedAt && (
+                    <li className="mt-1 text-ink-soft">
+                      Exported {new Date(importState.preview.exportedAt).toLocaleString()}
+                    </li>
+                  )}
+                  {importState.preview.droppedCount > 0 && (
+                    <li className="mt-1 text-coral-700 dark:text-coral-300">
+                      {importState.preview.droppedCount} corrupt entry(ies) will be skipped.
+                    </li>
+                  )}
+                </ul>
+
+                <p className="mt-3 text-xs text-ink-soft dark:text-paper-muted">
+                  Tip: export your current library first if you want to come back to it later.
+                </p>
+
+                {!importState.confirmingReplace ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleApplyMerge}
+                      className="rounded-md bg-coral-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-coral-600 active:scale-95"
+                    >
+                      Merge into my library
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setImportState({ ...importState, confirmingReplace: true })
+                      }
+                      className="rounded-md border border-coral-300 px-3 py-1.5 text-sm font-medium text-coral-700 transition hover:bg-coral-50 dark:border-coral-500/40 dark:text-coral-300 dark:hover:bg-coral-500/10"
+                    >
+                      Replace my library
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImportState({ kind: "idle" });
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                      }}
+                      className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:text-ink dark:text-paper-muted dark:hover:text-paper"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-3 rounded-md border border-coral-300 bg-coral-50 p-2.5 dark:border-coral-500/40 dark:bg-coral-500/10">
+                    <p className="text-xs text-coral-900 dark:text-coral-100">
+                      This will delete your existing prompts, favorites, recent, and run history,
+                      then load the file. Settings (API key, model, theme) are kept. This
+                      can&apos;t be undone.
+                    </p>
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setImportState({ ...importState, confirmingReplace: false })
+                        }
+                        className="rounded-md border border-coral-300 px-2.5 py-1 text-xs font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleApplyReplace}
+                        className="rounded-md bg-coral-600 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-coral-700 active:scale-95"
+                      >
+                        Replace
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {importState.kind === "success" && (
+              <div
+                role="status"
+                className="mt-3 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-100"
+              >
+                Imported {importState.result.promptsAdded} prompt(s),{" "}
+                {importState.result.favoritesAdded} favorite(s),{" "}
+                {importState.result.runsPromptsWritten} prompt(s) of history.
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border px-6 py-4 dark:border-night-border">

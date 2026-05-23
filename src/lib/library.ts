@@ -299,6 +299,66 @@ export function purgePromptStorage(id: string): void {
   }
 }
 
+/**
+ * Enumerate every prompt id that currently has at least one per-prompt
+ * sub-key in storage (for the given prefix). Used by F5 (export) to gather
+ * runs/values for every prompt — defensive: returns ghost ids too (a prompt
+ * that was deleted but whose sub-keys lingered before purgePromptStorage
+ * landed). The export caller filters down to ids that still exist as user
+ * prompts.
+ */
+export function listStoredPromptIdsByPrefix(prefix: string): string[] {
+  if (typeof window === "undefined") return [];
+  const ids: string[] = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(prefix)) {
+        ids.push(key.slice(prefix.length));
+      }
+    }
+  } catch {
+    /* unavailable */
+  }
+  return ids;
+}
+
+/** All per-prompt key prefixes the app currently uses. Exported so the
+ *  transfer module can enumerate runs + values + any future feature keys
+ *  in one place. */
+export const PER_PROMPT_PREFIXES_PUBLIC: readonly string[] = PER_PROMPT_PREFIXES;
+
+/**
+ * Wipe ALL user-library data — `userPrompts`, `favorites`, `recent`, and
+ * every per-prompt sub-key. Settings (apiKey/model/maxTokens), onboarded
+ * flag, and the schema version are untouched.
+ *
+ * Used by F5 (import in Replace mode). Inline-confirmed in the UI; this
+ * function itself does no confirmation — that's the caller's responsibility.
+ */
+export function wipeAllUserData(): void {
+  if (typeof window === "undefined") return;
+  try {
+    // 1. Collect every per-prompt key first, THEN remove. Removing while
+    //    iterating over localStorage by index would skip keys.
+    const toRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+      if (PER_PROMPT_PREFIXES.some((p) => key.startsWith(p))) {
+        toRemove.push(key);
+      }
+    }
+    for (const key of toRemove) localStorage.removeItem(key);
+    // 2. The list-shaped keys.
+    localStorage.removeItem(STORAGE_KEYS.userPrompts);
+    localStorage.removeItem(STORAGE_KEYS.favorites);
+    localStorage.removeItem(STORAGE_KEYS.recent);
+  } catch {
+    /* unavailable */
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Schema migrations
 // ---------------------------------------------------------------------------
