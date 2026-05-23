@@ -237,3 +237,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 7
 - F-n2-13: parallel-walk pattern. `loadAllLastRunIsos` is a structural copy of `loadAllRunCounts` (same prefix walk, different per-key extraction). Once you have two of these, a generic `walkPromptlibKeys(prefix, extract)` is worth it. Not yet — still rule of three.
 - F-n2-14: "show only when different" is the right filter for offered actions. Don't offer a no-op fill, and don't show absent-history affordances.
+
+### Cycle 8
+- F-n2-15: indented code blocks share the same `code-block` AST node as fenced ones, so the existing F-night-3 copy button works for both with zero extra code. Reuse > re-invent.
+- F-n2-16: a one-line privacy note in the footer ("All data stays in this browser") answers the question users never ask out loud. Free trust.
