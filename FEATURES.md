@@ -10,102 +10,115 @@
 
 ---
 
-## Up next (this cycle)
+## Up next (this cycle — PM session)
 
-### F2 — Variable values persistence  (S)  ← now next
-See section below.
-
-### F3 — Tag filter  (S)
-See section below.
-
-### F4 — Keyboard shortcuts overlay  (S) — stretch
-See section below.
-
----
-
-## Done
-
-### F1 — Run history per prompt  (M)  ✅ landed on `cycle/auto-2026-05-23`
+### F5 — Export / Import library  (M-L)
 **User story**
-As someone who uses the same prompt multiple times, I want to see my last few runs (input values + the response Claude gave) so I can compare results, copy a past response, or replay a prompt with the same inputs without retyping.
+Everything in this app lives in this browser. If I clear my data, switch laptops, or hand the app to someone else, I lose all my custom prompts, favorites, history, and saved variable values. I want a one-click backup file and a one-click restore.
 
 **Scope**
-- Save the last 10 runs per prompt to `localStorage` (`promptlib:runs:<promptId>`), oldest evicted.
-- Each run captures: ISO timestamp, model id, filled variable values, full response text, completion status (`completed` | `aborted` | `errored`).
-- A new "History" disclosure inside `PromptDetail`, collapsed by default, opens to a list of timestamped entries.
-- Per-entry actions: **View** (expands inline to show inputs + response), **Restore inputs** (loads values into the live form), **Copy response**, **Delete**.
-- Clear-all-history button at the top of the panel with inline confirm.
-- Skipped completely if 0 history entries (no empty panel).
+- **Export**: a button (probably in Settings) that downloads a `prompt-library-<date>.json` file containing:
+  - `version: 1`
+  - `exportedAt` (ISO)
+  - `userPrompts` (all custom prompts)
+  - `favorites` (id list)
+  - `recent` (id list)
+  - `runs` (full per-prompt history)
+  - `values` (per-prompt saved draft values)
+  - **Never**: `apiKey`, `model`, `maxTokens`, `schemaVersion`. (API key would be a security footgun in a file users might share.)
+- **Import**: a file-picker (also in Settings). Validates the file, shows a preview ("This file has X prompts, Y favorites, Z runs from 2026-05-22"), then asks:
+  - **Merge** — keep existing data; only add prompts whose id you don't have. Favorites/recent/runs/values for an imported prompt only land if you also accept the prompt.
+  - **Replace** — wipe your existing user prompts/favorites/recent/runs/values and use the file's. Inline confirm.
+- File validation: reject anything missing `version` or with the wrong top-level shape; partial validity (one corrupt run) drops only the corrupt entry, not the whole import.
 
 **Acceptance**
-- Running a prompt successfully writes a new entry; running again pushes the previous one down.
-- Aborted runs save with `aborted` status and whatever streamed in.
-- Errored runs save the user-facing error message, not a stack trace.
-- Reopening the modal still shows the history.
-- Deleting a prompt deletes its history (`promptlib:runs:<id>` removed).
-- Cap at 10 entries per prompt is enforced.
-- `npx tsc --noEmit` green.
+| # | Behaviour |
+|---|---|
+| 1 | Export downloads a valid JSON file with the right keys; opening it in a text editor shows readable JSON. |
+| 2 | `apiKey`, `model`, `maxTokens` are never in the export. |
+| 3 | Importing the same file you just exported is a no-op in Merge mode (everything already exists). |
+| 4 | Replace mode wipes user prompts AND the per-prompt sub-keys (runs, values) for the wiped prompts. |
+| 5 | A malformed file shows a friendly error, not a crash. |
+| 6 | A file from a future `version` shows a friendly "this file is newer than this app" message. |
+| 7 | Seed prompts never appear in the export (they're shipped with the app). |
+| 8 | `npx tsc --noEmit` green. |
 
-**Dependencies** — None.
-**Out of scope** — Cross-prompt global history view; export/import (covered later).
+**Dependencies** — None new. Builds on the existing `library.ts` helpers + `runs.ts` per-prompt storage.
 
-### F2 — Variable values persistence  (S)  — full spec
+### F6 — Markdown rendering of Claude responses  (M)
 **User story**
-When I reopen a prompt I worked on earlier, I want my last typed values still there so I can tweak one thing instead of retyping everything.
+Claude's responses come back with headings, lists, code blocks, bold/italic — and the app shows them as a wall of plain text. I want them rendered so what I read matches what Claude wrote.
 
 **Scope**
-- Save the in-flight variable values per prompt to `localStorage` (`promptlib:values:<promptId>`) on change (debounced or simple onChange — pick simple).
-- Restore on open. Cleared by the existing "Clear" button (also wipes storage).
-- Pruned when a prompt is deleted.
+- A tiny dependency-free safe-subset Markdown renderer (~150 lines): headings (h1-h3), paragraphs, bold/italic, inline code, fenced code blocks (no syntax highlighting in v1), unordered + ordered lists, line breaks, and links (`https://` / `http://` / `mailto:` only).
+- Renders both during streaming (response panel in `PromptDetail`) and in the History expanded row.
+- No raw HTML support. No images. No tables. No script execution. Steve double-checks the escape-everything-by-default rule.
 
 **Acceptance**
-- Type values, close modal, reopen → values are still there.
-- Hit Clear → values disappear from both UI and storage.
-- Deleted prompts have no leftover values in storage.
-- Does NOT auto-load from history (that's F1's "Restore inputs" path).
-- Typecheck green.
-
-**Dependencies** — Reuses the same per-prompt storage discipline as F1, so Dana lands both keys together.
-
-### F3 — Tag filter  (S)
-**User story**
-I see tags on the prompt cards and detail header but can't click them to filter. I'd like the same one-click filter behaviour I get from categories, but for tags.
-
-**Scope**
-- Derive the tag list from all prompts (sorted by frequency, then alphabetical).
-- A `TagChips` row beneath `CategoryChips` (or merged into it as a second tier — Dani decides).
-- Clicking a tag filters the visible grid; clicking again clears.
-- Clicking a tag on `PromptCard` or in `PromptDetail` opens the home grid filtered by that tag.
-- Active tag has the same visual treatment as the active category.
-
-**Acceptance**
-- Selecting a tag narrows the grid; the count text updates.
-- Selecting a category + tag intersects the two filters.
-- Selecting "All categories" keeps the tag selection; clearing the tag returns to all-of-that-category.
-- Empty result → a friendly empty state, not a blank grid.
-- Typecheck green.
+| # | Behaviour |
+|---|---|
+| 1 | A response with `# Heading\nSome text **bold** *italic*` renders accordingly. |
+| 2 | Fenced code blocks render in a mono font with a soft background. |
+| 3 | Lists with `-` or `1.` items render as `<ul>` / `<ol>`. |
+| 4 | Any `<script>` tag in the response renders as literal text, not executed. |
+| 5 | An `<img>` tag in the response is escaped (no network request). |
+| 6 | Plain text without markdown renders as plain text (idempotent). |
+| 7 | Streaming partial markdown ("# Head") shows a partial render without flicker. |
+| 8 | Typecheck green. |
 
 **Dependencies** — None.
 
+### F7 — Customize seed → save as your own  (S)
+**User story**
+I love that there are starter prompts but I want to tweak one without losing the original. Today the only way is "Duplicate" — fine, but the action label doesn't tell me that's what's happening.
+
+**Scope**
+- On a seed prompt's detail header, the existing **Duplicate** action gains an explicit **Customize** button (or replaces Duplicate's label for seeds only — Dani's call).
+- "Customize" opens the create form pre-filled with the seed's content and `(custom)` appended to the title.
+- The original seed is untouched.
+
+**Acceptance**
+| # | Behaviour |
+|---|---|
+| 1 | Clicking Customize on a seed opens the form pre-filled. |
+| 2 | Saving creates a NEW user prompt; the seed remains in the library. |
+| 3 | The button shows on seeds, not on user prompts. |
+| 4 | Typecheck green. |
+
+**Dependencies** — None.
+
 ---
 
-## Stretch (if time allows)
+## Stretch
 
-### F4 — Keyboard shortcuts overlay  (S)
-Press `?` (when not typing) → modal listing every shortcut (`⌘K`, `/`, `Esc`, `⌘↵`, `?`). Auto-built from a static list so adding a shortcut means adding one line.
+### F8 — Better empty states  (S)
+Friendly empty states for: search-with-no-results (already exists, polish it), Favorites tab when you have none (today: section hidden — give a "Star prompts to see them here" tile instead), Recent (same pattern), and the All Prompts grid if a user somehow deletes all seeds. Consistent affordance: small icon + one sentence + a one-click CTA.
 
----
-
-## Later / parked
-
-- **F5 — Export / Import library** — JSON download of user prompts + favorites + recent + history (NOT the API key), and an upload-to-merge flow. Necessary backup story for an all-localStorage app.
-- **F6 — Markdown rendering of Claude responses** — headings, lists, code blocks while streaming. Quality bump, needs a tiny dependency-free renderer or a vetted lib.
-- **F7 — Customize seed prompt → save as your own** — pre-fills the create form from a seed, keeps the seed intact.
-- **F8 — Better empty states** — for favorites, recent, search, and (post-F3) tag-filtered grids.
-- **F9 — Theme: respect `prefers-color-scheme` on first visit** — currently the toggle works; confirm system preference is honoured on first load.
+### F9 — Respect `prefers-color-scheme` on first visit  (XS)
+On first load (no stored theme preference), pick dark or light from the user's system preference. The toggle remains the source of truth from that moment forward.
 
 ---
 
 ## Done (most recent first)
 
-_See "Done" section above. Git log on `cycle/auto-2026-05-23` is canonical._
+### F1 — Run history per prompt  (M)  ✅ landed on `cycle/auto-2026-05-23`
+Last 10 runs per prompt with restore-inputs, copy-response, delete-one, clear-all. Storage: `promptlib:runs:<id>`, cap 10, 32KB per-response trim.
+
+### F2 — Variable values persistence  (S)  ✅ landed on `cycle/auto-2026-05-23`
+Per-prompt `promptlib:values:<id>` draft. Survives reopen; cleared by Clear; cascade-on-delete via `purgePromptStorage`.
+
+### F3 — Tag filter  (S)  ✅ landed on `cycle/auto-2026-05-23`
+Frequency-sorted `TagChips`; tags clickable on cards + detail header; category + tag intersect; auto-clear stale tag; empty state with Clear filters.
+
+### F4 — Keyboard shortcuts overlay  (S, stretch)  ✅ landed on `cycle/auto-2026-05-23`
+Press `?` (not while typing). One canonical `SHORTCUTS` constant drives the render.
+
+---
+
+## Later / parked
+
+- **F-future-1 — Cross-prompt history view** — global "what did I run today?" timeline.
+- **F-future-2 — Per-run usage / token display** — parse `message_delta` from the stream and store tokens used.
+- **F-future-3 — Multiple named variable presets per prompt** — beyond the single in-flight draft.
+- **F-future-4 — Storage usage readout in Settings** — "your library uses 1.2 MB of 5 MB".
+- **F-future-5 — Cloud sync** — out of scope for v1 / requires a backend.
