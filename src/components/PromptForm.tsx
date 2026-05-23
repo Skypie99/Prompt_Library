@@ -31,22 +31,51 @@ interface PromptFormProps {
 const fieldClass =
   "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30";
 
+// F-n2-20 — given a variable name, produce a short readable sample so
+// the preview shows what a filled body looks like without the user
+// having to mentally substitute. Pulls a few common shapes from the
+// name itself (topic → "your topic", date → "May 23", etc.) and falls
+// back to "sample <name>".
+function sampleFor(name: string): string {
+  const lc = name.toLowerCase();
+  if (/date/.test(lc)) return "May 23";
+  if (/email/.test(lc)) return "you@example.com";
+  if (/name/.test(lc)) return "Sky";
+  if (/url|link/.test(lc)) return "https://example.com";
+  if (/topic|subject/.test(lc)) return "shipping a beta";
+  if (/tone/.test(lc)) return "warm and plain";
+  if (/length|count|number/.test(lc)) return "200";
+  if (/code|snippet/.test(lc)) return "const x = 1;";
+  return `sample ${name}`;
+}
+
 // F-night-9 — small inline preview that mirrors PromptDetail's preview
 // pane (filled-variable / unfilled-variable chip treatment) but renders
 // every variable as "unfilled" since the form has no fill state. Memoized
 // on body so the parser doesn't re-run on unrelated state changes
 // (e.g. typing into the tags input).
-function PromptBodyPreview({ body }: { body: string }) {
+//
+// F-n2-20 — "Sample fill" mode renders each {{var}} as its sampleFor()
+// value with a coral-tinted fill, mirroring PromptDetail's filled-value
+// chip treatment. Lets the author see "what does it look like in flight"
+// without leaving the form.
+function PromptBodyPreview({ body, sampleFill }: { body: string; sampleFill: boolean }) {
   const segments = useMemo(() => parseBody(body), [body]);
   return (
-    <div className="mt-3">
-      <span className="text-[10px] uppercase tracking-wider text-ink-soft">
-        Preview
-      </span>
+    // Header is now rendered by the parent (so the "Sample fill" toggle
+    // can sit next to it). This component is just the body box.
+    <div>
       <pre className="mt-1 max-h-48 overflow-y-auto whitespace-pre-wrap break-words rounded-md border border-border bg-cream/40 px-3 py-2 font-sans text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night/40 dark:text-paper">
         {segments.map((segment, index) =>
           segment.type === "text" ? (
             <span key={index}>{segment.value}</span>
+          ) : sampleFill ? (
+            <span
+              key={index}
+              className="rounded bg-coral-100/70 px-1 text-ink dark:bg-coral-500/20 dark:text-paper"
+            >
+              {sampleFor(segment.name)}
+            </span>
           ) : (
             <span
               key={index}
@@ -75,6 +104,8 @@ export function PromptForm({
   const [category, setCategory] = useState(initial?.category ?? "");
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
+  // F-n2-20 — toggle for sample-fill in the preview pane.
+  const [sampleFill, setSampleFill] = useState(false);
   // F-n2-8 — ref to the body textarea so the "Insert {{}}" helper can
   // place the caret inside the braces after insertion.
   const bodyRef = useRef<HTMLTextAreaElement>(null);
@@ -222,13 +253,27 @@ export function PromptForm({
               })()}
             </div>
 
-            {/* F-night-9 — live preview of the body with {{variables}}
-                highlighted as dashed coral chips. Mirrors the same chip
-                treatment PromptDetail uses for the preview pane, so the
-                author sees during writing what the eventual reader will
-                see during run. Hidden when body is empty so the form
-                doesn't open with a "preview of nothing" box. */}
-            {body.trim() !== "" && <PromptBodyPreview body={body} />}
+            {/* F-night-9 + F-n2-20 — live preview, with optional sample
+                fill toggle for "what does this look like filled in?". */}
+            {body.trim() !== "" && (
+              <>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-wider text-ink-soft">
+                    Preview
+                  </span>
+                  <label className="flex items-center gap-1 text-[11px] text-ink-muted dark:text-paper-muted">
+                    <input
+                      type="checkbox"
+                      checked={sampleFill}
+                      onChange={(e) => setSampleFill(e.target.checked)}
+                      className="h-3 w-3 accent-coral-500"
+                    />
+                    Sample fill
+                  </label>
+                </div>
+                <PromptBodyPreview body={body} sampleFill={sampleFill} />
+              </>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
