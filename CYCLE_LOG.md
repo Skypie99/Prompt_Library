@@ -119,7 +119,7 @@ Quality rails:
 |---|---|
 | Peter | `qa-reports/perf-sweep-2026-05-23.md` — 127 kB First Load JS, all routes prerendered, memoization audit clean, 0 regressions |
 | Gary | `qa-reports/qa-sweep-2026-05-23-cycle.md` + 2 new tests + 1 extended (~32 new cases). Tests don't execute until Vitest install proposal lands |
-| Morgan | Briefing: `~/Documents/Claude/Agent Summarys /Access Map Summarys/2026-05-23_Continuous_Build_Report_PromptLibrary.md` |
+| Morgan | Briefing: `~/Documents/Claude/Agent Summarys /Access Map Summarys/2026-05-23_Prompt_Libary_Continuous_Build_Report.md` (+ `_email.txt` companion) |
 
 **Final state:**
 - 15 commits on `cycle/auto-2026-05-23` (10 this session + 5 inherited from `qa/auto-2026-05-23`).
