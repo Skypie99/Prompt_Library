@@ -225,3 +225,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 4
 - F-n2-7: blockquote was a one-block-type addition — define the regex, gather consecutive matching lines, emit a single node, exclude from the paragraph gobbler. Tiny.
 - F-n2-8: `setSelectionRange` inside a RAF after a controlled-textarea state change is the dance for "insert text and place the caret inside it". The RAF gives React time to commit before the DOM read.
+
+### Cycle 5
+- F-n2-9: storing "system" as the ABSENCE of the localStorage key (instead of the literal string "system") meant zero changes to the no-flash script in layout.tsx — the script's existing fall-through to matchMedia already handled "missing key". The toggle stays the source of truth via removeItem.
+- F-n2-10: reuse the existing `wipeAllUserData` from F5 (Replace import). One scope definition for "what's user data," used by both Import-Replace and Reset.
