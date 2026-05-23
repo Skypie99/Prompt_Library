@@ -528,6 +528,25 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               <span className="hidden text-sm text-ink-muted sm:inline dark:text-paper-muted">
                 {visiblePrompts.length} {visiblePrompts.length === 1 ? "prompt" : "prompts"}
               </span>
+              {/* F-night-2 — Clear filters button. Visible only when at
+                  least one filter is active, so it sits invisible during
+                  the default browse view. One click clears both filters
+                  at once (the empty-state "Clear filters" already exists
+                  for the zero-result case; this puts the same affordance
+                  in the header for the non-empty-but-filtered case). */}
+              {(activeCategory || activeTag) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory(null);
+                    setActiveTag(null);
+                  }}
+                  aria-label="Clear active category and tag filters"
+                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
+                >
+                  Clear filters
+                </button>
+              )}
               {/* F-eve-1 — sort dropdown. Native <select> for full keyboard
                   + screen-reader support; the visible "Sort:" prefix is
                   aria-hidden because the select itself carries the
