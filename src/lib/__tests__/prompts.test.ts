@@ -200,3 +200,55 @@ describe("getTagsWithCounts (F-eve-2)", () => {
     expect(getTagsWithCounts(prompts)).toEqual([{ tag: "work", count: 2 }]);
   });
 });
+
+describe("getCategoriesWithCounts (F-night-12)", () => {
+  it("returns [] for an empty list", () => {
+    expect(getCategoriesWithCounts([])).toEqual([]);
+  });
+
+  it("carries the count for each category", () => {
+    const prompts = [
+      makePrompt({ id: "a", category: "writing" }),
+      makePrompt({ id: "b", category: "writing" }),
+      makePrompt({ id: "c", category: "code" }),
+    ];
+    expect(getCategoriesWithCounts(prompts)).toEqual([
+      { category: "code", count: 1 },
+      { category: "writing", count: 2 },
+    ]);
+  });
+
+  it("orders alphabetically (same order as getCategories)", () => {
+    const prompts = [
+      makePrompt({ id: "1", category: "zebra" }),
+      makePrompt({ id: "2", category: "apple" }),
+      makePrompt({ id: "3", category: "mango" }),
+    ];
+    expect(getCategoriesWithCounts(prompts).map((c) => c.category)).toEqual([
+      "apple",
+      "mango",
+      "zebra",
+    ]);
+  });
+
+  it("getCategories and getCategoriesWithCounts agree on category order", () => {
+    const prompts = [
+      makePrompt({ id: "a", category: "writing" }),
+      makePrompt({ id: "b", category: "code" }),
+    ];
+    expect(getCategories(prompts)).toEqual(
+      getCategoriesWithCounts(prompts).map((c) => c.category),
+    );
+  });
+
+  it("drops empty / whitespace-only categories defensively", () => {
+    const prompts = [
+      makePrompt({ id: "a", category: "writing" }),
+      makePrompt({ id: "b", category: "  " }),
+      makePrompt({ id: "c", category: "" }),
+    ];
+    expect(getCategoriesWithCounts(prompts)).toEqual([
+      { category: "writing", count: 1 },
+    ]);
+  });
+});

@@ -4,6 +4,40 @@ _Started by Will on 2026-05-23 during the fastloop session. New entries on top; 
 
 ---
 
+## 2026-05-23 — Night cycle 4 (post-build clean)
+
+Cycle = 3 builds + 1 clean. Features: F-night-10 (auto-link bare URLs
+in Markdown), F-night-11 (category color stripe on cards), F-night-12
+(category count badges on CategoryChips).
+
+### What the clean pass caught
+
+- **F-night-12 test catch-up.** The `getCategoriesWithCounts` test block
+  didn't land in the feature commit (one Edit succeeded, the next was
+  rejected because the prior import-bump had shifted the file). Clean
+  pass appended the missing 5 cases.
+
+### Patterns reinforced
+
+- **Always grep -c after a multi-edit to verify both halves landed.**
+  Especially when two edits touch the same file: the first changes the
+  state the second was matching against. Cheap to verify.
+- **Pair pattern: getX → getXWithCounts.** F-eve-2 set the precedent
+  for tags; F-night-12 follows it for categories. The "with counts"
+  variant becomes the canonical primitive, and the legacy `getX`
+  delegates. Easy to extend (favorites with counts? recent with run
+  counts?) when we want.
+- **Per-category color stripe.** Deterministic hash → fixed palette is
+  a familiar trick; the 3px stripe is enough signal for scanning
+  without competing with content. Aria-hidden because the visible
+  category chip already names it.
+
+### Clean pass result
+
+1 fix (test catch-up). Otherwise green.
+
+---
+
 ## 2026-05-23 — Night cycle 3 (post-build clean)
 
 Cycle = 3 builds + 1 clean. Features: F-night-7 (`s` keyboard shortcut
