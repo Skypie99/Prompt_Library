@@ -4,6 +4,38 @@ _Started by Will on 2026-05-23 during the fastloop session. New entries on top; 
 
 ---
 
+## 2026-05-23 — Night cycle 3 (post-build clean)
+
+Cycle = 3 builds + 1 clean. Features: F-night-7 (`s` keyboard shortcut
+to favorite the open prompt), F-night-8 (live word/char count in
+PromptForm body), F-night-9 (live preview pane in PromptForm).
+
+### Patterns reinforced
+
+- **Inline a 6-line util rather than cross domains for it.** F-night-7
+  needed an `isTypingTarget` check inside PromptDetail; the existing
+  copy in HomeClient is also 6 lines. Pulling into a shared utility
+  module would have crossed three components for two lines. Logged
+  the dup explicitly in a comment so future-me knows it was a choice.
+- **"(s)" in the visible tooltip label** is how to teach a keyboard
+  shortcut to a sighted user without adding a separate help affordance.
+  Same trick as the existing "⌘K" badge in the search button.
+- **Reuse the same primitive for visual consistency.** F-night-9's
+  body preview reuses `parseBody` from `variables.ts` — the same
+  parser PromptDetail uses for its preview pane — so the dashed
+  coral chip for an unfilled `{{token}}` looks identical across the
+  author-side preview and the runner-side preview. One language.
+- **Memo the parse, not the render.** F-night-9 memoizes `parseBody`
+  on the body string; the render of the resulting segments is cheap
+  and runs on every re-render. The right boundary for memo is the
+  expensive bit (regex walk), not every JSX leaf.
+
+### Clean pass
+
+No fixes needed.
+
+---
+
 ## 2026-05-23 — Night cycle 2 (post-build clean)
 
 Cycle = 3 builds + 1 clean. Features: F-night-4 (history status filter),
