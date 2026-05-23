@@ -119,6 +119,18 @@ Quality rails (same as AM):
 
 ---
 
-## Final sweep — Peter (perf) → Gary (tests/CI) → Morgan (briefing)
+## Final sweep — Peter (perf) → Gary (tests/CI) → Morgan (briefing)  ✅ done
 
-_(in progress)_
+| Role | Output |
+|---|---|
+| Peter | `qa-reports/perf-sweep-2026-05-23-pm.md` — `/` First Load JS 132 kB (+5 kB across F5-F9), all routes static, memoization audit clean, 0 regressions |
+| Gary | `qa-reports/qa-sweep-2026-05-23-pm.md` + 2 new tests (~41 cases). Cumulative day: ~116 cases pending Vitest install |
+| Morgan | Briefing: `~/Documents/Claude/Agent Summarys /Access Map Summarys/2026-05-23_Prompt_Libary_Continuous_Build_Report_PM.md` (+ `_email.txt` companion) |
+
+**Final PM state:**
+- 8 commits on `cycle/auto-2026-05-23-pm`, stacked on the AM cycle.
+- 5 features shipped (F5-F9) + Peter + Gary sweep.
+- 0 decisions deferred to Sky.
+- Typecheck and full production build green.
+
+Gmail draft denied (same connector permission issue as morning); the `_email.txt` file is ready to paste into a new message.
