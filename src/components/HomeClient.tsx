@@ -462,6 +462,13 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
             initial: { ...activePrompt, title: `${activePrompt.title} (copy)` },
           })
         }
+        onCustomize={() =>
+          activePrompt &&
+          setForm({
+            mode: "create",
+            initial: { ...activePrompt, title: `${activePrompt.title} (custom)` },
+          })
+        }
         onDelete={() => activePrompt && deletePrompt(activePrompt.id)}
         onSelectTag={(tag) => {
           setActiveTag(tag);

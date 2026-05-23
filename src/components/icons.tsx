@@ -135,6 +135,16 @@ export function ClockIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// Small wand-with-sparkle — used for "Customize this prompt" on seed prompts,
+// where the action creates a custom user-editable copy.
+export function WandIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M15 9h0M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5" />
+    </svg>
+  );
+}
+
 // Counter-clockwise rotation arrow — used for "Restore inputs" in run history.
 export function RotateCcwIcon(props: SVGProps<SVGSVGElement>) {
   return (

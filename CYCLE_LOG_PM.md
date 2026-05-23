@@ -49,6 +49,27 @@ Quality rails (same as AM):
 
 ---
 
-## Loop 2 — F6 Markdown rendering of Claude responses
+## Loop 2 — F6 Markdown rendering of Claude responses  ✅ done
+
+| Role | Output |
+|---|---|
+| Quinn + Dani + Steve | `specs/F6-markdown-rendering.md` (Steve weighed in early on the safety contract) |
+| Dana | n/a (no storage) |
+| Shamus | `src/lib/markdown.ts` (parser + AST, ~250 lines), `src/components/Markdown.tsx` (renderer, ~100 lines), wiring into PromptDetail response panel + RunHistory expanded view |
+| Steve | Verified: zero `dangerouslySetInnerHTML`, zero `eval`/`Function`, link protocol allowlist (https/http/mailto only), raw HTML and images render as literal text (no network requests), streaming partials safely render as literal text until the closer arrives |
+| Alex | Heading levels capped at 3 to keep the type scale clean; markdown reused the existing color/font tokens; links open in new tab with `rel="noreferrer noopener"` |
+| Dana audit | n/a |
+
+**Decisions made:**
+- **No external markdown library** — kept the bundle small and avoided supply-chain surface; the safe subset is plenty for Claude responses.
+- **No syntax highlighting** — would need a heavyweight dep; out of scope.
+- **No images, tables, blockquotes, math** for v1 — every one is a separate XSS surface or a noticeable size hit. Plain text fallback for each.
+- **Links open in a new tab with `noreferrer noopener`** so the response panel never gives the linked page a handle on the app's window.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Loop 3 — F7 Customize seed → save as own
 
 _(in progress)_

@@ -28,6 +28,7 @@ import {
   PencilIcon,
   StarIcon,
   TrashIcon,
+  WandIcon,
 } from "./icons";
 
 interface PromptDetailProps {
@@ -41,6 +42,12 @@ interface PromptDetailProps {
   onToggleFavorite: () => void;
   onEdit: () => void;
   onDuplicate: () => void;
+  /** Seed prompts get this explicit "make your own version" affordance.
+   *  Implementation-wise it's just a Duplicate with a different title
+   *  suffix and label, but for beginners the explicit "Customize" verb
+   *  is the difference between "I see what this does" and "...what does
+   *  Duplicate mean?". */
+  onCustomize?: () => void;
   onDelete: () => void;
   /** Clicking a tag in the header sets it as the active filter on the
    *  home grid and closes the detail modal. Optional so PromptDetail can
@@ -112,6 +119,7 @@ export function PromptDetail({
   onToggleFavorite,
   onEdit,
   onDuplicate,
+  onCustomize,
   onDelete,
   onSelectTag,
 }: PromptDetailProps) {
@@ -361,9 +369,24 @@ export function PromptDetail({
                 className={clsx("h-[18px] w-[18px]", isFavorite && "animate-pop")}
               />
             </HeaderButton>
-            <HeaderButton label="Duplicate" onClick={onDuplicate}>
-              <DuplicateIcon className="h-[18px] w-[18px]" />
-            </HeaderButton>
+            {prompt.isSeed ? (
+              // Seeds get the explicit "Customize" affordance instead of
+              // the generic Duplicate — the verb tells a first-time user
+              // exactly what's about to happen (open a pre-filled form to
+              // save as your own custom prompt). Falls back to onDuplicate
+              // if no customize handler is wired (defensive — keeps the
+              // header usable in any composition).
+              <HeaderButton
+                label="Customize — save as your own"
+                onClick={onCustomize ?? onDuplicate}
+              >
+                <WandIcon className="h-[18px] w-[18px]" />
+              </HeaderButton>
+            ) : (
+              <HeaderButton label="Duplicate" onClick={onDuplicate}>
+                <DuplicateIcon className="h-[18px] w-[18px]" />
+              </HeaderButton>
+            )}
             {!prompt.isSeed && (
               <HeaderButton label="Edit" onClick={onEdit}>
                 <PencilIcon className="h-[18px] w-[18px]" />
