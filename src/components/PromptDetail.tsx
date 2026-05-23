@@ -41,6 +41,10 @@ interface PromptDetailProps {
   onEdit: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
+  /** Clicking a tag in the header sets it as the active filter on the
+   *  home grid and closes the detail modal. Optional so PromptDetail can
+   *  still be rendered without a tag-filter consumer. */
+  onSelectTag?: (tag: string) => void;
 }
 
 // Small square icon button used in the detail header action row.
@@ -108,6 +112,7 @@ export function PromptDetail({
   onEdit,
   onDuplicate,
   onDelete,
+  onSelectTag,
 }: PromptDetailProps) {
   const [values, setValues] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState(false);
@@ -315,14 +320,26 @@ export function PromptDetail({
               <span className="rounded-full bg-coral-50 px-2.5 py-0.5 text-xs font-medium text-coral-700 dark:bg-coral-500/15 dark:text-coral-300">
                 {prompt.category}
               </span>
-              {prompt.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-soft dark:bg-night dark:text-paper-muted"
-                >
-                  #{tag}
-                </span>
-              ))}
+              {prompt.tags.map((tag) =>
+                onSelectTag ? (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => onSelectTag(tag)}
+                    aria-label={`Filter by #${tag}`}
+                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+                  >
+                    #{tag}
+                  </button>
+                ) : (
+                  <span
+                    key={tag}
+                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted dark:bg-night dark:text-paper-muted"
+                  >
+                    #{tag}
+                  </span>
+                ),
+              )}
             </div>
             <h2 className="mt-2 font-display text-2xl font-semibold text-ink dark:text-paper">
               {prompt.title}

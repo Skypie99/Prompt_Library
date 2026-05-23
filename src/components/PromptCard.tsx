@@ -9,9 +9,18 @@ interface PromptCardProps {
   onOpen: () => void;
   isFavorite: boolean;
   onToggleFavorite: () => void;
+  /** Optional: clicking a tag on the card sets it as the active filter
+   *  on the home grid, instead of opening the prompt. */
+  onSelectTag?: (tag: string) => void;
 }
 
-export function PromptCard({ prompt, onOpen, isFavorite, onToggleFavorite }: PromptCardProps) {
+export function PromptCard({
+  prompt,
+  onOpen,
+  isFavorite,
+  onToggleFavorite,
+  onSelectTag,
+}: PromptCardProps) {
   // The card itself is the click target; the star is a nested control, so we
   // use a div with button semantics (a real <button> can't contain a button).
   function handleKeyDown(event: React.KeyboardEvent) {
@@ -64,14 +73,30 @@ export function PromptCard({ prompt, onOpen, isFavorite, onToggleFavorite }: Pro
       </p>
 
       <div className="mt-4 flex flex-wrap gap-1.5">
-        {prompt.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-soft dark:bg-night dark:text-paper-muted"
-          >
-            #{tag}
-          </span>
-        ))}
+        {prompt.tags.map((tag) =>
+          onSelectTag ? (
+            <button
+              key={tag}
+              type="button"
+              onClick={(event) => {
+                // Don't also open the prompt — the user picked the chip, not the card.
+                event.stopPropagation();
+                onSelectTag(tag);
+              }}
+              aria-label={`Filter by #${tag}`}
+              className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+            >
+              #{tag}
+            </button>
+          ) : (
+            <span
+              key={tag}
+              className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted dark:bg-night dark:text-paper-muted"
+            >
+              #{tag}
+            </span>
+          ),
+        )}
       </div>
     </div>
   );

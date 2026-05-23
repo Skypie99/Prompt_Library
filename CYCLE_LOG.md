@@ -51,6 +51,26 @@ Quality rails:
 
 ---
 
-## Loop 2 — F2 Variable values persistence
+## Loop 2 — F2 Variable values persistence  ✅ done
+
+| Role | Output |
+|---|---|
+| Quinn + Dani | `specs/F2-variable-values-persistence.md` (compressed — behavior-only feature, no visuals) |
+| Dana | Storage already proposed in Loop 1; this loop just consumes `promptlib:values:<id>` |
+| Shamus | `loadValues` / `saveValues` / `clearValues` in `library.ts`; PromptDetail wired (hydrate on open, persist on change, clear on Clear, persist on Restore-from-history) |
+| Steve / Alex | Routed through existing `writeJSON` banner; no UI surface changes to harden |
+| Dana audit | Cascade-on-delete verified (`PER_PROMPT_PREFIXES` includes `promptlib:values:`, exercised by `purgePromptStorage` in `HomeClient.deletePrompt`) |
+
+**Decisions made:**
+
+- **No debounce on save.** Values are tiny, write-on-change matches the rest of the app, and the user's mental model is "what I see is what's saved." A 200ms debounce would be invisible to the user but would risk losing the last keystroke on an immediate close.
+- **Restore-from-history persists too.** A restored set IS the user's new draft. Avoids the "I picked a run, closed, reopened, where'd my picked values go?" surprise.
+- **No "Saved" indicator.** Persistence is invisible by design.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Loop 3 — F3 Tag filter
 
 _(in progress)_

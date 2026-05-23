@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Prompt } from "@/lib/types";
-import { getCategories } from "@/lib/prompts";
+import { getCategories, getTags } from "@/lib/prompts";
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_MODEL,
@@ -29,6 +29,7 @@ import {
 import { Header } from "./Header";
 import { PromptGrid } from "./PromptGrid";
 import { CategoryChips } from "./CategoryChips";
+import { TagChips } from "./TagChips";
 import { CommandPalette } from "./CommandPalette";
 import { PromptDetail } from "./PromptDetail";
 import { SettingsModal } from "./SettingsModal";
@@ -57,6 +58,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const [settingsNotice, setSettingsNotice] = useState<string | null>(null);
   const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [form, setForm] = useState<FormState | null>(null);
 
   // Settings (defaults first to match SSR, then hydrated from localStorage)
@@ -112,11 +114,24 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   }, [allPrompts]);
 
   const categories = useMemo(() => getCategories(allPrompts), [allPrompts]);
+  const tags = useMemo(() => getTags(allPrompts), [allPrompts]);
 
-  const visiblePrompts = useMemo(
-    () => (activeCategory ? allPrompts.filter((p) => p.category === activeCategory) : allPrompts),
-    [allPrompts, activeCategory],
-  );
+  // Intersection of category + tag filters. Either, both, or neither can be
+  // active. When neither is set, we show everything.
+  const visiblePrompts = useMemo(() => {
+    return allPrompts.filter((p) => {
+      if (activeCategory && p.category !== activeCategory) return false;
+      if (activeTag && !p.tags.includes(activeTag)) return false;
+      return true;
+    });
+  }, [allPrompts, activeCategory, activeTag]);
+
+  // If the active tag stops existing (e.g. last prompt with it was deleted),
+  // silently clear the filter so the user doesn't end up stuck on an empty
+  // grid forever.
+  useEffect(() => {
+    if (activeTag && !tags.includes(activeTag)) setActiveTag(null);
+  }, [activeTag, tags]);
 
   const favoritePrompts = useMemo(
     () => favorites.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
@@ -252,7 +267,14 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const showCuratedSections = activeCategory === null;
+  // Hide Favorites/Recent rails whenever ANY filter is active — the user is
+  // narrowing, not browsing.
+  const showCuratedSections = activeCategory === null && activeTag === null;
+  // The header reflects whichever filter(s) are active.
+  const filteredHeading =
+    activeCategory && activeTag
+      ? `${activeCategory} · #${activeTag}`
+      : activeCategory ?? (activeTag ? `#${activeTag}` : "All prompts");
 
   return (
     <div className="min-h-screen">
@@ -314,6 +336,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         {showOnboarding && <OnboardingHint onDismiss={dismissOnboarding} />}
 
         <CategoryChips categories={categories} active={activeCategory} onSelect={setActiveCategory} />
+        <TagChips tags={tags} active={activeTag} onSelect={setActiveTag} />
 
         {/* Favorites */}
         {showCuratedSections && favoritePrompts.length > 0 && (
@@ -329,6 +352,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onOpen={openPrompt}
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
+              onSelectTag={setActiveTag}
             />
           </section>
         )}
@@ -345,6 +369,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onOpen={openPrompt}
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
+              onSelectTag={setActiveTag}
             />
           </section>
         )}
@@ -353,7 +378,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         <section className="pb-24 pt-10">
           <div className="mb-5 flex items-center justify-between gap-4">
             <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
-              {activeCategory ?? "All prompts"}
+              {filteredHeading}
             </h2>
             <div className="flex items-center gap-3">
               <span className="hidden text-sm text-ink-muted sm:inline dark:text-paper-muted">
@@ -369,12 +394,29 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
             </div>
           </div>
 
-          <PromptGrid
-            prompts={visiblePrompts}
-            onOpen={openPrompt}
-            isFavorite={isFavorite}
-            onToggleFavorite={toggleFavorite}
-          />
+          {visiblePrompts.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border bg-cream/40 px-6 py-10 text-center text-sm text-ink-muted dark:border-night-border dark:bg-night/40 dark:text-paper-muted">
+              <p>No prompts match this filter.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveCategory(null);
+                  setActiveTag(null);
+                }}
+                className="mt-3 inline-flex items-center gap-1 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            <PromptGrid
+              prompts={visiblePrompts}
+              onOpen={openPrompt}
+              isFavorite={isFavorite}
+              onToggleFavorite={toggleFavorite}
+              onSelectTag={setActiveTag}
+            />
+          )}
         </section>
       </main>
 
@@ -401,6 +443,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           })
         }
         onDelete={() => activePrompt && deletePrompt(activePrompt.id)}
+        onSelectTag={(tag) => {
+          setActiveTag(tag);
+          setActivePrompt(null);
+        }}
       />
 
       <SettingsModal
