@@ -582,12 +582,37 @@ export function PromptDetail({
               <div className="space-y-3">
                 {variables.map((variable) => (
                   <div key={variable.name}>
-                    <label
-                      htmlFor={`var-${variable.name}`}
-                      className="mb-1 block text-sm font-medium text-ink dark:text-paper"
-                    >
-                      {variable.label}
-                    </label>
+                    <div className="mb-1 flex items-baseline justify-between gap-2">
+                      <label
+                        htmlFor={`var-${variable.name}`}
+                        className="block text-sm font-medium text-ink dark:text-paper"
+                      >
+                        {variable.label}
+                      </label>
+                      {/* F-n2-14 — "Use last" chip: if the most recent
+                          run had a value for this variable, offer it as
+                          one-click fill. Hidden when current value already
+                          matches or when there's no history. */}
+                      {(() => {
+                        const lastRun = runs[0];
+                        const lastValue = lastRun?.values[variable.name];
+                        const currentValue = values[variable.name] ?? "";
+                        if (!lastValue || lastValue === currentValue) return null;
+                        const display =
+                          lastValue.length > 30 ? `${lastValue.slice(0, 30)}…` : lastValue;
+                        return (
+                          <button
+                            type="button"
+                            onClick={() => setValue(variable.name, lastValue)}
+                            aria-label={`Use last value for ${variable.label}: ${lastValue}`}
+                            title={lastValue}
+                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+                          >
+                            Use last: <span className="font-mono">{display}</span>
+                          </button>
+                        );
+                      })()}
+                    </div>
                     {variable.multiline ? (
                       // F-night-5 — multiline inputs auto-grow with content
                       // up to ~480px (then the textarea takes over scroll).
