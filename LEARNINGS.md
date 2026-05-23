@@ -221,3 +221,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 3
 - F-n2-5/6: meta-key prefix avoids the "do we hijack a digit keystroke?" tension. Cmd+1..9 in the palette opens the Nth result; bare digits still type into the search input.
 - F-n2-6: when there's no query, "recent first" beats "alphabetical" — the user just opened the palette to get back to something.
+
+### Cycle 4
+- F-n2-7: blockquote was a one-block-type addition — define the regex, gather consecutive matching lines, emit a single node, exclude from the paragraph gobbler. Tiny.
+- F-n2-8: `setSelectionRange` inside a RAF after a controlled-textarea state change is the dance for "insert text and place the caret inside it". The RAF gives React time to commit before the DOM read.
