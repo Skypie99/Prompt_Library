@@ -344,6 +344,12 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         // question mark into a prompt field would steal focus into the modal.
         event.preventDefault();
         setShortcutsOpen((open) => !open);
+      } else if (event.key === "n" && !isTypingTarget(event)) {
+        // F-n2-17 — "n" opens the New prompt form. Same typing-target
+        // guard as "?" / "/" so typing the letter into a field doesn't
+        // pop the modal.
+        event.preventDefault();
+        setForm({ mode: "create", initial: null });
       } else if (event.key === "Escape") {
         setPaletteOpen(false);
         setSettingsOpen(false);
