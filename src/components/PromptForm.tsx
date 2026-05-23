@@ -133,11 +133,29 @@ export function PromptForm({
               rows={8}
               className={`${fieldClass} resize-y font-mono text-xs leading-relaxed`}
             />
-            <p className="mt-1.5 text-xs text-ink-soft dark:text-paper-muted">
-              Wrap fill-ins in double braces, like{" "}
-              <code className="rounded bg-cream px-1 dark:bg-night">{"{{topic}}"}</code> — they become
-              input fields automatically.
-            </p>
+            <div className="mt-1.5 flex items-baseline justify-between gap-3">
+              <p className="text-xs text-ink-soft dark:text-paper-muted">
+                Wrap fill-ins in double braces, like{" "}
+                <code className="rounded bg-cream px-1 dark:bg-night">{"{{topic}}"}</code> — they
+                become input fields automatically.
+              </p>
+              {/* F-night-8 — live word/char count for the body. Helps
+                  prompt authors keep things tight without leaving the form. */}
+              {(() => {
+                const trimmed = body.trim();
+                const words = trimmed === "" ? 0 : trimmed.split(/\s+/).length;
+                const chars = body.length;
+                return (
+                  <span
+                    aria-label={`Prompt body length: ${words} ${words === 1 ? "word" : "words"}, ${chars} ${chars === 1 ? "character" : "characters"}`}
+                    className="shrink-0 whitespace-nowrap text-[11px] tabular-nums text-ink-soft dark:text-paper-muted"
+                  >
+                    {words.toLocaleString()} {words === 1 ? "word" : "words"} ·{" "}
+                    {chars.toLocaleString()} chars
+                  </span>
+                );
+              })()}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
