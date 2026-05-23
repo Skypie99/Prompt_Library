@@ -205,3 +205,11 @@ Every one of the four eve loops surfaced something a deferred end-sweep would ha
 
 - **Tests added in a single combined `fastloop.test.ts` file** — convenient for one session but it'll get cluttered fast. Next time, co-locate one test file per new pure-logic module (the AM/PM pattern). Already noted in the file's docstring so a refactor is easy.
 - **Density toggle could one day live alongside future density-related preferences** (e.g. row-vs-grid for the prompt list). A `src/lib/preferences.ts` consolidation might make sense after a few more feature flags accumulate, but not yet (rule of three).
+
+## 2026-05-23 — Night2 cycles (2 fast + 1 clean × 10)
+
+Fast cycles for surface polish. Each entry below = one cycle's worth.
+
+### Cycle 1
+- F-n2-1: native `title` attribute beats a custom popover for "show me the body on hover" — keyboard-focus accessible, no bundle weight, OS-native look.
+- F-n2-2: pure derived stats footer using the runCounts map already gathered for F-fast-2. Aria-label spells the categories so the dot separator doesn't get read as "twelve dot three".
