@@ -58,6 +58,16 @@ const STATUS_DOT_CLASS: Record<StoredRun["status"], string> = {
   errored: "bg-coral-600",
 };
 
+// F-night-4 — status filter values used by the history-panel dropdown.
+type StatusFilter = "all" | StoredRun["status"];
+
+const STATUS_FILTER_LABELS: Record<StatusFilter, string> = {
+  all: "All",
+  completed: "Completed",
+  aborted: "Stopped",
+  errored: "Errored",
+};
+
 export function RunHistory({
   promptId,
   runs,
@@ -69,6 +79,11 @@ export function RunHistory({
   const [openRunId, setOpenRunId] = useState<string | null>(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
   const [copiedRunId, setCopiedRunId] = useState<string | null>(null);
+  // F-night-4 — status filter. Per-prompt-session local state only (not
+  // persisted) — power-user feature for triage; resetting it on prompt
+  // switch is the right default so opening a different prompt doesn't
+  // surprise you with a stale filter.
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
 
@@ -86,6 +101,7 @@ export function RunHistory({
     setOpenRunId(null);
     setConfirmingClear(false);
     setCopiedRunId(null);
+    setStatusFilter("all");
   }, [promptId]);
 
   const handleDeleteOne = useCallback(
@@ -128,19 +144,32 @@ export function RunHistory({
     }
   }, []);
 
+  // F-night-4 — apply the status filter BEFORE relative-time decoration.
+  // Filtering first keeps the formatter from running for entries the user
+  // can't see, which matters on a heavy prompt with the 30s tick re-running.
+  const filteredRuns = useMemo(
+    () =>
+      statusFilter === "all"
+        ? runs
+        : runs.filter((r) => r.status === statusFilter),
+    [runs, statusFilter],
+  );
+
   // Memoize one parsed Date per entry so we're not parsing on every tick.
   const entries = useMemo(
     () =>
-      runs.map((run) => ({
+      filteredRuns.map((run) => ({
         run,
         relative: formatRelativeTime(run.ranAt, now),
       })),
-    [runs, now],
+    [filteredRuns, now],
   );
 
   // Empty history → render nothing. The cue to run is the existing Run button.
   if (runs.length === 0) return null;
 
+  // Header label reflects total, not filtered, count — the filter is a
+  // local triage tool, not a fact about how much history exists.
   const headerLabel = `History · ${runs.length}`;
 
   return (
@@ -167,13 +196,33 @@ export function RunHistory({
         </button>
 
         {expanded && !confirmingClear && (
-          <button
-            type="button"
-            onClick={() => setConfirmingClear(true)}
-            className="text-xs font-medium text-coral-600 transition hover:text-coral-700 dark:text-coral-400"
-          >
-            Clear all
-          </button>
+          <div className="flex items-center gap-2">
+            {/* F-night-4 — status filter. Native <select> for keyboard +
+                SR support; "Show:" prefix is aria-hidden because the
+                select carries the accessible name. */}
+            <div className="flex items-center gap-1 text-xs text-ink-soft dark:text-paper-muted">
+              <span aria-hidden>Show:</span>
+              <select
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
+                aria-label="Filter history by status"
+                className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-coral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
+              >
+                {(Object.keys(STATUS_FILTER_LABELS) as StatusFilter[]).map((s) => (
+                  <option key={s} value={s}>
+                    {STATUS_FILTER_LABELS[s]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={() => setConfirmingClear(true)}
+              className="text-xs font-medium text-coral-600 transition hover:text-coral-700 dark:text-coral-400"
+            >
+              Clear all
+            </button>
+          </div>
         )}
       </div>
 
@@ -207,7 +256,24 @@ export function RunHistory({
         </div>
       )}
 
-      {expanded && (
+      {expanded && entries.length === 0 && (
+        <p
+          id={listId}
+          role="status"
+          className="rounded-md border border-dashed border-border bg-cream/30 px-3 py-3 text-center text-xs text-ink-muted dark:border-night-border dark:bg-night/40 dark:text-paper-muted"
+        >
+          No {STATUS_FILTER_LABELS[statusFilter].toLowerCase()} runs in history.
+          <button
+            type="button"
+            onClick={() => setStatusFilter("all")}
+            className="ml-2 font-medium text-coral-600 underline-offset-2 hover:underline dark:text-coral-400"
+          >
+            Show all
+          </button>
+        </p>
+      )}
+
+      {expanded && entries.length > 0 && (
         <ul
           id={listId}
           aria-label="Past runs"
