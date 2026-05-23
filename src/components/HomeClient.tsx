@@ -26,6 +26,7 @@ import {
   saveUserPrompts,
   setStorageWriteFailureHandler,
 } from "@/lib/library";
+import { loadAllRunCounts } from "@/lib/runs";
 import { Header } from "./Header";
 import { PromptGrid } from "./PromptGrid";
 import { CategoryChips } from "./CategoryChips";
@@ -77,6 +78,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const [recent, setRecent] = useState<string[]>([]);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [storageWarning, setStorageWarning] = useState<string | null>(null);
+  // F-fast-2 — promptId → run count, for the usage badge on cards.
+  // Hydrated on mount and after each run completion (callback from PromptDetail).
+  const [runCounts, setRunCounts] = useState<Map<string, number>>(() => new Map());
 
   useEffect(() => {
     // Migrate the on-disk shape BEFORE any reader runs, so v0 -> v1 keys are
@@ -98,6 +102,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setUserPrompts(loadUserPrompts());
     setFavorites(loadFavorites());
     setRecent(loadRecent());
+    setRunCounts(loadAllRunCounts());
     setShowOnboarding(!loadOnboarded());
 
     return () => {
@@ -196,8 +201,15 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setUserPrompts(loadUserPrompts());
     setFavorites(loadFavorites());
     setRecent(loadRecent());
+    setRunCounts(loadAllRunCounts());
     // Close any open prompt — its id may have been overwritten by Replace mode.
     setActivePrompt(null);
+  }, []);
+
+  // F-fast-2 — called by PromptDetail after a run terminates so the
+  // home grid's usage badges reflect the new count without a refresh.
+  const refreshRunCounts = useCallback(() => {
+    setRunCounts(loadAllRunCounts());
   }, []);
 
   const deletePrompt = useCallback((id: string) => {
@@ -220,6 +232,13 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     // values) so deleted prompts don't leave orphaned localStorage entries
     // accumulating forever.
     purgePromptStorage(id);
+    // F-fast-2 — drop this id's badge count from the in-memory map.
+    setRunCounts((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Map(prev);
+      next.delete(id);
+      return next;
+    });
     setActivePrompt(null);
   }, []);
 
@@ -378,6 +397,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
+              runCounts={runCounts}
             />
           </section>
         ) : showCuratedSections &&
@@ -414,6 +434,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
+              runCounts={runCounts}
             />
           </section>
         ) : showCuratedSections && recentPrompts.length === 0 && favorites.length > 0 ? (
@@ -471,6 +492,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
+              runCounts={runCounts}
             />
           )}
         </section>
@@ -510,6 +532,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           setActiveTag(tag);
           setActivePrompt(null);
         }}
+        onRunCompleted={refreshRunCounts}
       />
 
       <SettingsModal

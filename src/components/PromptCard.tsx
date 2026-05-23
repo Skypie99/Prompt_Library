@@ -12,6 +12,8 @@ interface PromptCardProps {
   /** Optional: clicking a tag on the card sets it as the active filter
    *  on the home grid, instead of opening the prompt. */
   onSelectTag?: (tag: string) => void;
+  /** Optional run count for the F-fast-2 usage badge. Omit / 0 = hide. */
+  runCount?: number;
 }
 
 export function PromptCard({
@@ -20,6 +22,7 @@ export function PromptCard({
   isFavorite,
   onToggleFavorite,
   onSelectTag,
+  runCount,
 }: PromptCardProps) {
   // The card itself is the click target; the star is a nested control, so we
   // use a div with button semantics (a real <button> can't contain a button).
@@ -39,9 +42,22 @@ export function PromptCard({
       className="group relative flex h-full cursor-pointer flex-col rounded-xl border border-border bg-surface p-5 text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-coral-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-coral-300 dark:border-night-border dark:bg-night-surface dark:hover:border-coral-500/40"
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="inline-flex w-fit items-center rounded-full bg-coral-50 px-2.5 py-0.5 text-xs font-medium text-coral-700 dark:bg-coral-500/15 dark:text-coral-300">
-          {prompt.category}
-        </span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="inline-flex w-fit items-center rounded-full bg-coral-50 px-2.5 py-0.5 text-xs font-medium text-coral-700 dark:bg-coral-500/15 dark:text-coral-300">
+            {prompt.category}
+          </span>
+          {runCount !== undefined && runCount > 0 && (
+            // F-fast-2 — quiet usage signal. Same pill shape as the
+            // category chip but lighter (ink-soft instead of coral) so
+            // it never competes with the category for attention.
+            <span
+              aria-label={`Run ${runCount} ${runCount === 1 ? "time" : "times"}`}
+              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
+            >
+              Run {runCount}×
+            </span>
+          )}
+        </div>
         <button
           type="button"
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}

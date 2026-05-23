@@ -138,6 +138,42 @@ export function clearRuns(promptId: string): void {
   }
 }
 
+/**
+ * Walk every `promptlib:runs:<id>` key once and return a Map of
+ * `promptId → runCount`. Cheaper than calling loadRuns() per prompt
+ * when N is large (one localStorage walk vs N JSON.parses), and a
+ * single map is a clean prop to pass down the grid for the F-fast-2
+ * usage badge. SSR-safe.
+ *
+ * Caller is responsible for re-reading after a new run lands (we don't
+ * try to be reactive — a single re-read on the "run completed" event
+ * is simpler than wiring storage events).
+ */
+export function loadAllRunCounts(): Map<string, number> {
+  const out = new Map<string, number>();
+  if (typeof window === "undefined") return out;
+  const prefix = KEY_PREFIX;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith(prefix)) continue;
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          out.set(key.slice(prefix.length), parsed.length);
+        }
+      } catch {
+        // Corrupt entry — skip; the rest of the readout is still useful.
+      }
+    }
+  } catch {
+    /* localStorage unavailable */
+  }
+  return out;
+}
+
 /** Generate a short, collision-safe run id. Not user-facing. */
 export function generateRunId(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {

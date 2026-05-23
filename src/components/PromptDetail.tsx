@@ -53,6 +53,10 @@ interface PromptDetailProps {
    *  home grid and closes the detail modal. Optional so PromptDetail can
    *  still be rendered without a tag-filter consumer. */
   onSelectTag?: (tag: string) => void;
+  /** F-fast-2 — fires after every run termination (completed / aborted /
+   *  errored) so the parent can refresh per-prompt run counts shown on
+   *  PromptCards. Optional. */
+  onRunCompleted?: () => void;
 }
 
 // Small square icon button used in the detail header action row.
@@ -122,6 +126,7 @@ export function PromptDetail({
   onCustomize,
   onDelete,
   onSelectTag,
+  onRunCompleted,
 }: PromptDetailProps) {
   const [values, setValues] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState(false);
@@ -279,6 +284,8 @@ export function PromptDetail({
       };
       const nextRuns = appendRun(prompt.id, entry);
       setRuns(nextRuns);
+      // F-fast-2 — let the grid refresh its "Run N×" badge for this prompt.
+      onRunCompleted?.();
     }
   }
 
