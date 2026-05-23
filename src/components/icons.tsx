@@ -135,6 +135,25 @@ export function ClockIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// Counter-clockwise rotation arrow — used for "Restore inputs" in run history.
+export function RotateCcwIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+      <path d="M3 3v5h5" />
+    </svg>
+  );
+}
+
+// Small chevron — used for collapse/expand affordances. Rotate via Tailwind.
+export function ChevronIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
 // A 4-point sparkle — used for the app mark and the hero eyebrow.
 export function SparkleIcon(props: SVGProps<SVGSVGElement>) {
   return (

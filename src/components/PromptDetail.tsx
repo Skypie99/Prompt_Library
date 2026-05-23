@@ -1,16 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import { ClaudeError, streamClaude } from "@/lib/anthropic";
 import { modelLabel, type Settings } from "@/lib/settings";
+import {
+  appendRun,
+  generateRunId,
+  loadRuns,
+  type StoredRun,
+} from "@/lib/runs";
 import {
   countFilled,
   extractVariables,
   parseBody,
   substituteBody,
 } from "@/lib/variables";
+import { RunHistory } from "./RunHistory";
 import {
   CheckIcon,
   CloseIcon,
@@ -111,6 +118,9 @@ export function PromptDetail({
   const [error, setError] = useState<ClaudeError | null>(null);
   const [responseCopied, setResponseCopied] = useState(false);
 
+  // History state — hydrated from localStorage when a prompt opens.
+  const [runs, setRuns] = useState<StoredRun[]>([]);
+
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const responseCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -120,7 +130,7 @@ export function PromptDetail({
   const segments = useMemo(() => (prompt ? parseBody(prompt.body) : []), [prompt]);
 
   // Reset everything whenever a different prompt opens; abort any in-flight run;
-  // then focus the first field.
+  // hydrate history; then focus the first field.
   useEffect(() => {
     abortRef.current?.abort();
     setValues({});
@@ -129,6 +139,7 @@ export function PromptDetail({
     setRunning(false);
     setResponse("");
     setError(null);
+    setRuns(prompt ? loadRuns(prompt.id) : []);
     if (prompt) {
       requestAnimationFrame(() => {
         panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
@@ -178,6 +189,7 @@ export function PromptDetail({
       onOpenSettings("Add your Anthropic API key to run prompts live.");
       return;
     }
+    if (!prompt) return;
 
     setError(null);
     setResponse("");
@@ -186,28 +198,78 @@ export function PromptDetail({
     const controller = new AbortController();
     abortRef.current = controller;
 
+    // Capture-the-moment so the persisted run reflects what was sent even if
+    // the user edits values mid-stream (they shouldn't, but the cost of being
+    // defensive is one local const).
+    const sentPrompt = finalText;
+    const sentModel = settings.model;
+    const sentValues = { ...values };
+
+    // Buffer chunks here so we can persist the partial even if the component
+    // unmounts before our finally runs (e.g. user closes the modal).
+    let buffered = "";
+    let status: StoredRun["status"] = "completed";
+    let errorMessage: string | undefined;
+
     try {
       await streamClaude({
         apiKey: settings.apiKey,
-        model: settings.model,
+        model: sentModel,
         maxTokens: settings.maxTokens,
-        prompt: finalText,
+        prompt: sentPrompt,
         signal: controller.signal,
-        onText: (chunk) => setResponse((prev) => prev + chunk),
+        onText: (chunk) => {
+          buffered += chunk;
+          setResponse((prev) => prev + chunk);
+        },
       });
     } catch (err) {
       if ((err as Error)?.name === "AbortError") {
         // User pressed Stop — keep whatever streamed in, show no error.
+        status = "aborted";
       } else if (err instanceof ClaudeError) {
         setError(err);
+        status = "errored";
+        errorMessage = err.message;
       } else {
-        setError(new ClaudeError("unknown", "Something unexpected happened. Please try again."));
+        const fallback = new ClaudeError(
+          "unknown",
+          "Something unexpected happened. Please try again.",
+        );
+        setError(fallback);
+        status = "errored";
+        errorMessage = fallback.message;
       }
     } finally {
       setRunning(false);
       abortRef.current = null;
+      // Persist regardless of outcome — completed, aborted, and errored runs
+      // are all useful in history (the errored ones tell you what went wrong
+      // and let you re-run the same inputs once the cause is fixed).
+      const entry: StoredRun = {
+        id: generateRunId(),
+        ranAt: new Date().toISOString(),
+        model: sentModel,
+        values: sentValues,
+        sentPrompt,
+        response: buffered,
+        status,
+        ...(errorMessage ? { errorMessage } : {}),
+      };
+      const nextRuns = appendRun(prompt.id, entry);
+      setRuns(nextRuns);
     }
   }
+
+  // Called from the history panel — drop a past run's values straight into
+  // the live form. Does NOT auto-run; user decides whether to re-run.
+  const handleRestoreInputs = useCallback((restored: Record<string, string>) => {
+    setValues({ ...restored });
+    // Move focus back to the variable area so the user can see what changed.
+    requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
+    });
+  }, []);
 
   function handleStop() {
     abortRef.current?.abort();
@@ -494,6 +556,13 @@ export function PromptDetail({
                 )}
               </div>
             )}
+
+            <RunHistory
+              promptId={prompt.id}
+              runs={runs}
+              onChange={setRuns}
+              onRestoreInputs={handleRestoreInputs}
+            />
           </div>
         </div>
       </div>
