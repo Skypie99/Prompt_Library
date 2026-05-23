@@ -130,6 +130,9 @@ export function PromptDetail({
 }: PromptDetailProps) {
   const [values, setValues] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState(false);
+  // F-fast-4 — separate confirm flash for the "Copy template" link so the
+  // two copy actions don't share a single toast.
+  const [templateCopied, setTemplateCopied] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   // Run state
@@ -142,6 +145,7 @@ export function PromptDetail({
   const [runs, setRuns] = useState<StoredRun[]>([]);
 
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const templateCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const responseCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -171,6 +175,7 @@ export function PromptDetail({
   useEffect(() => {
     return () => {
       if (copyTimer.current) clearTimeout(copyTimer.current);
+      if (templateCopyTimer.current) clearTimeout(templateCopyTimer.current);
       if (responseCopyTimer.current) clearTimeout(responseCopyTimer.current);
       abortRef.current?.abort();
     };
@@ -199,6 +204,19 @@ export function PromptDetail({
     setCopied(true);
     if (copyTimer.current) clearTimeout(copyTimer.current);
     copyTimer.current = setTimeout(() => setCopied(false), 1500);
+  }
+
+  // F-fast-4 — copy the RAW body (still containing {{tokens}}) so the user
+  // can paste the unfilled template elsewhere (a doc, another tool, a
+  // colleague) without having to retype it. Independent confirm flash so
+  // the two copy actions don't fight over the same toast.
+  async function handleCopyTemplate() {
+    if (!prompt) return;
+    const ok = await copyToClipboard(prompt.body);
+    if (!ok) return;
+    setTemplateCopied(true);
+    if (templateCopyTimer.current) clearTimeout(templateCopyTimer.current);
+    templateCopyTimer.current = setTimeout(() => setTemplateCopied(false), 1500);
   }
 
   async function handleCopyResponse() {
@@ -533,6 +551,7 @@ export function PromptDetail({
             <div className="mt-6 flex gap-2">
               <button
                 onClick={handleCopy}
+                aria-label={copied ? "Filled prompt copied" : "Copy filled prompt"}
                 className={clsx(
                   "flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95",
                   copied
@@ -548,7 +567,7 @@ export function PromptDetail({
                 ) : (
                   <>
                     <CopyIcon className="h-4 w-4" />
-                    Copy
+                    Copy filled
                   </>
                 )}
               </button>
@@ -582,6 +601,24 @@ export function PromptDetail({
               <span className="mx-2 text-ink-soft/60">·</span>
               {modelLabel(settings.model)} · <kbd className="font-sans">⌘↵</kbd> to run
             </p>
+
+            {/* F-fast-4 — secondary "copy the unfilled template" affordance.
+                Lives below the primary action row so it doesn't compete with
+                Copy-filled / Run, but is reachable in one tab and one click. */}
+            <div className="mt-2 text-center">
+              <button
+                type="button"
+                onClick={handleCopyTemplate}
+                aria-label={
+                  templateCopied
+                    ? "Template copied"
+                    : "Copy the prompt template with unfilled variables"
+                }
+                className="rounded text-xs font-medium text-coral-600 transition hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-coral-400 dark:focus-visible:ring-offset-night"
+              >
+                {templateCopied ? "Template copied" : "Copy template (with {{variables}})"}
+              </button>
+            </div>
 
             {/* Response / error */}
             {showResponsePanel && (
