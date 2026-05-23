@@ -14,6 +14,9 @@ import { SearchIcon } from "./icons";
 interface CommandPaletteProps {
   open: boolean;
   prompts: Prompt[];
+  /** F-n2-6 — recent-prompt-ids in most-recent-first order. When the
+   *  search query is empty, these float to the top of the results. */
+  recentIds?: string[];
   onClose: () => void;
   onSelect: (prompt: Prompt) => void;
 }
@@ -56,7 +59,13 @@ function Kbd({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function CommandPalette({ open, prompts, onClose, onSelect }: CommandPaletteProps) {
+export function CommandPalette({
+  open,
+  prompts,
+  recentIds,
+  onClose,
+  onSelect,
+}: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,10 +74,22 @@ export function CommandPalette({ open, prompts, onClose, onSelect }: CommandPale
   // Index is built once per prompt list. Search runs on every keystroke — the
   // dataset is small, so this is instant with no debounce needed.
   const fuse = useMemo(() => createPromptFuse(prompts), [prompts]);
-  const results = useMemo(
-    () => searchPrompts(fuse, prompts, query),
-    [fuse, prompts, query],
-  );
+  const results = useMemo(() => {
+    const raw = searchPrompts(fuse, prompts, query);
+    // F-n2-6 — when there's no query, surface recent prompts at the top
+    // (in most-recent-first order). Once the user types, Fuse's relevance
+    // takes over. Reordering uses the same array — no new prompt objects
+    // — so reference equality for the existing memos downstream still holds.
+    if (query.trim() === "" && recentIds && recentIds.length > 0) {
+      const recentSet = new Set(recentIds);
+      const inRecent = recentIds
+        .map((id) => raw.find((r) => r.prompt.id === id))
+        .filter((r): r is PromptSearchResult => Boolean(r));
+      const rest = raw.filter((r) => !recentSet.has(r.prompt.id));
+      return [...inRecent, ...rest];
+    }
+    return raw;
+  }, [fuse, prompts, query, recentIds]);
 
   // Fresh start each time the palette opens.
   useEffect(() => {
@@ -106,6 +127,19 @@ export function CommandPalette({ open, prompts, onClose, onSelect }: CommandPale
     } else if (event.key === "Escape") {
       event.preventDefault();
       onClose();
+    } else if (
+      // F-n2-5 — Cmd/Ctrl + 1..9 opens the Nth visible result. Doesn't
+      // conflict with typing digits because we require the meta/ctrl
+      // modifier; the bare digit still types normally into the search input.
+      (event.metaKey || event.ctrlKey) &&
+      /^[1-9]$/.test(event.key)
+    ) {
+      const index = Number(event.key) - 1;
+      const result = results[index];
+      if (result) {
+        event.preventDefault();
+        onSelect(result.prompt);
+      }
     }
   }
 

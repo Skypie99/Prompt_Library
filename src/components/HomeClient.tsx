@@ -631,6 +631,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       <CommandPalette
         open={paletteOpen}
         prompts={allPrompts}
+        recentIds={recent}
         onClose={() => setPaletteOpen(false)}
         onSelect={openPrompt}
       />

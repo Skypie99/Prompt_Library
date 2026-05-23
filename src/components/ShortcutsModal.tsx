@@ -24,6 +24,7 @@ const SHORTCUTS: ReadonlyArray<{
   { keys: [["Esc"]], description: "Close any open overlay (palette, prompt, modal, form)" },
   { keys: [["⌘", "↵"], ["Ctrl", "↵"]], description: "Run the current prompt (inside a prompt)" },
   { keys: [["s"]], description: "Star / unstar the open prompt" },
+  { keys: [["⌘", "1-9"], ["Ctrl", "1-9"]], description: "Open the Nth result in the search palette" },
 ];
 
 export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
