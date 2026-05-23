@@ -201,6 +201,8 @@ const FENCE_RE = /^```([\w-]*)\s*$/;
 const UL_RE = /^\s*[-*]\s+(.*)$/;
 const OL_RE = /^\s*\d+\.\s+(.*)$/;
 const BLOCKQUOTE_RE = /^>\s?(.*)$/; // F-n2-7
+// F-n2-15 — 4-space (or tab) indented code block. Matches CommonMark.
+const INDENT_CODE_RE = /^(?: {4}|\t)(.*)$/;
 
 /**
  * Parse a markdown document into a flat list of block nodes. Robust to
@@ -246,6 +248,29 @@ export function parseMarkdown(input: string): BlockNode[] {
         children: parseInline(heading[2]),
       });
       i++;
+      continue;
+    }
+
+    // ---- indented code block (F-n2-15) ----
+    // 4-space or tab indent → code block. Consume consecutive matching
+    // lines (including blank lines between them). Stops at the first
+    // non-indented non-blank line.
+    if (INDENT_CODE_RE.test(line)) {
+      const codeLines: string[] = [];
+      while (i < lines.length) {
+        const m = lines[i].match(INDENT_CODE_RE);
+        if (m) {
+          codeLines.push(m[1]);
+          i++;
+        } else if (lines[i].trim() === "" && i + 1 < lines.length && INDENT_CODE_RE.test(lines[i + 1])) {
+          // blank line embedded inside an indented code block
+          codeLines.push("");
+          i++;
+        } else {
+          break;
+        }
+      }
+      blocks.push({ type: "code-block", value: codeLines.join("\n") });
       continue;
     }
 
@@ -296,7 +321,8 @@ export function parseMarkdown(input: string): BlockNode[] {
       !FENCE_RE.test(lines[j]) &&
       !UL_RE.test(lines[j]) &&
       !OL_RE.test(lines[j]) &&
-      !BLOCKQUOTE_RE.test(lines[j])
+      !BLOCKQUOTE_RE.test(lines[j]) &&
+      !INDENT_CODE_RE.test(lines[j])
     ) {
       paraLines.push(lines[j]);
       j++;
