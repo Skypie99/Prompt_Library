@@ -26,7 +26,7 @@ import {
   saveUserPrompts,
   setStorageWriteFailureHandler,
 } from "@/lib/library";
-import { loadAllRunCounts } from "@/lib/runs";
+import { loadAllLastRunIsos, loadAllRunCounts } from "@/lib/runs";
 import { DEFAULT_DENSITY, loadDensity, saveDensity, type Density } from "@/lib/density";
 import {
   DEFAULT_SORT,
@@ -90,6 +90,8 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // F-fast-2 — promptId → run count, for the usage badge on cards.
   // Hydrated on mount and after each run completion (callback from PromptDetail).
   const [runCounts, setRunCounts] = useState<Map<string, number>>(() => new Map());
+  // F-n2-13 — promptId → most-recent-run ISO, for the "Last 2hr ago" line.
+  const [lastRunIsos, setLastRunIsos] = useState<Map<string, string>>(() => new Map());
   // F-fast-5 — grid density. Defaults to comfortable to match prior layout.
   const [density, setDensity] = useState<Density>(DEFAULT_DENSITY);
   // F-eve-1 — sort mode for the All prompts grid. Defaults to "newest"
@@ -117,6 +119,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setFavorites(loadFavorites());
     setRecent(loadRecent());
     setRunCounts(loadAllRunCounts());
+    setLastRunIsos(loadAllLastRunIsos());
     setDensity(loadDensity());
     setSortMode(loadSort());
     setShowOnboarding(!loadOnboarded());
@@ -242,6 +245,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // home grid's usage badges reflect the new count without a refresh.
   const refreshRunCounts = useCallback(() => {
     setRunCounts(loadAllRunCounts());
+    setLastRunIsos(loadAllLastRunIsos());
   }, []);
 
   // F-fast-5 — flip density and persist. Wrapped in useCallback so the
@@ -473,6 +477,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
               runCounts={runCounts}
+              lastRunIsos={lastRunIsos}
               density={density}
             />
           </section>
@@ -511,6 +516,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
               runCounts={runCounts}
+              lastRunIsos={lastRunIsos}
               density={density}
             />
           </section>
@@ -608,6 +614,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
               runCounts={runCounts}
+              lastRunIsos={lastRunIsos}
               density={density}
             />
           )}

@@ -5,6 +5,7 @@ import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import type { Density } from "@/lib/density";
 import { categoryColor } from "@/lib/categoryColor";
+import { formatRelativeTime } from "@/lib/runs";
 import { countBodyVariables } from "@/lib/variables";
 import { StarIcon } from "./icons";
 
@@ -18,6 +19,9 @@ interface PromptCardProps {
   onSelectTag?: (tag: string) => void;
   /** Optional run count for the F-fast-2 usage badge. Omit / 0 = hide. */
   runCount?: number;
+  /** F-n2-13 — ISO timestamp of the most recent run; renders as
+   *  "Last 2hr ago" beneath the description. */
+  lastRunIso?: string;
   /** F-fast-5 — compact mode tightens padding and clamps the description
    *  to one line so more cards fit on screen. Default comfortable. */
   density?: Density;
@@ -30,6 +34,7 @@ export function PromptCard({
   onToggleFavorite,
   onSelectTag,
   runCount,
+  lastRunIso,
   density = "comfortable",
 }: PromptCardProps) {
   const isCompact = density === "compact";
@@ -149,6 +154,13 @@ export function PromptCard({
       >
         {prompt.description}
       </p>
+
+      {/* F-n2-13 — quiet "Last 2hr ago" line under the description. */}
+      {lastRunIso && (
+        <p className="mt-1.5 text-[11px] text-ink-soft dark:text-paper-muted">
+          Last run <time dateTime={lastRunIso}>{formatRelativeTime(lastRunIso)}</time>
+        </p>
+      )}
 
       <div className={clsx("flex flex-wrap gap-1.5", isCompact ? "mt-3" : "mt-4")}>
         {prompt.tags.map((tag) =>

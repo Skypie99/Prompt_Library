@@ -158,6 +158,41 @@ export function clearRuns(promptId: string): void {
 }
 
 /**
+ * F-n2-13 — companion to loadAllRunCounts: walk every per-prompt runs
+ * key once and return a Map of `promptId → ISO of the most recent run`.
+ * Returns the empty string for a prompt that has runs but no parseable
+ * ranAt (defensive — shouldn't happen but we don't want to crash the
+ * grid render). SSR-safe.
+ */
+export function loadAllLastRunIsos(): Map<string, string> {
+  const out = new Map<string, string>();
+  if (typeof window === "undefined") return out;
+  const prefix = KEY_PREFIX;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith(prefix)) continue;
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || parsed.length === 0) continue;
+        // Runs are stored newest-first; the first entry's ranAt is the
+        // most recent.
+        const first = parsed[0];
+        const ranAt = first && typeof first.ranAt === "string" ? first.ranAt : "";
+        out.set(key.slice(prefix.length), ranAt);
+      } catch {
+        // Corrupt entry — skip.
+      }
+    }
+  } catch {
+    /* unavailable */
+  }
+  return out;
+}
+
+/**
  * Walk every `promptlib:runs:<id>` key once and return a Map of
  * `promptId → runCount`. Cheaper than calling loadRuns() per prompt
  * when N is large (one localStorage walk vs N JSON.parses), and a

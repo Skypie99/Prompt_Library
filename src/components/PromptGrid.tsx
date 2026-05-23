@@ -14,6 +14,8 @@ interface PromptGridProps {
   /** Optional map of promptId → run count for the F-fast-2 usage badge.
    *  Omit to hide all badges. */
   runCounts?: Map<string, number>;
+  /** F-n2-13 — optional map of promptId → most-recent-run ISO timestamp. */
+  lastRunIsos?: Map<string, string>;
   /** F-fast-5 — grid density. Compact gets an extra column at md+
    *  and tighter spacing; comfortable is the original layout. */
   density?: Density;
@@ -26,6 +28,7 @@ export function PromptGrid({
   onToggleFavorite,
   onSelectTag,
   runCounts,
+  lastRunIsos,
   density = "comfortable",
 }: PromptGridProps) {
   const gridClass =
@@ -44,6 +47,7 @@ export function PromptGrid({
           onToggleFavorite={() => onToggleFavorite(prompt.id)}
           onSelectTag={onSelectTag}
           runCount={runCounts?.get(prompt.id)}
+          lastRunIso={lastRunIsos?.get(prompt.id)}
           density={density}
         />
       ))}
