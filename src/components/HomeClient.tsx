@@ -35,6 +35,7 @@ import { PromptDetail } from "./PromptDetail";
 import { SettingsModal } from "./SettingsModal";
 import { OnboardingHint } from "./OnboardingHint";
 import { PromptForm, type PromptFormValues } from "./PromptForm";
+import { ShortcutsModal } from "./ShortcutsModal";
 import { ClockIcon, PlusIcon, SearchIcon, SparkleIcon, StarIcon } from "./icons";
 
 // Returns true if the keystroke happened inside a text field, so global
@@ -55,6 +56,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // Overlay state
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [settingsNotice, setSettingsNotice] = useState<string | null>(null);
   const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -256,9 +258,15 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       } else if (event.key === "/" && !isTypingTarget(event)) {
         event.preventDefault();
         setPaletteOpen(true);
+      } else if (event.key === "?" && !isTypingTarget(event)) {
+        // "?" only fires when the user is NOT typing — otherwise typing a
+        // question mark into a prompt field would steal focus into the modal.
+        event.preventDefault();
+        setShortcutsOpen((open) => !open);
       } else if (event.key === "Escape") {
         setPaletteOpen(false);
         setSettingsOpen(false);
+        setShortcutsOpen(false);
         setActivePrompt(null);
         setForm(null);
       }
@@ -467,6 +475,8 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           onSubmit={submitForm}
         />
       )}
+
+      <ShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   );
 }

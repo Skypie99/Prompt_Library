@@ -71,6 +71,28 @@ Quality rails:
 
 ---
 
-## Loop 3 — F3 Tag filter
+## Loop 3 — F3 Tag filter  ✅ done
+
+| Role | Output |
+|---|---|
+| Quinn + Dani | `specs/F3-tag-filter.md` |
+| Dana | None (no storage; pure derived state) |
+| Shamus | `getTags` in `prompts.ts`; `TagChips` component; HomeClient state + intersection + auto-clear when active tag stops existing + empty state with Clear filters; PromptCard / PromptGrid / PromptDetail plumbed with `onSelectTag`; tag chips become buttons; bumped chip text from `ink-soft` to `ink-muted` for AA contrast |
+| Steve | No new storage; nothing to harden. `event.stopPropagation()` on PromptCard tag click verified so filter-click doesn't also open the modal |
+| Alex | `aria-pressed` on active chip, `aria-label="Filter by #tag"` on every tag button, focus-visible rings throughout, empty-state has a real Clear filters button (not just text) |
+| Dana audit | No storage touched; nothing to audit |
+
+**Decisions made:**
+
+- **Category + tag intersect** rather than union — most "I want a specific kind of thing" mental model is narrowing, not broadening.
+- **Curated rails (Favorites/Recent) hidden under any filter** so the screen tells you "you're narrowing" rather than presenting two parallel views.
+- **Auto-clear the active tag when it stops existing** (the last prompt with that tag gets deleted) so the user is never stuck on an empty grid forever.
+- **First 12 tags shown, "+N more" disclosure** keeps the visual weight in check for users with many tags.
+
+**Decisions deferred to Sky** — none.
+
+---
+
+## Loop 4 — F4 Keyboard shortcuts overlay  (stretch)
 
 _(in progress)_
