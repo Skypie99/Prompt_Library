@@ -407,13 +407,22 @@ export function SettingsModal({
             )}
 
             {/* F-fast-3 — Storage usage readout. Tiny, on-by-default; lets
-                users see where their localStorage budget is going. */}
+                users see where their localStorage budget is going. Real
+                <section> with aria-labelledby so screen readers announce
+                the whole card as one labeled region instead of reading the
+                bucket list out of context. */}
             {storageUsage && (
-              <div className="mt-4 rounded-md border border-border bg-cream/40 p-3 dark:border-night-border dark:bg-night/40">
+              <section
+                aria-labelledby="storage-usage-heading"
+                className="mt-4 rounded-md border border-border bg-cream/40 p-3 dark:border-night-border dark:bg-night/40"
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium uppercase tracking-wider text-ink-soft">
+                  <h3
+                    id="storage-usage-heading"
+                    className="text-xs font-medium uppercase tracking-wider text-ink-soft"
+                  >
                     Storage usage
-                  </span>
+                  </h3>
                   <span
                     className="text-xs font-medium text-ink dark:text-paper"
                     aria-label={`Total storage used: about ${formatBytes(storageUsage.totalBytes)}`}
@@ -437,7 +446,7 @@ export function SettingsModal({
                   All stored in this browser. Typical browser quota is ~5–10 MB
                   per site.
                 </p>
-              </div>
+              </section>
             )}
           </div>
         </div>
