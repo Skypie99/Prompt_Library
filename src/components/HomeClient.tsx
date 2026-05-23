@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Prompt } from "@/lib/types";
-import { getCategories, getTagsWithCounts } from "@/lib/prompts";
+import { getCategoriesWithCounts, getTagsWithCounts } from "@/lib/prompts";
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_MODEL,
@@ -137,7 +137,16 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     return map;
   }, [allPrompts]);
 
-  const categories = useMemo(() => getCategories(allPrompts), [allPrompts]);
+  // F-night-12 — counts come along for the CategoryChips badge.
+  const categoriesWithCounts = useMemo(
+    () => getCategoriesWithCounts(allPrompts),
+    [allPrompts],
+  );
+  // String-only list is what the PromptForm category combobox needs.
+  const categories = useMemo(
+    () => categoriesWithCounts.map((c) => c.category),
+    [categoriesWithCounts],
+  );
   // F-eve-2 — each entry carries its count for the TagChips badge. Named
   // `tagsWithCounts` (not just `tags`) so every call site below reads
   // unambiguously as "this is the {tag, count}[] shape," not a string[].
@@ -440,7 +449,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
         {showOnboarding && <OnboardingHint onDismiss={dismissOnboarding} />}
 
-        <CategoryChips categories={categories} active={activeCategory} onSelect={setActiveCategory} />
+        <CategoryChips categories={categoriesWithCounts} active={activeCategory} onSelect={setActiveCategory} />
         <TagChips tags={tagsWithCounts} active={activeTag} onSelect={setActiveTag} />
 
         {/* Favorites: either the populated grid, or a soft "you haven't

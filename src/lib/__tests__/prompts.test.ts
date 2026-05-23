@@ -10,7 +10,13 @@
  *    means the chip order would flip every render that re-derives.
  */
 
-import { seedPrompts, getCategories, getTags, getTagsWithCounts } from "../prompts";
+import {
+  seedPrompts,
+  getCategories,
+  getCategoriesWithCounts,
+  getTags,
+  getTagsWithCounts,
+} from "../prompts";
 import type { Prompt } from "../types";
 
 function makePrompt(overrides: Partial<Prompt> = {}): Prompt {

@@ -12,6 +12,27 @@ export function getCategories(prompts: Prompt[]): string[] {
 }
 
 /**
+ * Same alphabetised ordering as `getCategories` but carries the count
+ * alongside each name. F-night-12 uses this for the count badges on
+ * CategoryChips ("writing (5)"). Empty categories are dropped — they
+ * shouldn't exist (the form defaults to "Uncategorized") but a defensive
+ * filter beats a chip labeled "(3)".
+ */
+export function getCategoriesWithCounts(
+  prompts: Prompt[],
+): { category: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const p of prompts) {
+    const name = p.category.trim();
+    if (!name) continue;
+    counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+  return Array.from(counts.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([category, count]) => ({ category, count }));
+}
+
+/**
  * Tags derived from the prompts, ordered by frequency (most-used first),
  * tie-broken alphabetically so the order is stable between renders. Empty
  * tags are dropped — they're a data hygiene problem, not a filter option.
