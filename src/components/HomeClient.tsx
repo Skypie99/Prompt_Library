@@ -27,6 +27,7 @@ import {
   setStorageWriteFailureHandler,
 } from "@/lib/library";
 import { loadAllRunCounts } from "@/lib/runs";
+import { DEFAULT_DENSITY, loadDensity, saveDensity, type Density } from "@/lib/density";
 import { Header } from "./Header";
 import { PromptGrid } from "./PromptGrid";
 import { CategoryChips } from "./CategoryChips";
@@ -81,6 +82,8 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // F-fast-2 — promptId → run count, for the usage badge on cards.
   // Hydrated on mount and after each run completion (callback from PromptDetail).
   const [runCounts, setRunCounts] = useState<Map<string, number>>(() => new Map());
+  // F-fast-5 — grid density. Defaults to comfortable to match prior layout.
+  const [density, setDensity] = useState<Density>(DEFAULT_DENSITY);
 
   useEffect(() => {
     // Migrate the on-disk shape BEFORE any reader runs, so v0 -> v1 keys are
@@ -103,6 +106,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setFavorites(loadFavorites());
     setRecent(loadRecent());
     setRunCounts(loadAllRunCounts());
+    setDensity(loadDensity());
     setShowOnboarding(!loadOnboarded());
 
     return () => {
@@ -212,6 +216,13 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setRunCounts(loadAllRunCounts());
   }, []);
 
+  // F-fast-5 — flip density and persist. Wrapped in useCallback so the
+  // Header button's prop identity is stable across re-renders.
+  const handleChangeDensity = useCallback((next: Density) => {
+    setDensity(next);
+    saveDensity(next);
+  }, []);
+
   const deletePrompt = useCallback((id: string) => {
     setUserPrompts((prev) => {
       const next = prev.filter((p) => p.id !== id);
@@ -318,7 +329,12 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
   return (
     <div className="min-h-screen">
-      <Header onOpenSearch={() => setPaletteOpen(true)} onOpenSettings={() => openSettings()} />
+      <Header
+        onOpenSearch={() => setPaletteOpen(true)}
+        onOpenSettings={() => openSettings()}
+        density={density}
+        onChangeDensity={handleChangeDensity}
+      />
 
       {storageWarning && (
         <div
@@ -398,6 +414,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
               runCounts={runCounts}
+              density={density}
             />
           </section>
         ) : showCuratedSections &&
@@ -435,6 +452,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
               runCounts={runCounts}
+              density={density}
             />
           </section>
         ) : showCuratedSections && recentPrompts.length === 0 && favorites.length > 0 ? (
@@ -493,6 +511,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onToggleFavorite={toggleFavorite}
               onSelectTag={setActiveTag}
               runCounts={runCounts}
+              density={density}
             />
           )}
         </section>

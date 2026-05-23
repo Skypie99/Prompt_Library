@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
+import type { Density } from "@/lib/density";
 import { StarIcon } from "./icons";
 
 interface PromptCardProps {
@@ -14,6 +15,9 @@ interface PromptCardProps {
   onSelectTag?: (tag: string) => void;
   /** Optional run count for the F-fast-2 usage badge. Omit / 0 = hide. */
   runCount?: number;
+  /** F-fast-5 — compact mode tightens padding and clamps the description
+   *  to one line so more cards fit on screen. Default comfortable. */
+  density?: Density;
 }
 
 export function PromptCard({
@@ -23,7 +27,9 @@ export function PromptCard({
   onToggleFavorite,
   onSelectTag,
   runCount,
+  density = "comfortable",
 }: PromptCardProps) {
+  const isCompact = density === "compact";
   // The card itself is the click target; the star is a nested control, so we
   // use a div with button semantics (a real <button> can't contain a button).
   function handleKeyDown(event: React.KeyboardEvent) {
@@ -39,7 +45,10 @@ export function PromptCard({
       tabIndex={0}
       onClick={onOpen}
       onKeyDown={handleKeyDown}
-      className="group relative flex h-full cursor-pointer flex-col rounded-xl border border-border bg-surface p-5 text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-coral-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-coral-300 dark:border-night-border dark:bg-night-surface dark:hover:border-coral-500/40"
+      className={clsx(
+        "group relative flex h-full cursor-pointer flex-col rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-coral-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-coral-300 dark:border-night-border dark:bg-night-surface dark:hover:border-coral-500/40",
+        isCompact ? "p-3.5" : "p-5",
+      )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -80,15 +89,25 @@ export function PromptCard({
         </button>
       </div>
 
-      <h3 className="mt-3 font-display text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-coral-600 dark:text-paper dark:group-hover:text-coral-300">
+      <h3
+        className={clsx(
+          "mt-3 font-display font-semibold leading-snug text-ink transition-colors group-hover:text-coral-600 dark:text-paper dark:group-hover:text-coral-300",
+          isCompact ? "text-base" : "text-lg",
+        )}
+      >
         {prompt.title}
       </h3>
 
-      <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-ink-muted dark:text-paper-muted">
+      <p
+        className={clsx(
+          "mt-1.5 text-sm leading-relaxed text-ink-muted dark:text-paper-muted",
+          isCompact ? "line-clamp-1" : "line-clamp-2",
+        )}
+      >
         {prompt.description}
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-1.5">
+      <div className={clsx("flex flex-wrap gap-1.5", isCompact ? "mt-3" : "mt-4")}>
         {prompt.tags.map((tag) =>
           onSelectTag ? (
             <button

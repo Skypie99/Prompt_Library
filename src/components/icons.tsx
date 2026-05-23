@@ -135,6 +135,35 @@ export function ClockIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// 2x2 grid — used for the "comfortable" (roomy) grid density state.
+export function GridLargeIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="3" width="8" height="8" rx="1.5" />
+      <rect x="13" y="3" width="8" height="8" rx="1.5" />
+      <rect x="3" y="13" width="8" height="8" rx="1.5" />
+      <rect x="13" y="13" width="8" height="8" rx="1.5" />
+    </svg>
+  );
+}
+
+// 3x3 grid — used for the "compact" (denser) grid density state.
+export function GridCompactIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="3" width="5" height="5" rx="1" />
+      <rect x="9.5" y="3" width="5" height="5" rx="1" />
+      <rect x="16" y="3" width="5" height="5" rx="1" />
+      <rect x="3" y="9.5" width="5" height="5" rx="1" />
+      <rect x="9.5" y="9.5" width="5" height="5" rx="1" />
+      <rect x="16" y="9.5" width="5" height="5" rx="1" />
+      <rect x="3" y="16" width="5" height="5" rx="1" />
+      <rect x="9.5" y="16" width="5" height="5" rx="1" />
+      <rect x="16" y="16" width="5" height="5" rx="1" />
+    </svg>
+  );
+}
+
 // Small wand-with-sparkle — used for "Customize this prompt" on seed prompts,
 // where the action creates a custom user-editable copy.
 export function WandIcon(props: SVGProps<SVGSVGElement>) {

@@ -1,14 +1,18 @@
 "use client";
 
+import { DensityToggle } from "./DensityToggle";
 import { GearIcon, SearchIcon, SparkleIcon } from "./icons";
 import { ThemeToggle } from "./ThemeToggle";
+import type { Density } from "@/lib/density";
 
 interface HeaderProps {
   onOpenSearch: () => void;
   onOpenSettings: () => void;
+  density: Density;
+  onChangeDensity: (next: Density) => void;
 }
 
-export function Header({ onOpenSearch, onOpenSettings }: HeaderProps) {
+export function Header({ onOpenSearch, onOpenSettings, density, onChangeDensity }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-cream/80 backdrop-blur dark:border-night-border/70 dark:bg-night/80">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
@@ -33,6 +37,7 @@ export function Header({ onOpenSearch, onOpenSettings }: HeaderProps) {
             </kbd>
           </button>
 
+          <DensityToggle density={density} onChange={onChangeDensity} />
           <ThemeToggle />
 
           <button
