@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Prompt } from "@/lib/types";
+import { parseBody } from "@/lib/variables";
 import { CloseIcon } from "./icons";
 
 export interface PromptFormValues {
@@ -29,6 +30,36 @@ interface PromptFormProps {
 
 const fieldClass =
   "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30";
+
+// F-night-9 — small inline preview that mirrors PromptDetail's preview
+// pane (filled-variable / unfilled-variable chip treatment) but renders
+// every variable as "unfilled" since the form has no fill state. Memoized
+// on body so the parser doesn't re-run on unrelated state changes
+// (e.g. typing into the tags input).
+function PromptBodyPreview({ body }: { body: string }) {
+  const segments = useMemo(() => parseBody(body), [body]);
+  return (
+    <div className="mt-3">
+      <span className="text-[10px] uppercase tracking-wider text-ink-soft">
+        Preview
+      </span>
+      <pre className="mt-1 max-h-48 overflow-y-auto whitespace-pre-wrap break-words rounded-md border border-border bg-cream/40 px-3 py-2 font-sans text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night/40 dark:text-paper">
+        {segments.map((segment, index) =>
+          segment.type === "text" ? (
+            <span key={index}>{segment.value}</span>
+          ) : (
+            <span
+              key={index}
+              className="rounded border border-dashed border-coral-300 px-1 text-coral-600 dark:border-coral-500/50 dark:text-coral-300"
+            >
+              {segment.raw}
+            </span>
+          ),
+        )}
+      </pre>
+    </div>
+  );
+}
 
 export function PromptForm({
   mode,
@@ -156,6 +187,14 @@ export function PromptForm({
                 );
               })()}
             </div>
+
+            {/* F-night-9 — live preview of the body with {{variables}}
+                highlighted as dashed coral chips. Mirrors the same chip
+                treatment PromptDetail uses for the preview pane, so the
+                author sees during writing what the eventual reader will
+                see during run. Hidden when body is empty so the form
+                doesn't open with a "preview of nothing" box. */}
+            {body.trim() !== "" && <PromptBodyPreview body={body} />}
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
