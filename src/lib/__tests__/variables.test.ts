@@ -11,10 +11,11 @@
  */
 
 import {
+  countBodyVariables,
+  countFilled,
   extractVariables,
   parseBody,
   substituteBody,
-  countFilled,
 } from "../variables";
 import type { Prompt } from "../types";
 
@@ -234,5 +235,27 @@ describe("countFilled", () => {
 
   it("ignores extra keys not in variables[]", () => {
     expect(countFilled(variables, { a: "x", extra: "noise" })).toBe(1);
+  });
+});
+
+describe("countBodyVariables (F-night-1)", () => {
+  it("returns 0 for a body with no variables", () => {
+    expect(countBodyVariables("Plain text with no tokens.")).toBe(0);
+  });
+
+  it("counts unique variables", () => {
+    expect(countBodyVariables("Hello {{name}}, today is {{day}}.")).toBe(2);
+  });
+
+  it("dedupes repeated variables (same name counts once)", () => {
+    expect(countBodyVariables("{{name}} {{name}} {{name}}")).toBe(1);
+  });
+
+  it("trims whitespace inside braces so {{ name }} and {{name}} match", () => {
+    expect(countBodyVariables("Hi {{ name }} and {{name}}")).toBe(1);
+  });
+
+  it("handles many distinct variables", () => {
+    expect(countBodyVariables("{{a}} {{b}} {{c}} {{d}} {{e}}")).toBe(5);
   });
 });

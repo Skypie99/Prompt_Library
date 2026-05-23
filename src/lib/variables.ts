@@ -100,3 +100,20 @@ export function countFilled(
 ): number {
   return variables.filter((variable) => (values[variable.name] ?? "").trim() !== "").length;
 }
+
+/**
+ * Lightweight cousin of `extractVariables`: just counts unique `{{var}}`
+ * tokens in a body string. Used by the F-night-1 card badge where the
+ * full ResolvedVariable[] would be wasted work for ~all you want is a
+ * number. Same dedup rule as extractVariables — each unique name counts
+ * once regardless of how many times it appears.
+ */
+export function countBodyVariables(body: string): number {
+  const seen = new Set<string>();
+  const regex = new RegExp(TOKEN_SOURCE, "g");
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(body)) !== null) {
+    seen.add(match[1].trim());
+  }
+  return seen.size;
+}

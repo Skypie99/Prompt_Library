@@ -1,8 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
 import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import type { Density } from "@/lib/density";
+import { countBodyVariables } from "@/lib/variables";
 import { StarIcon } from "./icons";
 
 interface PromptCardProps {
@@ -30,6 +32,11 @@ export function PromptCard({
   density = "comfortable",
 }: PromptCardProps) {
   const isCompact = density === "compact";
+  // F-night-1 — variable count for the small "5 fields" badge.
+  // Memoized so the regex walk happens once per prompt change, not per
+  // render. Across a 50-prompt grid that's 50 walks once, not on every
+  // hover or unrelated state change.
+  const variableCount = useMemo(() => countBodyVariables(prompt.body), [prompt.body]);
   // The card itself is the click target; the star is a nested control, so we
   // use a div with button semantics (a real <button> can't contain a button).
   function handleKeyDown(event: React.KeyboardEvent) {
@@ -64,6 +71,18 @@ export function PromptCard({
               className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
             >
               Run {runCount}×
+            </span>
+          )}
+          {variableCount > 0 && (
+            // F-night-1 — variable count badge. Same pill family as the
+            // run-count badge so the badges visually cluster. Hidden when
+            // the prompt has no variables (most card-glanceable signal
+            // when it's there, but never noise when it's not).
+            <span
+              aria-label={`${variableCount} ${variableCount === 1 ? "field" : "fields"} to fill`}
+              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
+            >
+              {variableCount} {variableCount === 1 ? "field" : "fields"}
             </span>
           )}
         </div>
