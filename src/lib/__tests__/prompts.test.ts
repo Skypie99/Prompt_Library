@@ -1,0 +1,94 @@
+/**
+ * Tests for src/lib/prompts.ts — the seed-prompt loader and the
+ * category-derivation helper.
+ *
+ * Two pieces of behavior to lock in:
+ *  - seedPrompts is non-empty, well-typed, and every entry has a category
+ *    (otherwise the CategoryChips component renders an empty/anonymous chip).
+ *  - getCategories returns sorted, unique category names. The Chips bar
+ *    relies on this — duplicates would render twice, and an unsorted list
+ *    means the chip order would flip every render that re-derives.
+ */
+
+import { seedPrompts, getCategories } from "../prompts";
+import type { Prompt } from "../types";
+
+function makePrompt(overrides: Partial<Prompt> = {}): Prompt {
+  return {
+    id: "test-1",
+    title: "Test",
+    description: "",
+    body: "",
+    variables: [],
+    category: "general",
+    tags: [],
+    createdAt: "2026-01-01T00:00:00.000Z",
+    isSeed: false,
+    ...overrides,
+  };
+}
+
+describe("seedPrompts", () => {
+  it("is a non-empty array (the app ships with starter content)", () => {
+    expect(Array.isArray(seedPrompts)).toBe(true);
+    expect(seedPrompts.length).toBeGreaterThan(0);
+  });
+
+  it("every seed has id, title, body, and category", () => {
+    for (const p of seedPrompts) {
+      expect(typeof p.id).toBe("string");
+      expect(p.id.length).toBeGreaterThan(0);
+      expect(typeof p.title).toBe("string");
+      expect(p.title.length).toBeGreaterThan(0);
+      expect(typeof p.body).toBe("string");
+      expect(p.body.length).toBeGreaterThan(0);
+      expect(typeof p.category).toBe("string");
+      expect(p.category.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("seed ids are unique (the id→prompt map is keyed by id)", () => {
+    const ids = seedPrompts.map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe("getCategories", () => {
+  it("returns [] for an empty list of prompts", () => {
+    expect(getCategories([])).toEqual([]);
+  });
+
+  it("returns the single category for one prompt", () => {
+    expect(getCategories([makePrompt({ category: "writing" })])).toEqual([
+      "writing",
+    ]);
+  });
+
+  it("de-duplicates repeated categories", () => {
+    const prompts = [
+      makePrompt({ id: "1", category: "writing" }),
+      makePrompt({ id: "2", category: "writing" }),
+      makePrompt({ id: "3", category: "code" }),
+    ];
+    expect(getCategories(prompts)).toEqual(["code", "writing"]);
+  });
+
+  it("returns categories in alphabetical order (stable chip order)", () => {
+    const prompts = [
+      makePrompt({ id: "1", category: "writing" }),
+      makePrompt({ id: "2", category: "analysis" }),
+      makePrompt({ id: "3", category: "marketing" }),
+    ];
+    expect(getCategories(prompts)).toEqual([
+      "analysis",
+      "marketing",
+      "writing",
+    ]);
+  });
+
+  it("works on the real seedPrompts array (no surprises with real data)", () => {
+    const cats = getCategories(seedPrompts);
+    expect(new Set(cats).size).toBe(cats.length);
+    expect([...cats].sort()).toEqual(cats);
+  });
+});
