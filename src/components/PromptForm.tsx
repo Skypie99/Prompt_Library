@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { Prompt } from "@/lib/types";
 import { parseBody } from "@/lib/variables";
 import { CloseIcon } from "./icons";
@@ -75,6 +75,26 @@ export function PromptForm({
   const [category, setCategory] = useState(initial?.category ?? "");
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
+  // F-n2-8 — ref to the body textarea so the "Insert {{}}" helper can
+  // place the caret inside the braces after insertion.
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  function insertVariableAtCaret() {
+    const el = bodyRef.current;
+    if (!el) return;
+    const start = el.selectionStart ?? body.length;
+    const end = el.selectionEnd ?? body.length;
+    const insertion = "{{}}";
+    const next = body.slice(0, start) + insertion + body.slice(end);
+    setBody(next);
+    // Refocus + place caret between the braces ("{{|}}") on the next tick
+    // so the user can immediately type the variable name.
+    requestAnimationFrame(() => {
+      el.focus();
+      const caret = start + 2;
+      el.setSelectionRange(caret, caret);
+    });
+  }
 
   const canSave = title.trim() !== "" && body.trim() !== "";
 
@@ -153,10 +173,24 @@ export function PromptForm({
           </div>
 
           <div>
-            <label htmlFor="pf-body" className="mb-1 block text-sm font-medium text-ink dark:text-paper">
-              Prompt body <span className="text-coral-500">*</span>
-            </label>
+            <div className="mb-1 flex items-center justify-between gap-3">
+              <label htmlFor="pf-body" className="block text-sm font-medium text-ink dark:text-paper">
+                Prompt body <span className="text-coral-500">*</span>
+              </label>
+              {/* F-n2-8 — one-click insert of {{}} at the caret. Caret
+                  lands between the braces so the user immediately types
+                  the variable name. */}
+              <button
+                type="button"
+                onClick={insertVariableAtCaret}
+                aria-label="Insert a variable placeholder at the cursor"
+                className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300"
+              >
+                {"{{}}"}
+              </button>
+            </div>
             <textarea
+              ref={bodyRef}
               id="pf-body"
               value={body}
               onChange={(event) => setBody(event.target.value)}
