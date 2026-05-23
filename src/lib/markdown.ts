@@ -35,7 +35,8 @@ export type BlockNode =
   | { type: "heading"; level: 1 | 2 | 3; children: InlineNode[] }
   | { type: "paragraph"; children: InlineNode[] }
   | { type: "code-block"; value: string; lang?: string }
-  | { type: "list"; ordered: boolean; items: InlineNode[][] };
+  | { type: "list"; ordered: boolean; items: InlineNode[][] }
+  | { type: "blockquote"; children: InlineNode[] };
 
 // ---- protocol allowlist ----------------------------------------------------
 
@@ -199,6 +200,7 @@ const HEADING_RE = /^(#{1,3})\s+(.*)$/;
 const FENCE_RE = /^```([\w-]*)\s*$/;
 const UL_RE = /^\s*[-*]\s+(.*)$/;
 const OL_RE = /^\s*\d+\.\s+(.*)$/;
+const BLOCKQUOTE_RE = /^>\s?(.*)$/; // F-n2-7
 
 /**
  * Parse a markdown document into a flat list of block nodes. Robust to
@@ -247,6 +249,23 @@ export function parseMarkdown(input: string): BlockNode[] {
       continue;
     }
 
+    // ---- blockquote (F-n2-7) ----
+    // Consume consecutive `> ` lines into a single blockquote. Inline
+    // markdown inside (bold/em/code/link) is parsed normally.
+    if (BLOCKQUOTE_RE.test(line)) {
+      const quoteLines: string[] = [];
+      while (i < lines.length && BLOCKQUOTE_RE.test(lines[i])) {
+        const m = lines[i].match(BLOCKQUOTE_RE);
+        quoteLines.push(m ? m[1] : "");
+        i++;
+      }
+      blocks.push({
+        type: "blockquote",
+        children: parseInline(quoteLines.join("\n")),
+      });
+      continue;
+    }
+
     // ---- lists (homogeneous run of ul or ol) ----
     if (UL_RE.test(line) || OL_RE.test(line)) {
       const ordered = OL_RE.test(line);
@@ -276,7 +295,8 @@ export function parseMarkdown(input: string): BlockNode[] {
       !HEADING_RE.test(lines[j]) &&
       !FENCE_RE.test(lines[j]) &&
       !UL_RE.test(lines[j]) &&
-      !OL_RE.test(lines[j])
+      !OL_RE.test(lines[j]) &&
+      !BLOCKQUOTE_RE.test(lines[j])
     ) {
       paraLines.push(lines[j]);
       j++;

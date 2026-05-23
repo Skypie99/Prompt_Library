@@ -54,6 +54,14 @@ function Block({ node }: { node: BlockNode }) {
       );
     case "code-block":
       return <CodeBlock value={node.value} />;
+    case "blockquote":
+      return (
+        <blockquote className="my-3 border-l-2 border-coral-300 bg-cream/40 px-3 py-2 text-sm italic leading-relaxed text-ink-muted dark:border-coral-500/40 dark:bg-night/40 dark:text-paper-muted">
+          {node.children.map((c, i) => (
+            <Inline key={i} node={c} />
+          ))}
+        </blockquote>
+      );
     case "list":
       return node.ordered ? (
         <ol className="my-2 list-decimal space-y-1 pl-5 text-sm leading-relaxed text-ink dark:text-paper">
