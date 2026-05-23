@@ -4,6 +4,36 @@ _Started by Will on 2026-05-23 during the fastloop session. New entries on top; 
 
 ---
 
+## 2026-05-23 — Night cycle 2 (post-build clean)
+
+Cycle = 3 builds + 1 clean. Features: F-night-4 (history status filter),
+F-night-5 (auto-grow variable textareas), F-night-6 (suggested tags
+in PromptForm).
+
+### Patterns reinforced
+
+- **Filter BEFORE decoration.** F-night-4's status filter applies before
+  the relative-time formatter runs. The 30s tick re-rendering the panel
+  doesn't waste cycles formatting entries the user filtered out.
+- **Reset transient state on prompt switch.** The new `statusFilter`
+  joins `openRunId`, `confirmingClear`, `copiedRunId` in the
+  `useEffect([promptId])` reset. Easy to forget; pinning the pattern.
+- **AutoGrowTextarea pattern.** RAF + `height: auto` + `scrollHeight`
+  with a max cap is ~30 lines and handles 95% of cases. Manual user
+  resize still works because the native handle's last drag wins until
+  the next keystroke. Acceptable tradeoff vs ResizeObserver complexity.
+- **Suggested-from-context pattern.** F-night-6 surfaces existing
+  library tags as one-click chips. Frequency order from the existing
+  `tagsWithCounts` means the most-used tags suggest first, encouraging
+  consistency without enforcing it.
+
+### Clean pass
+
+No fixes needed. Same green signal as night-1: in-loop reviews caught
+the real issues at build time.
+
+---
+
 ## 2026-05-23 — Night cycle 1 (post-build clean)
 
 Cycle = 3 builds + 1 clean. Features: F-night-1 (variable count badge),
