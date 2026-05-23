@@ -9,6 +9,7 @@ import {
   getHighlightSegments,
   type PromptSearchResult,
 } from "@/lib/search";
+import { categoryColor } from "@/lib/categoryColor";
 import { SearchIcon } from "./icons";
 
 interface CommandPaletteProps {
@@ -214,9 +215,30 @@ export function CommandPalette({
                         />
                       </div>
                     </div>
-                    <span className="shrink-0 rounded-full bg-coral-50 px-2 py-0.5 text-[11px] font-medium text-coral-700 dark:bg-coral-500/15 dark:text-coral-300">
-                      {result.prompt.category}
-                    </span>
+                    {/* F-n2-19 — category chip in the palette now uses
+                        the same color hash as F-night-11's card stripe,
+                        so the visual category language is consistent
+                        across the home grid and the search results. */}
+                    {(() => {
+                      const c = categoryColor(result.prompt.category);
+                      return (
+                        <span
+                          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
+                        >
+                          <span
+                            aria-hidden
+                            className="h-2 w-2 rounded-full dark:hidden"
+                            style={{ backgroundColor: c.light }}
+                          />
+                          <span
+                            aria-hidden
+                            className="hidden h-2 w-2 rounded-full dark:block"
+                            style={{ backgroundColor: c.dark }}
+                          />
+                          {result.prompt.category}
+                        </span>
+                      );
+                    })()}
                   </button>
                 </li>
               );
