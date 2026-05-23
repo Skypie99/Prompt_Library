@@ -4,6 +4,34 @@ _Started by Will on 2026-05-23 during the fastloop session. New entries on top; 
 
 ---
 
+## 2026-05-23 — Night cycle 1 (post-build clean)
+
+Cycle = 3 builds + 1 clean. Features: F-night-1 (variable count badge),
+F-night-2 (Clear filters header button), F-night-3 (Markdown code block
+copy buttons).
+
+### What the clean pass found
+
+Nothing actionable. The in-loop reviews caught the relevant a11y +
+clarity issues at feature time. Signals worth noting:
+
+- `countBodyVariables` reused the existing `TOKEN_SOURCE` regex from
+  `variables.ts` — kept the dedup rule in one place.
+- The new Clear-filters button mirrors the existing empty-state Clear
+  button, so users see the same affordance whether they've narrowed
+  to a non-empty subset OR to zero.
+- The `CodeBlock` subcomponent uses `group/code` (Tailwind named group)
+  so its hover state doesn't conflict with any parent `group`. Worth
+  reaching for when adding nested hover-revealed UI.
+
+### Pattern reinforced
+
+- **"No fix needed" is a real outcome.** Documented here instead of
+  silently skipped, so future-me reading the LEARNINGS sees the
+  clean loop ran and validated, not that it was skipped.
+
+---
+
 ## 2026-05-23 — Clean loop (post-eve sweep)
 
 ### What the in-loop Alex+Gary pattern caught (cycle/auto-2026-05-23-eve)
