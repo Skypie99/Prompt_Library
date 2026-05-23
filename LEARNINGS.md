@@ -4,6 +4,28 @@ _Started by Will on 2026-05-23 during the fastloop session. New entries on top; 
 
 ---
 
+## 2026-05-23 — Clean loop (post-fastloop sweep)
+
+### What got tightened
+
+- **F-fast-1 token estimate** — `Math.max(1, Math.ceil(finalText.length / 4))` was inlined twice per render (visible text + aria-label). Hoisted to a single `tokenEstimate` const so the value can't drift between the two and `Math.ceil` only runs once per keystroke. aria-label now also uses `toLocaleString()` so screen-reader number formatting matches the visible text.
+- **F-fast-3 storage card** — was a `<div>` with a span-as-header. Promoted to `<section aria-labelledby>` with the heading carrying a real `id`, so the inner `<ul>` of bucket rows is announced as part of a labeled region instead of a context-free list. Visual unchanged.
+- **Tests co-located** — the single `fastloop.test.ts` was useful for one session but breaks the one-test-file-per-pure-logic-module pattern. Moved: `loadAllRunCounts` → `runs.test.ts`, `getStorageUsage`/`formatBytes` → `library.test.ts`, density → new `density.test.ts`. `fastloop.test.ts` deleted. Net case count unchanged.
+
+### Things checked but found clean (no commit needed)
+
+- **Peter (perf)** — every fastloop callback is wrapped in `useCallback` with stable deps; new state is plain `useState` with no derived shape worth memoizing; conditional density classes in PromptCard are cheap string concat. Nothing to memoize.
+- **DensityToggle, Copy template link, EmptyHint** — all have focus-visible rings on the established `coral-400` pattern; all have explicit aria-labels.
+- **Storage usage bucket order** — Prompts → Run history → Values → Favorites+Recent → Settings → App state. Readable user-facing sequence; no change.
+
+### Patterns this loop confirmed
+
+- **Co-locate tests with their module the day they ship.** It's free during the loop and adds friction later. The single combined file felt fine for one session and looked wrong by the next morning.
+- **`aria-labelledby` over `aria-label` when a visible heading exists.** A real `<h3 id>` + `<section aria-labelledby>` ties the visible label to the screen-reader announcement, so you can change the heading in one place and the AT announcement follows.
+- **A clean loop with no commit per role is a valid signal.** Peter found nothing to change here; that's documented as a green flag, not skipped.
+
+---
+
 ## 2026-05-23 — Fastloop session (F-fast-1..5)
 
 ### Patterns that worked
