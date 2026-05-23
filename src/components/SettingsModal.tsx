@@ -10,7 +10,13 @@ import {
   type ApplyImportResult,
   type ImportPreview,
 } from "@/lib/transfer";
-import { formatBytes, getStorageUsage, loadUserPrompts, type StorageUsage } from "@/lib/library";
+import {
+  formatBytes,
+  getStorageUsage,
+  loadUserPrompts,
+  wipeAllUserData,
+  type StorageUsage,
+} from "@/lib/library";
 import { CloseIcon } from "./icons";
 
 interface SettingsModalProps {
@@ -57,6 +63,8 @@ export function SettingsModal({
   const [importState, setImportState] = useState<ImportState>({ kind: "idle" });
   const [userPromptCount, setUserPromptCount] = useState(0);
   const [storageUsage, setStorageUsage] = useState<StorageUsage | null>(null);
+  // F-n2-10 — destructive "Reset all data" confirm gate.
+  const [confirmingReset, setConfirmingReset] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync the form to the saved settings each time the modal opens, and
@@ -448,6 +456,69 @@ export function SettingsModal({
                 </p>
               </section>
             )}
+
+            {/* F-n2-10 — destructive "Reset all data" with inline confirm.
+                Wipes user prompts + every per-prompt sub-key (runs, values).
+                Settings (API key, model, theme) are kept — same scope as
+                the export's "what's in / what's out" contract. */}
+            <section
+              aria-labelledby="reset-heading"
+              className="mt-4 rounded-md border border-coral-200 bg-coral-50/40 p-3 dark:border-coral-500/30 dark:bg-coral-500/5"
+            >
+              <h3
+                id="reset-heading"
+                className="text-xs font-medium uppercase tracking-wider text-coral-700 dark:text-coral-300"
+              >
+                Danger zone
+              </h3>
+              {!confirmingReset ? (
+                <div className="mt-2 flex items-center justify-between gap-3">
+                  <p className="text-xs text-ink-muted dark:text-paper-muted">
+                    Delete every prompt, favorite, recent, run, and saved
+                    value. Keeps your API key and theme.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingReset(true)}
+                    className="shrink-0 rounded-md border border-coral-300 px-2 py-1 text-xs font-medium text-coral-700 transition hover:bg-coral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:border-coral-500/40 dark:text-coral-300 dark:hover:bg-coral-500/10"
+                  >
+                    Reset all data
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <p className="text-xs text-coral-900 dark:text-coral-100">
+                    Permanently delete every prompt, favorite, recent, run, and
+                    saved value? This can&apos;t be undone. (Export first if
+                    you might want it back.)
+                  </p>
+                  <div className="mt-2 flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingReset(false)}
+                      className="rounded-md border border-coral-300 px-2 py-1 text-xs font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        wipeAllUserData();
+                        setConfirmingReset(false);
+                        // Refresh the local readout + tell the parent to
+                        // re-hydrate the home grid.
+                        setUserPromptCount(loadUserPrompts().length);
+                        setStorageUsage(getStorageUsage());
+                        onLibraryImported?.();
+                      }}
+                      className="rounded-md bg-coral-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-coral-700 active:scale-95"
+                    >
+                      Reset all data
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
           </div>
         </div>
 
