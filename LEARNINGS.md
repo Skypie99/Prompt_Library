@@ -241,3 +241,7 @@ Fast cycles for surface polish. Each entry below = one cycle's worth.
 ### Cycle 8
 - F-n2-15: indented code blocks share the same `code-block` AST node as fenced ones, so the existing F-night-3 copy button works for both with zero extra code. Reuse > re-invent.
 - F-n2-16: a one-line privacy note in the footer ("All data stays in this browser") answers the question users never ask out loud. Free trust.
+
+### Cycle 9
+- F-n2-17: adding a single-letter shortcut is now a four-touch recipe — handler in HomeClient with typing-target guard, entry in SHORTCUTS array, optional "(n)" hint in a tooltip, optional addition to per-shortcut docstring. Recipe scales.
+- F-n2-18: AND-combining filters in one memo (`filter((r) => statusCheck && timeCheck && ...)`) beats nesting filter calls — readable, single pass, easy to add the next filter.
