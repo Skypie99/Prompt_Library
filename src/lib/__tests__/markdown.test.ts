@@ -86,11 +86,10 @@ describe("parseMarkdown — blocks", () => {
     expect(blocks.map((b) => (b.type === "heading" ? b.level : null))).toEqual([1, 2, 3]);
   });
 
-  it("h4+ falls back to h3 (we cap the scale)", () => {
+  it("#### H4 is treated as a paragraph (heading scale caps at h3)", () => {
     const blocks = parseMarkdown("#### H4");
-    // #### is 4 hashes; our regex still matches with level capped to 3.
-    expect(blocks[0].type).toBe("heading");
-    if (blocks[0].type === "heading") expect(blocks[0].level).toBe(3);
+    // HEADING_RE only matches #{1,3}, so #### does not match — it becomes a paragraph.
+    expect(blocks[0].type).toBe("paragraph");
   });
 
   it("paragraphs separated by blank lines", () => {
