@@ -80,8 +80,9 @@ describe("extractVariables", () => {
     const result = extractVariables(
       makePrompt({ body: "{{first_name}} {{last-name}}" }),
     );
-    expect(result[0].label).toBe("First Name");
-    expect(result[1].label).toBe("Last Name");
+    // humanize uses sentence case: only the first character of the full string is uppercased.
+    expect(result[0].label).toBe("First name");
+    expect(result[1].label).toBe("Last name");
   });
 
   it("humanizes camelCase names", () => {

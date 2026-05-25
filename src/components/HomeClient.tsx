@@ -599,19 +599,41 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           </div>
 
           {visiblePrompts.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border bg-cream/40 px-6 py-10 text-center text-sm text-ink-muted dark:border-night-border dark:bg-night/40 dark:text-paper-muted">
-              <p>No prompts match this filter.</p>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveCategory(null);
-                  setActiveTag(null);
-                }}
-                className="mt-3 inline-flex items-center gap-1 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
-              >
-                Clear filters
-              </button>
-            </div>
+            activeCategory || activeTag ? (
+              <div className="rounded-xl border border-dashed border-border bg-cream/40 px-6 py-10 text-center text-sm text-ink-muted dark:border-night-border dark:bg-night/40 dark:text-paper-muted">
+                <p>No prompts match this filter.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory(null);
+                    setActiveTag(null);
+                  }}
+                  className="mt-3 inline-flex items-center gap-1 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
+              // F8 — truly-empty library (no filters active, no prompts at
+              // all). Edge case: seeds ship with the app, so reaching here
+              // means a user deleted every custom prompt AND the seeds are
+              // somehow absent. Give them the same visual language as the
+              // filtered case (dashed tile) but a forward-looking CTA that
+              // matches the header's "New prompt" affordance — no dead end.
+              <div className="rounded-xl border border-dashed border-border bg-cream/40 px-6 py-10 text-center text-sm text-ink-muted dark:border-night-border dark:bg-night/40 dark:text-paper-muted">
+                <SparkleIcon aria-hidden className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted" />
+                <p className="mt-2 font-medium text-ink dark:text-paper">Your library is empty</p>
+                <p className="mt-1 text-xs">Create your first prompt to get started.</p>
+                <button
+                  type="button"
+                  onClick={() => setForm({ mode: "create", initial: null })}
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-coral-300 bg-coral-50 px-3 py-1.5 text-xs font-medium text-coral-700 transition hover:bg-coral-100 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-300 dark:hover:bg-coral-500/20"
+                >
+                  <PlusIcon className="h-3.5 w-3.5" />
+                  Create your first prompt
+                </button>
+              </div>
+            )
           ) : (
             <PromptGrid
               prompts={visiblePrompts}
