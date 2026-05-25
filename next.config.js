@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 
 // On GitHub Pages this project is served from a subpath, not the domain root:
-//   https://skypie99.github.io/prompt-library-tool/
+//   https://skypie99.github.io/Prompt_Libary/
 // `basePath` / `assetPrefix` make every route and asset URL resolve under that
 // subpath. We ONLY apply them in production builds so that `npm run dev` keeps
 // serving cleanly at the root (http://localhost:3000) with no broken links.
 const isProd = process.env.NODE_ENV === "production";
-const repo = "prompt-library-tool";
+const repo = "Prompt_Libary"; // must match the exact GitHub repo name
 
 const nextConfig = {
   // Emit a fully static site into ./out — no server needed to host it.
