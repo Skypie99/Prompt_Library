@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import type { Density } from "@/lib/density";
@@ -27,7 +27,7 @@ interface PromptCardProps {
   density?: Density;
 }
 
-export function PromptCard({
+export const PromptCard = memo(function PromptCard({
   prompt,
   onOpen,
   isFavorite,
@@ -63,7 +63,7 @@ export function PromptCard({
       onKeyDown={handleKeyDown}
       className={clsx(
         "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-coral-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-coral-300 dark:border-night-border dark:bg-night-surface dark:hover:border-coral-500/40",
-        isCompact ? "p-3.5" : "p-5",
+        isCompact ? "p-3.5" : "p-5"
       )}
     >
       {/* F-night-11 — 3px left stripe in the category's deterministic
@@ -121,7 +121,7 @@ export function PromptCard({
             "-mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90",
             isFavorite
               ? "text-coral-500"
-              : "text-ink-soft opacity-0 hover:text-coral-500 focus-visible:opacity-100 group-hover:opacity-100",
+              : "text-ink-soft opacity-0 hover:text-coral-500 focus-visible:opacity-100 group-hover:opacity-100"
           )}
         >
           <StarIcon
@@ -134,7 +134,7 @@ export function PromptCard({
       <h3
         className={clsx(
           "mt-3 font-display font-semibold leading-snug text-ink transition-colors group-hover:text-coral-600 dark:text-paper dark:group-hover:text-coral-300",
-          isCompact ? "text-base" : "text-lg",
+          isCompact ? "text-base" : "text-lg"
         )}
       >
         {prompt.title}
@@ -143,7 +143,7 @@ export function PromptCard({
       <p
         className={clsx(
           "mt-1.5 text-sm leading-relaxed text-ink-muted dark:text-paper-muted",
-          isCompact ? "line-clamp-1" : "line-clamp-2",
+          isCompact ? "line-clamp-1" : "line-clamp-2"
         )}
         // F-n2-1 — title attribute gives a native hover preview of the
         // first ~240 chars of the body (browser-native tooltip; respects
@@ -185,9 +185,9 @@ export function PromptCard({
             >
               #{tag}
             </span>
-          ),
+          )
         )}
       </div>
     </div>
   );
-}
+});

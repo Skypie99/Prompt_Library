@@ -52,7 +52,7 @@ export function saveSort(value: SortMode): void {
 export function sortPrompts(
   prompts: Prompt[],
   mode: SortMode,
-  runCounts?: Map<string, number>,
+  runCounts?: Map<string, number>
 ): Prompt[] {
   // Copy first — sort mutates in place.
   const arr = [...prompts];
@@ -64,9 +64,7 @@ export function sortPrompts(
       return arr;
     case "az":
       // Locale-aware case-insensitive sort so "Alpha" / "alpha" don't swap.
-      arr.sort((a, b) =>
-        a.title.localeCompare(b.title, undefined, { sensitivity: "base" }),
-      );
+      arr.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: "base" }));
       return arr;
     case "most-run":
       arr.sort((a, b) => {

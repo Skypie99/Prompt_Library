@@ -146,12 +146,8 @@ describe("mergePrompts", () => {
   });
 
   it("does not mutate input arrays", () => {
-    const user: Prompt[] = [
-      makePrompt({ id: "u", createdAt: "2025-01-01T00:00:00.000Z" }),
-    ];
-    const seed: Prompt[] = [
-      makePrompt({ id: "s", createdAt: "2026-01-01T00:00:00.000Z" }),
-    ];
+    const user: Prompt[] = [makePrompt({ id: "u", createdAt: "2025-01-01T00:00:00.000Z" })];
+    const seed: Prompt[] = [makePrompt({ id: "s", createdAt: "2026-01-01T00:00:00.000Z" })];
     const userSnapshot = [...user];
     const seedSnapshot = [...seed];
     mergePrompts(user, seed);

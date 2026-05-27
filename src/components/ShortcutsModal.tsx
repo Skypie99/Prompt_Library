@@ -19,12 +19,30 @@ const SHORTCUTS: ReadonlyArray<{
   description: string;
 }> = [
   { keys: [["?"]], description: "Show this help" },
-  { keys: [["⌘", "K"], ["Ctrl", "K"]], description: "Open the search palette" },
+  {
+    keys: [
+      ["⌘", "K"],
+      ["Ctrl", "K"],
+    ],
+    description: "Open the search palette",
+  },
   { keys: [["/"]], description: "Open the search palette" },
   { keys: [["Esc"]], description: "Close any open overlay (palette, prompt, modal, form)" },
-  { keys: [["⌘", "↵"], ["Ctrl", "↵"]], description: "Run the current prompt (inside a prompt)" },
+  {
+    keys: [
+      ["⌘", "↵"],
+      ["Ctrl", "↵"],
+    ],
+    description: "Run the current prompt (inside a prompt)",
+  },
   { keys: [["s"]], description: "Star / unstar the open prompt" },
-  { keys: [["⌘", "1-9"], ["Ctrl", "1-9"]], description: "Open the Nth result in the search palette" },
+  {
+    keys: [
+      ["⌘", "1-9"],
+      ["Ctrl", "1-9"],
+    ],
+    description: "Open the Nth result in the search palette",
+  },
   { keys: [["n"]], description: "Create a new prompt" },
 ];
 
@@ -77,9 +95,9 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
             // Build the aria-label so a screen reader reads, e.g.
             // "Command K or Control K: Open the search palette".
             const ariaLabel =
-              row.keys
-                .map((combo) => combo.map((k) => prettyForA11y(k)).join(" "))
-                .join(" or ") + ": " + row.description;
+              row.keys.map((combo) => combo.map((k) => prettyForA11y(k)).join(" ")).join(" or ") +
+              ": " +
+              row.description;
 
             return (
               <li

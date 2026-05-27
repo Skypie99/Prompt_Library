@@ -44,9 +44,9 @@ export interface ImportPreview {
   userPromptCount: number;
   favoritesCount: number;
   recentCount: number;
-  runsCount: number;          // total runs across all prompts in the file
-  valuesPromptCount: number;  // number of prompts that have a saved values draft
-  droppedCount: number;       // entries silently dropped during validation
+  runsCount: number; // total runs across all prompts in the file
+  valuesPromptCount: number; // number of prompts that have a saved values draft
+  droppedCount: number; // entries silently dropped during validation
 }
 
 export type ImportMode = "merge" | "replace";

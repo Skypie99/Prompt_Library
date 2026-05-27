@@ -45,7 +45,7 @@ function Highlighted({
           </mark>
         ) : (
           <span key={index}>{segment.text}</span>
-        ),
+        )
       )}
     </>
   );
@@ -171,7 +171,8 @@ export function CommandPalette({
         {results.length === 0 ? (
           <div className="px-4 py-12 text-center">
             <p className="text-sm text-ink-muted dark:text-paper-muted">
-              No prompts match <span className="font-medium text-ink dark:text-paper">“{query}”</span>
+              No prompts match{" "}
+              <span className="font-medium text-ink dark:text-paper">“{query}”</span>
             </p>
             <p className="mt-1 text-xs text-ink-soft">Try a different word or a tag.</p>
           </div>
@@ -189,7 +190,7 @@ export function CommandPalette({
                       "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors",
                       isActive
                         ? "bg-coral-100 dark:bg-coral-500/20"
-                        : "hover:bg-coral-50/70 dark:hover:bg-night-border/40",
+                        : "hover:bg-coral-50/70 dark:hover:bg-night-border/40"
                     )}
                   >
                     <div className="min-w-0 flex-1">
@@ -198,7 +199,7 @@ export function CommandPalette({
                           "truncate text-sm font-medium",
                           isActive
                             ? "text-coral-800 dark:text-coral-200"
-                            : "text-ink dark:text-paper",
+                            : "text-ink dark:text-paper"
                         )}
                       >
                         <Highlighted
@@ -222,9 +223,7 @@ export function CommandPalette({
                     {(() => {
                       const c = categoryColor(result.prompt.category);
                       return (
-                        <span
-                          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
-                        >
+                        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted">
                           <span
                             aria-hidden
                             className="h-2 w-2 rounded-full dark:hidden"

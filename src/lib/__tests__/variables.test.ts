@@ -53,16 +53,12 @@ describe("extractVariables", () => {
   });
 
   it("tolerates whitespace inside the token braces", () => {
-    const result = extractVariables(
-      makePrompt({ body: "Hello {{  name  }} and {{ city }}" }),
-    );
+    const result = extractVariables(makePrompt({ body: "Hello {{  name  }} and {{ city }}" }));
     expect(result.map((v) => v.name)).toEqual(["name", "city"]);
   });
 
   it("de-duplicates tokens (first-appearance order)", () => {
-    const result = extractVariables(
-      makePrompt({ body: "{{a}} {{b}} {{a}} {{c}} {{b}}" }),
-    );
+    const result = extractVariables(makePrompt({ body: "{{a}} {{b}} {{a}} {{c}} {{b}}" }));
     expect(result.map((v) => v.name)).toEqual(["a", "b", "c"]);
   });
 
@@ -71,15 +67,13 @@ describe("extractVariables", () => {
       makePrompt({
         body: "Hi {{user}}",
         variables: [{ name: "user", label: "Your name" }],
-      }),
+      })
     );
     expect(result[0].label).toBe("Your name");
   });
 
   it("humanizes snake_case and kebab-case names", () => {
-    const result = extractVariables(
-      makePrompt({ body: "{{first_name}} {{last-name}}" }),
-    );
+    const result = extractVariables(makePrompt({ body: "{{first_name}} {{last-name}}" }));
     // humanize uses sentence case: only the first character of the full string is uppercased.
     expect(result[0].label).toBe("First name");
     expect(result[1].label).toBe("Last name");
@@ -94,7 +88,7 @@ describe("extractVariables", () => {
     const result = extractVariables(
       makePrompt({
         body: "{{title}} {{body}} {{code}} {{notes}} {{transcript}}",
-      }),
+      })
     );
     const map = Object.fromEntries(result.map((v) => [v.name, v.multiline]));
     expect(map.title).toBe(false);
@@ -109,7 +103,7 @@ describe("extractVariables", () => {
       makePrompt({
         body: "{{x}}",
         variables: [{ name: "x", label: "X", placeholder: "Paste here" }],
-      }),
+      })
     );
     expect(result[0].multiline).toBe(true);
   });
@@ -119,7 +113,7 @@ describe("extractVariables", () => {
       makePrompt({
         body: "{{x}}",
         variables: [{ name: "x", label: "X", placeholder: "e.g. foo" }],
-      }),
+      })
     );
     expect(result[0].placeholder).toBe("e.g. foo");
   });
@@ -127,9 +121,7 @@ describe("extractVariables", () => {
 
 describe("parseBody", () => {
   it("returns a single text segment for plain text", () => {
-    expect(parseBody("just text")).toEqual([
-      { type: "text", value: "just text" },
-    ]);
+    expect(parseBody("just text")).toEqual([{ type: "text", value: "just text" }]);
   });
 
   it("returns an empty array for an empty string", () => {
@@ -197,15 +189,11 @@ describe("substituteBody", () => {
   });
 
   it("substitutes multiple instances of the same token", () => {
-    expect(substituteBody("{{x}} and {{x}}", { x: "yes" })).toBe(
-      "yes and yes",
-    );
+    expect(substituteBody("{{x}} and {{x}}", { x: "yes" })).toBe("yes and yes");
   });
 
   it("tolerates whitespace inside braces when matching values", () => {
-    expect(substituteBody("Hello {{  name  }}", { name: "Sky" })).toBe(
-      "Hello Sky",
-    );
+    expect(substituteBody("Hello {{  name  }}", { name: "Sky" })).toBe("Hello Sky");
   });
 
   it("returns the body unchanged when there are no tokens", () => {
@@ -225,9 +213,7 @@ describe("countFilled", () => {
   });
 
   it("counts only non-empty trimmed values", () => {
-    expect(
-      countFilled(variables, { a: "x", b: "", c: "   " }),
-    ).toBe(1);
+    expect(countFilled(variables, { a: "x", b: "", c: "   " })).toBe(1);
   });
 
   it("counts all when all are filled", () => {

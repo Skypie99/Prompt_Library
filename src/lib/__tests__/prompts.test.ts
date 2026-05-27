@@ -65,9 +65,7 @@ describe("getCategories", () => {
   });
 
   it("returns the single category for one prompt", () => {
-    expect(getCategories([makePrompt({ category: "writing" })])).toEqual([
-      "writing",
-    ]);
+    expect(getCategories([makePrompt({ category: "writing" })])).toEqual(["writing"]);
   });
 
   it("de-duplicates repeated categories", () => {
@@ -85,11 +83,7 @@ describe("getCategories", () => {
       makePrompt({ id: "2", category: "analysis" }),
       makePrompt({ id: "3", category: "marketing" }),
     ];
-    expect(getCategories(prompts)).toEqual([
-      "analysis",
-      "marketing",
-      "writing",
-    ]);
+    expect(getCategories(prompts)).toEqual(["analysis", "marketing", "writing"]);
   });
 
   it("works on the real seedPrompts array (no surprises with real data)", () => {
@@ -128,9 +122,7 @@ describe("getTags (F3)", () => {
   });
 
   it("drops empty / whitespace-only tags (data hygiene)", () => {
-    const prompts = [
-      makePrompt({ id: "a", tags: ["good", "", "   "] }),
-    ];
+    const prompts = [makePrompt({ id: "a", tags: ["good", "", "   "] })];
     expect(getTags(prompts)).toEqual(["good"]);
   });
 
@@ -176,11 +168,7 @@ describe("getTagsWithCounts (F-eve-2)", () => {
       makePrompt({ id: "b", tags: ["apple"] }),
       makePrompt({ id: "c", tags: ["mango"] }),
     ];
-    expect(getTagsWithCounts(prompts).map((t) => t.tag)).toEqual([
-      "apple",
-      "mango",
-      "zebra",
-    ]);
+    expect(getTagsWithCounts(prompts).map((t) => t.tag)).toEqual(["apple", "mango", "zebra"]);
   });
 
   it("getTags and getTagsWithCounts agree on tag order", () => {
@@ -236,9 +224,7 @@ describe("getCategoriesWithCounts (F-night-12)", () => {
       makePrompt({ id: "a", category: "writing" }),
       makePrompt({ id: "b", category: "code" }),
     ];
-    expect(getCategories(prompts)).toEqual(
-      getCategoriesWithCounts(prompts).map((c) => c.category),
-    );
+    expect(getCategories(prompts)).toEqual(getCategoriesWithCounts(prompts).map((c) => c.category));
   });
 
   it("drops empty / whitespace-only categories defensively", () => {
@@ -247,8 +233,6 @@ describe("getCategoriesWithCounts (F-night-12)", () => {
       makePrompt({ id: "b", category: "  " }),
       makePrompt({ id: "c", category: "" }),
     ];
-    expect(getCategoriesWithCounts(prompts)).toEqual([
-      { category: "writing", count: 1 },
-    ]);
+    expect(getCategoriesWithCounts(prompts)).toEqual([{ category: "writing", count: 1 }]);
   });
 });
