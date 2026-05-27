@@ -30,7 +30,7 @@ export function ApiKeyNudge({ onOpenSettings, onDismiss }: ApiKeyNudgeProps) {
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss this notice"
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-coral-700 transition hover:bg-coral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-500 focus-visible:ring-offset-1 focus-visible:ring-offset-coral-50 dark:text-coral-200 dark:hover:bg-coral-500/20 dark:focus-visible:ring-offset-night"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-coral-700 transition hover:bg-coral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-500 focus-visible:ring-offset-1 focus-visible:ring-offset-coral-50 dark:text-coral-200 dark:hover:bg-coral-500/20 dark:focus-visible:ring-offset-night"
         >
           <CloseIcon className="h-4 w-4" aria-hidden />
         </button>
