@@ -228,4 +228,59 @@ describe("streamClaude onUsage callback (F-usage-a)", () => {
       restore();
     }
   });
+
+  it("does NOT call onUsage when an AbortError is thrown (user hits Stop)", async () => {
+    // Simulate the fetch itself being aborted: the error propagates as an
+    // AbortError before any SSE events are read, so onUsage must not fire.
+    const abortError = new DOMException("The user aborted a request.", "AbortError");
+    const original = globalThis.fetch;
+    // @ts-expect-error — test mock
+    globalThis.fetch = async () => { throw abortError; };
+    try {
+      const received: unknown[] = [];
+      await expect(
+        streamClaude({
+          apiKey: "test-key",
+          model: "claude-3-5-haiku-20241022",
+          maxTokens: 1024,
+          prompt: "Hello",
+          onText: () => {},
+          onUsage: (u) => received.push(u),
+        })
+      ).rejects.toThrow();
+      expect(received).toHaveLength(0);
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+
+  it("does NOT call onUsage when an error SSE event arrives in the stream", async () => {
+    // An 'error' type SSE event causes streamClaude to throw a ClaudeError,
+    // aborting the stream before the normal message_delta/message_stop.
+    const SSE_ERROR_EVENT =
+      `data: ${JSON.stringify({ type: "error", error: { message: "internal error" } })}\n\n`;
+    const events = [
+      SSE_MESSAGE_START(50),
+      SSE_CONTENT_BLOCK_START,
+      SSE_TEXT_DELTA("partial"),
+      SSE_ERROR_EVENT,
+    ];
+    const restore = mockFetchOk(makeStream(events));
+    try {
+      const received: unknown[] = [];
+      await expect(
+        streamClaude({
+          apiKey: "test-key",
+          model: "claude-3-5-haiku-20241022",
+          maxTokens: 1024,
+          prompt: "Hello",
+          onText: () => {},
+          onUsage: (u) => received.push(u),
+        })
+      ).rejects.toThrow();
+      expect(received).toHaveLength(0);
+    } finally {
+      restore();
+    }
+  });
 });
