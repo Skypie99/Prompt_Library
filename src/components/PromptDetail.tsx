@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
-import { ClaudeError, streamClaude } from "@/lib/anthropic";
+import { ClaudeError, streamClaude, type TokenUsage } from "@/lib/anthropic";
 import { modelLabel, type Settings } from "@/lib/settings";
 import { appendRun, generateRunId, loadRuns, type StoredRun } from "@/lib/runs";
 import { clearValues, loadValues, saveValues } from "@/lib/library";
@@ -116,6 +116,16 @@ async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
+// F-usage — format a token count with thousands separators.
+// Uses Intl.NumberFormat ("en") with a fallback for unusual environments.
+function formatTokens(n: number): string {
+  try {
+    return n.toLocaleString("en");
+  } catch {
+    return String(n);
+  }
+}
+
 export function PromptDetail({
   prompt,
   settings,
@@ -161,6 +171,12 @@ export function PromptDetail({
   // is triggered from the history panel below it; otherwise the user stays
   // looking at History and doesn't see the new stream above.
   const responsePanelRef = useRef<HTMLDivElement>(null);
+  // F-usage — captured token counts from the API for the current/last run.
+  // null until a completed run reports usage via onUsage callback.
+  const [currentTokensUsed, setCurrentTokensUsed] = useState<{ input: number; output: number } | null>(null);
+  // Ref so onUsage callback can write the value without triggering a re-render
+  // mid-stream; the state is set once at run completion alongside appendRun.
+  const pendingUsageRef = useRef<TokenUsage | null>(null);
 
   const variables = useMemo(() => (prompt ? extractVariables(prompt) : []), [prompt]);
   const segments = useMemo(() => (prompt ? parseBody(prompt.body) : []), [prompt]);
@@ -182,6 +198,8 @@ export function PromptDetail({
     setError(null);
     setRetryCountdown(null);
     setRuns(prompt ? loadRuns(prompt.id) : []);
+    setCurrentTokensUsed(null);
+    pendingUsageRef.current = null;
     if (prompt) {
       requestAnimationFrame(() => {
         panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
@@ -291,6 +309,8 @@ export function PromptDetail({
     }
     setRetryCountdown(null);
     setResponse("");
+    setCurrentTokensUsed(null);
+    pendingUsageRef.current = null;
     setRunning(true);
 
     const controller = new AbortController();
@@ -322,6 +342,10 @@ export function PromptDetail({
         onText: (chunk) => {
           buffered += chunk;
           setResponse((prev) => prev + chunk);
+        },
+        onUsage: (usage) => {
+          // Capture in a ref — no re-render needed mid-stream.
+          pendingUsageRef.current = usage;
         },
       });
     } catch (err) {
@@ -364,6 +388,15 @@ export function PromptDetail({
       // Persist regardless of outcome — completed, aborted, and errored runs
       // are all useful in history (the errored ones tell you what went wrong
       // and let you re-run the same inputs once the cause is fixed).
+      // Capture usage from the ref (set by onUsage callback) and write
+      // to state so the response panel header can display it.
+      const capturedUsage = pendingUsageRef.current as TokenUsage | null;
+      const tokensUsed =
+        capturedUsage !== null
+          ? { input: capturedUsage.inputTokens, output: capturedUsage.outputTokens }
+          : undefined;
+      if (tokensUsed) setCurrentTokensUsed(tokensUsed);
+
       const entry: StoredRun = {
         id: generateRunId(),
         ranAt: new Date().toISOString(),
@@ -373,6 +406,7 @@ export function PromptDetail({
         response: buffered,
         status,
         ...(errorMessage ? { errorMessage } : {}),
+        ...(tokensUsed ? { tokensUsed } : {}),
       };
       const nextRuns = appendRun(prompt.id, entry);
       setRuns(nextRuns);
@@ -806,6 +840,17 @@ export function PromptDetail({
                     </button>
                   )}
                 </div>
+                {/* F-usage-c — token count line. Only shown after a run
+                    completes with usage data (not during streaming, not on
+                    error or abort). */}
+                {!running && !error && currentTokensUsed && (
+                  <p
+                    className="mb-1 text-xs text-ink-soft dark:text-paper-muted"
+                    aria-label={`Token usage: ${formatTokens(currentTokensUsed.input)} input tokens, ${formatTokens(currentTokensUsed.output)} output tokens`}
+                  >
+                    Tokens: {formatTokens(currentTokensUsed.input)} in · {formatTokens(currentTokensUsed.output)} out
+                  </p>
+                )}
 
                 {error ? (
                   <div className="rounded-md border border-teal-300 bg-teal-50 px-3 py-2.5 text-sm text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200">

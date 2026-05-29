@@ -74,3 +74,158 @@ describe("ClaudeError retryAfterSeconds field", () => {
     expect(network.retryAfterSeconds).toBeUndefined();
   });
 });
+
+// ---- F-usage: onUsage callback via streamClaude ----------------------------
+
+// Helper: create a ReadableStream from a sequence of SSE event strings.
+// Each event string should be a complete SSE data block (data: {...}\n\n).
+function makeStream(events: string[]): ReadableStream<Uint8Array> {
+  const encoder = new TextEncoder();
+  const chunks = events.map((e) => encoder.encode(e));
+  let i = 0;
+  return new ReadableStream<Uint8Array>({
+    pull(controller) {
+      if (i < chunks.length) {
+        controller.enqueue(chunks[i++]);
+      } else {
+        controller.close();
+      }
+    },
+  });
+}
+
+// Minimal SSE events that the Anthropic streaming API emits.
+const SSE_MESSAGE_START = (inputTokens: number) =>
+  `data: ${JSON.stringify({
+    type: "message_start",
+    message: { usage: { input_tokens: inputTokens } },
+  })}
+
+`;
+
+const SSE_CONTENT_BLOCK_START =
+  `data: ${JSON.stringify({ type: "content_block_start", index: 0, content_block: { type: "text", text: "" } })}
+
+`;
+
+const SSE_TEXT_DELTA = (text: string) =>
+  `data: ${JSON.stringify({ type: "content_block_delta", index: 0, delta: { type: "text_delta", text } })}
+
+`;
+
+const SSE_CONTENT_BLOCK_STOP =
+  `data: ${JSON.stringify({ type: "content_block_stop", index: 0 })}
+
+`;
+
+const SSE_MESSAGE_DELTA = (outputTokens: number) =>
+  `data: ${JSON.stringify({
+    type: "message_delta",
+    delta: { stop_reason: "end_turn" },
+    usage: { output_tokens: outputTokens },
+  })}
+
+`;
+
+const SSE_MESSAGE_STOP =
+  `data: ${JSON.stringify({ type: "message_stop" })}
+
+`;
+
+// Mock global fetch for streamClaude tests.
+function mockFetchOk(stream: ReadableStream<Uint8Array>) {
+  const original = globalThis.fetch;
+  // @ts-expect-error — test mock, not a full Response
+  globalThis.fetch = async () => ({
+    ok: true,
+    status: 200,
+    headers: { get: () => null },
+    body: stream,
+  });
+  return () => {
+    globalThis.fetch = original;
+  };
+}
+
+import { streamClaude } from "../anthropic";
+
+describe("streamClaude onUsage callback (F-usage-a)", () => {
+  it("calls onUsage with correct input and output token counts when stream completes", async () => {
+    const events = [
+      SSE_MESSAGE_START(312),
+      SSE_CONTENT_BLOCK_START,
+      SSE_TEXT_DELTA("Hello"),
+      SSE_CONTENT_BLOCK_STOP,
+      SSE_MESSAGE_DELTA(1204),
+      SSE_MESSAGE_STOP,
+    ];
+    const restore = mockFetchOk(makeStream(events));
+    try {
+      const received: { inputTokens: number; outputTokens: number }[] = [];
+      await streamClaude({
+        apiKey: "test-key",
+        model: "claude-3-5-haiku-20241022",
+        maxTokens: 1024,
+        prompt: "Hello",
+        onText: () => {},
+        onUsage: (u) => received.push(u),
+      });
+      expect(received).toHaveLength(1);
+      expect(received[0]).toEqual({ inputTokens: 312, outputTokens: 1204 });
+    } finally {
+      restore();
+    }
+  });
+
+  it("does NOT call onUsage when the stream is aborted before message_delta", async () => {
+    const controller = new AbortController();
+    // Stream that only sends message_start then stops (simulating early abort).
+    const events = [
+      SSE_MESSAGE_START(100),
+      SSE_CONTENT_BLOCK_START,
+      // No message_delta — stream ends early.
+    ];
+    const restore = mockFetchOk(makeStream(events));
+    try {
+      const received: unknown[] = [];
+      await streamClaude({
+        apiKey: "test-key",
+        model: "claude-3-5-haiku-20241022",
+        maxTokens: 1024,
+        prompt: "Hello",
+        signal: controller.signal,
+        onText: () => {},
+        onUsage: (u) => received.push(u),
+      });
+      // onUsage must NOT be called — only input_tokens arrived, not output_tokens.
+      expect(received).toHaveLength(0);
+    } finally {
+      restore();
+    }
+  });
+
+  it("is a no-op when onUsage is not provided (existing callers unaffected)", async () => {
+    const events = [
+      SSE_MESSAGE_START(10),
+      SSE_TEXT_DELTA("Hi"),
+      SSE_MESSAGE_DELTA(5),
+      SSE_MESSAGE_STOP,
+    ];
+    const restore = mockFetchOk(makeStream(events));
+    try {
+      // Must not throw when onUsage is absent.
+      await expect(
+        streamClaude({
+          apiKey: "test-key",
+          model: "claude-3-5-haiku-20241022",
+          maxTokens: 1024,
+          prompt: "Hello",
+          onText: () => {},
+          // onUsage deliberately omitted
+        })
+      ).resolves.toBeUndefined();
+    } finally {
+      restore();
+    }
+  });
+});
