@@ -16,6 +16,10 @@
 
 2. **Teal chip contrast** — active chip text is 3.25:1 (ARIA-compensated, Alex cleared it). If strict SC 1.4.3 text contrast is required → use teal-600 as active bg instead of teal-500. Alex says current is acceptable; your call.
 
+3. **Token usage display (F-usage)** — shipped with raw counts only, no USD cost estimate.
+   Open: (a) Add cost estimate? (b) Token counts shown in both panel + history — OK?
+   Current: no cost, both panels. Easy to adjust post-merge.
+
 ---
 
 ## Branches ready for Sky to merge (recommended order)
@@ -29,6 +33,8 @@
 7. `docs/features-update-2026-05-29` — FEATURES.md + this overnight summary
 8. `ci/cleanup-finder-dupes-2026-05-29` — 6 Finder " 2"/" 3" duplicate files removed, .gitignore updated; tests pass
 9. `fix/ratelimit-retry-disabled-2026-05-29` — pre-existing bug: rate-limit retry button now has `disabled={running}`; found by Peter's perf audit
+10. `feat/f-usage-token-display-2026-05-29` — per-run token usage display (input/output counts in response panel + RunHistory). Quinn spec, 347 tests, Alex PASS ✓
+11. `a11y/header-focus-teal-2026-05-29` — Header Search/Settings focus rings + Search aria-label. Branches off teal. Alex PASS ✓. **Must merge AFTER feat/teal-reskin-2026-05-29.**
 
 ---
 
@@ -92,6 +98,13 @@ All 14 are `@typescript-eslint/ban-ts-comment` in 7 test files — pre-existing 
 3. **Shamus react-hooks + ban-ts-comment cleanup** — 14 test-file lint errors remain on the ESLint branch; a targeted Gary/Shamus pass would clear CI to green.
 4. **F5 — Export/Import library** — next big user-facing feature in the backlog; Quinn's spec is ready.
 5. **Peter's remaining open finding** — `querySelector` in variable extraction should be wrapped in try/catch (or sanitize variable names at extraction point). Low-risk; worth a short Shamus pass after the Wave 8 merges land.
+
+---
+
+## ⚠️ Merge order dependencies
+1. `ci/eslint-setup-2026-05-29` → then `fix/ratelimit-retry-disabled-2026-05-29` (stacked)
+2. `feat/teal-reskin-2026-05-29` → then `a11y/header-focus-teal-2026-05-29` (branches off teal)
+All other branches are independent of each other.
 
 ---
 
