@@ -35,7 +35,8 @@ export function Header({
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenSearch}
-            className="hidden items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-ink-muted transition hover:border-teal-300 hover:text-teal-600 sm:flex dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-400"
+            aria-label="Search prompts"
+            className="hidden items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream sm:flex dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-400 dark:focus-visible:ring-offset-night"
           >
             <SearchIcon className="h-4 w-4" />
             Search
@@ -50,7 +51,7 @@ export function Header({
             onClick={onOpenShortcuts}
             aria-label="Keyboard shortcuts"
             title="Keyboard shortcuts (?)"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-400 dark:focus-visible:ring-offset-night"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-400 dark:focus-visible:ring-offset-night"
           >
             <span aria-hidden className="text-base font-semibold">
               ?
@@ -62,7 +63,7 @@ export function Header({
           <button
             onClick={onOpenSettings}
             aria-label="Settings"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-400"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-400 dark:focus-visible:ring-offset-night"
           >
             <GearIcon className="h-[18px] w-[18px]" />
           </button>
