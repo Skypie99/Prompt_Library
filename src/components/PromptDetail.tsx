@@ -386,24 +386,6 @@ export function PromptDetail({
     void runWithValues(values);
   }
 
-  // Called from the history panel — drop a past run's values straight into
-  // the live form. Does NOT auto-run; user decides whether to re-run.
-  // Persists too — restored values become the new in-flight draft, so the
-  // next reopen sees them (matches the user's mental model: "I picked this
-  // run; these are my values now").
-  const handleRestoreInputs = useCallback(
-    (restored: Record<string, string>) => {
-      const next = { ...restored };
-      setValues(next);
-      if (prompt) saveValues(prompt.id, next);
-      // Move focus back to the variable area so the user can see what changed.
-      requestAnimationFrame(() => {
-        panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
-      });
-    },
-    [prompt]
-  );
-
   // F-eve-4 — "Run again" from history: restore values into the form AND
   // immediately trigger the run with those exact values (no waiting on
   // React state to flush). Persists too, like handleRestoreInputs, so the
