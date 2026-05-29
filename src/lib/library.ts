@@ -29,7 +29,7 @@ const STORAGE_KEYS = {
 // Per-prompt key prefixes. Keep the prefix list in `PER_PROMPT_PREFIXES`
 // so `purgePromptStorage()` stays a one-liner when a new feature lands.
 const PER_PROMPT_PREFIXES = [
-  "promptlib:runs:",   // F1 (run history) — added in a later commit
+  "promptlib:runs:", // F1 (run history) — added in a later commit
   "promptlib:values:", // F2 (saved variable values) — added in a later commit
 ] as const;
 
@@ -49,7 +49,7 @@ let onStorageWriteFailure: ((result: Exclude<StorageWriteResult, { ok: true }>) 
   null;
 
 export function setStorageWriteFailureHandler(
-  handler: ((result: Exclude<StorageWriteResult, { ok: true }>) => void) | null,
+  handler: ((result: Exclude<StorageWriteResult, { ok: true }>) => void) | null
 ): void {
   onStorageWriteFailure = handler;
 }
@@ -80,9 +80,7 @@ export function writeJSON(key: string, value: unknown): StorageWriteResult {
     // "NS_ERROR_DOM_QUOTA_REACHED" historically in Firefox).
     const name = (error as { name?: string } | null)?.name ?? "";
     const reason: "quota" | "unknown" =
-      name === "QuotaExceededError" || name === "NS_ERROR_DOM_QUOTA_REACHED"
-        ? "quota"
-        : "unknown";
+      name === "QuotaExceededError" || name === "NS_ERROR_DOM_QUOTA_REACHED" ? "quota" : "unknown";
     const result: Exclude<StorageWriteResult, { ok: true }> = {
       ok: false,
       reason,
@@ -233,8 +231,7 @@ export function generateId(title: string): string {
     suffix = crypto.randomUUID();
   } else {
     // 16 base-36 chars = ~83 bits of entropy — collision-safe even at scale.
-    suffix =
-      Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
+    suffix = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
   }
   return `${slugify(title)}-${suffix}`;
 }

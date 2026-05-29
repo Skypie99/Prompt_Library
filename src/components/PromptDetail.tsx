@@ -5,19 +5,9 @@ import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import { ClaudeError, streamClaude } from "@/lib/anthropic";
 import { modelLabel, type Settings } from "@/lib/settings";
-import {
-  appendRun,
-  generateRunId,
-  loadRuns,
-  type StoredRun,
-} from "@/lib/runs";
+import { appendRun, generateRunId, loadRuns, type StoredRun } from "@/lib/runs";
 import { clearValues, loadValues, saveValues } from "@/lib/library";
-import {
-  countFilled,
-  extractVariables,
-  parseBody,
-  substituteBody,
-} from "@/lib/variables";
+import { countFilled, extractVariables, parseBody, substituteBody } from "@/lib/variables";
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
 import { Markdown } from "./Markdown";
 import { RunHistory } from "./RunHistory";
@@ -305,7 +295,7 @@ export function PromptDetail({
       } else {
         const fallback = new ClaudeError(
           "unknown",
-          "Something unexpected happened. Please try again.",
+          "Something unexpected happened. Please try again."
         );
         setError(fallback);
         status = "errored";
@@ -354,7 +344,7 @@ export function PromptDetail({
         panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
       });
     },
-    [prompt],
+    [prompt]
   );
 
   // F-eve-4 — "Run again" from history: restore values into the form AND
@@ -436,7 +426,7 @@ export function PromptDetail({
                   >
                     #{tag}
                   </span>
-                ),
+                )
               )}
             </div>
             <h2 className="mt-2 font-display text-2xl font-semibold text-ink dark:text-paper">
@@ -639,7 +629,7 @@ export function PromptDetail({
                           placeholder={variable.placeholder}
                           className={clsx(
                             "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30",
-                            (values[variable.name] ?? "") !== "" && "pr-8",
+                            (values[variable.name] ?? "") !== "" && "pr-8"
                           )}
                         />
                         {(values[variable.name] ?? "") !== "" && (
@@ -650,7 +640,9 @@ export function PromptDetail({
                             tabIndex={-1}
                             className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-ink-soft transition hover:bg-cream hover:text-ink dark:hover:bg-night-border dark:hover:text-paper"
                           >
-                            <span aria-hidden className="text-base leading-none">×</span>
+                            <span aria-hidden className="text-base leading-none">
+                              ×
+                            </span>
                           </button>
                         )}
                       </div>
@@ -669,7 +661,7 @@ export function PromptDetail({
                   "flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95",
                   copied
                     ? "border-coral-500 bg-coral-500 text-white"
-                    : "border-border text-ink hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:text-paper dark:hover:text-coral-300",
+                    : "border-border text-ink hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:text-paper dark:hover:text-coral-300"
                 )}
               >
                 {copied ? (
@@ -711,7 +703,8 @@ export function PromptDetail({
               <span
                 aria-label={`Estimated length: ${finalText.length.toLocaleString()} characters, about ${tokenEstimate.toLocaleString()} tokens`}
               >
-                ~{finalText.length.toLocaleString()} chars · ~{tokenEstimate.toLocaleString()} tokens
+                ~{finalText.length.toLocaleString()} chars · ~{tokenEstimate.toLocaleString()}{" "}
+                tokens
               </span>
               <span className="mx-2 text-ink-soft/60">·</span>
               {modelLabel(settings.model)} · <kbd className="font-sans">⌘↵</kbd> to run

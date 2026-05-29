@@ -45,6 +45,7 @@ import { PromptDetail } from "./PromptDetail";
 import { SettingsModal } from "./SettingsModal";
 import { EmptyHint } from "./EmptyHint";
 import { OnboardingHint } from "./OnboardingHint";
+import { ApiKeyNudge } from "./ApiKeyNudge";
 import { PromptForm, type PromptFormValues } from "./PromptForm";
 import { ShortcutsModal } from "./ShortcutsModal";
 import { ClockIcon, PlusIcon, SearchIcon, SparkleIcon, StarIcon } from "./icons";
@@ -97,6 +98,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // F-eve-1 — sort mode for the All prompts grid. Defaults to "newest"
   // (the same createdAt-desc order the app has always used).
   const [sortMode, setSortMode] = useState<SortMode>(DEFAULT_SORT);
+  // F-r1 — first-run API key nudge. False initially to avoid SSR hydration
+  // mismatch; set on mount if no key + no prior runs + not session-dismissed.
+  const [showApiKeyNudge, setShowApiKeyNudge] = useState(false);
 
   useEffect(() => {
     // Migrate the on-disk shape BEFORE any reader runs, so v0 -> v1 keys are
@@ -114,12 +118,28 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       setStorageWarning(msg);
     });
 
-    setSettings(loadSettings());
+    const loadedSettings = loadSettings();
+    setSettings(loadedSettings);
     setUserPrompts(loadUserPrompts());
     setFavorites(loadFavorites());
     setRecent(loadRecent());
-    setRunCounts(loadAllRunCounts());
+    const loadedCounts = loadAllRunCounts();
+    setRunCounts(loadedCounts);
     setLastRunIsos(loadAllLastRunIsos());
+
+    // F-r1 — show nudge only when: no API key stored, not session-dismissed,
+    // and no prior runs (a completed run is proof the key works).
+    if (!loadedSettings.apiKey) {
+      const nudgeDismissed = (() => {
+        try {
+          return sessionStorage.getItem("promptlib:keyNudgeDismissed") === "1";
+        } catch {
+          return false;
+        }
+      })();
+      const hasAnyRun = Array.from(loadedCounts.values()).some((c) => c > 0);
+      setShowApiKeyNudge(!nudgeDismissed && !hasAnyRun);
+    }
     setDensity(loadDensity());
     setSortMode(loadSort());
     setShowOnboarding(!loadOnboarded());
@@ -132,7 +152,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // ---- Derived data ----
   const allPrompts = useMemo(
     () => mergePrompts(userPrompts, seedPrompts),
-    [userPrompts, seedPrompts],
+    [userPrompts, seedPrompts]
   );
   const promptById = useMemo(() => {
     const map = new Map<string, Prompt>();
@@ -141,14 +161,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   }, [allPrompts]);
 
   // F-night-12 — counts come along for the CategoryChips badge.
-  const categoriesWithCounts = useMemo(
-    () => getCategoriesWithCounts(allPrompts),
-    [allPrompts],
-  );
+  const categoriesWithCounts = useMemo(() => getCategoriesWithCounts(allPrompts), [allPrompts]);
   // String-only list is what the PromptForm category combobox needs.
   const categories = useMemo(
     () => categoriesWithCounts.map((c) => c.category),
-    [categoriesWithCounts],
+    [categoriesWithCounts]
   );
   // F-eve-2 — each entry carries its count for the TagChips badge. Named
   // `tagsWithCounts` (not just `tags`) so every call site below reads
@@ -178,11 +195,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
   const favoritePrompts = useMemo(
     () => favorites.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
-    [favorites, promptById],
+    [favorites, promptById]
   );
   const recentPrompts = useMemo(
     () => recent.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
-    [recent, promptById],
+    [recent, promptById]
   );
 
   const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites]);
@@ -191,6 +208,20 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const updateSettings = useCallback((next: Settings) => {
     setSettings(next);
     saveSettings(next);
+    // F-r1 — once a key is saved, suppress the nudge for this session.
+    if (next.apiKey) {
+      setShowApiKeyNudge(false);
+      try {
+        sessionStorage.setItem("promptlib:keyNudgeDismissed", "1");
+      } catch {}
+    }
+  }, []);
+
+  const dismissApiKeyNudge = useCallback(() => {
+    setShowApiKeyNudge(false);
+    try {
+      sessionStorage.setItem("promptlib:keyNudgeDismissed", "1");
+    } catch {}
   }, []);
 
   const openSettings = useCallback((notice?: string) => {
@@ -220,7 +251,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       setActivePrompt(prompt);
       recordRecent(prompt.id);
     },
-    [recordRecent],
+    [recordRecent]
   );
 
   const dismissOnboarding = useCallback(() => {
@@ -327,7 +358,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       }
       setForm(null);
     },
-    [form, recordRecent],
+    [form, recordRecent]
   );
 
   // Global shortcuts
@@ -369,7 +400,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const filteredHeading =
     activeCategory && activeTag
       ? `${activeCategory} · #${activeTag}`
-      : activeCategory ?? (activeTag ? `#${activeTag}` : "All prompts");
+      : (activeCategory ?? (activeTag ? `#${activeTag}` : "All prompts"));
 
   return (
     <div className="min-h-screen">
@@ -396,6 +427,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
             </button>
           </div>
         </div>
+      )}
+
+      {showApiKeyNudge && (
+        <ApiKeyNudge onOpenSettings={() => openSettings()} onDismiss={dismissApiKeyNudge} />
       )}
 
       <main className="mx-auto max-w-5xl px-6">
@@ -444,8 +479,12 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                   className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
                 >
                   <ClockIcon className="h-3.5 w-3.5 shrink-0 text-coral-500" aria-hidden />
-                  <span aria-hidden className="shrink-0">Resume</span>
-                  <span aria-hidden className="shrink-0 text-ink-soft/60">→</span>
+                  <span aria-hidden className="shrink-0">
+                    Resume
+                  </span>
+                  <span aria-hidden className="shrink-0 text-ink-soft/60">
+                    →
+                  </span>
                   {/* flex-1 + min-w-0 are the magic that lets `truncate`
                       actually clip — without min-w-0 a flex child stays
                       at its content's intrinsic width and overflows. */}
@@ -460,7 +499,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
         {showOnboarding && <OnboardingHint onDismiss={dismissOnboarding} />}
 
-        <CategoryChips categories={categoriesWithCounts} active={activeCategory} onSelect={setActiveCategory} />
+        <CategoryChips
+          categories={categoriesWithCounts}
+          active={activeCategory}
+          onSelect={setActiveCategory}
+        />
         <TagChips tags={tagsWithCounts} active={activeTag} onSelect={setActiveTag} />
 
         {/* Favorites: either the populated grid, or a soft "you haven't
@@ -513,7 +556,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
               <ClockIcon className="h-5 w-5 text-coral-500" />
-              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">Recent</h2>
+              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
+                Recent
+              </h2>
             </div>
             <PromptGrid
               prompts={recentPrompts}
@@ -530,7 +575,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
               <ClockIcon className="h-5 w-5 text-coral-500" />
-              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">Recent</h2>
+              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
+                Recent
+              </h2>
             </div>
             <EmptyHint
               icon={ClockIcon}
@@ -621,7 +668,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               // filtered case (dashed tile) but a forward-looking CTA that
               // matches the header's "New prompt" affordance — no dead end.
               <div className="rounded-xl border border-dashed border-border bg-cream/40 px-6 py-10 text-center text-sm text-ink-muted dark:border-night-border dark:bg-night/40 dark:text-paper-muted">
-                <SparkleIcon aria-hidden className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted" />
+                <SparkleIcon
+                  aria-hidden
+                  className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted"
+                />
                 <p className="mt-2 font-medium text-ink dark:text-paper">Your library is empty</p>
                 <p className="mt-1 text-xs">Create your first prompt to get started.</p>
                 <button
@@ -653,13 +703,15 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           const totalRuns = Array.from(runCounts.values()).reduce((a, b) => a + b, 0);
           return (
             <footer className="border-t border-border/50 py-6 text-center text-xs text-ink-soft dark:border-night-border/50 dark:text-paper-muted">
-              <span aria-label={`Library stats: ${allPrompts.length} prompts, ${favorites.length} favorites, ${totalRuns} total runs`}>
+              <span
+                aria-label={`Library stats: ${allPrompts.length} prompts, ${favorites.length} favorites, ${totalRuns} total runs`}
+              >
                 {allPrompts.length} prompts · {favorites.length} favorites · {totalRuns} total runs
               </span>
-              <span aria-hidden className="mx-2">·</span>
-              <span>
-                Prompt Library v0.1 · All data stays in this browser
+              <span aria-hidden className="mx-2">
+                ·
               </span>
+              <span>Prompt Library v0.1 · All data stays in this browser</span>
             </footer>
           );
         })()}

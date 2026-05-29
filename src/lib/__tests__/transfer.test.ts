@@ -17,12 +17,7 @@ import {
   parseImport,
   type ExportV1,
 } from "../transfer";
-import {
-  saveFavorites,
-  saveRecent,
-  saveUserPrompts,
-  saveValues,
-} from "../library";
+import { saveFavorites, saveRecent, saveUserPrompts, saveValues } from "../library";
 import { saveRuns } from "../runs";
 import type { Prompt } from "../types";
 import type { StoredRun } from "../runs";

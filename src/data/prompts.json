@@ -21,7 +21,11 @@
     "variables": [
       { "name": "recipientName", "label": "Recipient name", "placeholder": "e.g. Jordan" },
       { "name": "company", "label": "Their company", "placeholder": "e.g. Northwind Labs" },
-      { "name": "valueProp", "label": "Core value proposition", "placeholder": "e.g. cut onboarding time in half" }
+      {
+        "name": "valueProp",
+        "label": "Core value proposition",
+        "placeholder": "e.g. cut onboarding time in half"
+      }
     ],
     "category": "Sales",
     "tags": ["email", "outreach", "sales"],

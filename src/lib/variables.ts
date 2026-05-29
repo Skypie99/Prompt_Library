@@ -38,7 +38,7 @@ function isLikelyMultiline(name: string, placeholder?: string): boolean {
 // formally declared (e.g. user-added prompts later).
 export function extractVariables(prompt: Prompt): ResolvedVariable[] {
   const declared = new Map<string, PromptVariable>(
-    prompt.variables.map((variable) => [variable.name, variable]),
+    prompt.variables.map((variable) => [variable.name, variable])
   );
   const seen = new Set<string>();
   const result: ResolvedVariable[] = [];
@@ -94,10 +94,7 @@ export function substituteBody(body: string, values: Record<string, string>): st
 }
 
 // How many of the detected variables currently have a non-empty value.
-export function countFilled(
-  variables: ResolvedVariable[],
-  values: Record<string, string>,
-): number {
+export function countFilled(variables: ResolvedVariable[], values: Record<string, string>): number {
   return variables.filter((variable) => (values[variable.name] ?? "").trim() !== "").length;
 }
 

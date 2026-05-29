@@ -83,7 +83,7 @@ function PromptBodyPreview({ body, sampleFill }: { body: string; sampleFill: boo
             >
               {segment.raw}
             </span>
-          ),
+          )
         )}
       </pre>
     </div>
@@ -157,7 +157,10 @@ export function PromptForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 animate-fade-in bg-ink/40 backdrop-blur-sm" onClick={onCancel} />
+      <div
+        className="absolute inset-0 animate-fade-in bg-ink/40 backdrop-blur-sm"
+        onClick={onCancel}
+      />
 
       <div className="relative flex max-h-[88vh] w-full max-w-2xl animate-scale-in flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface">
         <div className="flex items-center justify-between border-b border-border px-6 py-4 dark:border-night-border">
@@ -175,7 +178,10 @@ export function PromptForm({
 
         <div className="scrollbar-soft space-y-4 overflow-y-auto px-6 py-5">
           <div>
-            <label htmlFor="pf-title" className="mb-1 block text-sm font-medium text-ink dark:text-paper">
+            <label
+              htmlFor="pf-title"
+              className="mb-1 block text-sm font-medium text-ink dark:text-paper"
+            >
               Title <span className="text-coral-500">*</span>
             </label>
             <input
@@ -205,7 +211,10 @@ export function PromptForm({
 
           <div>
             <div className="mb-1 flex items-center justify-between gap-3">
-              <label htmlFor="pf-body" className="block text-sm font-medium text-ink dark:text-paper">
+              <label
+                htmlFor="pf-body"
+                className="block text-sm font-medium text-ink dark:text-paper"
+              >
                 Prompt body <span className="text-coral-500">*</span>
               </label>
               {/* F-n2-8 — one-click insert of {{}} at the caret. Caret
@@ -300,7 +309,10 @@ export function PromptForm({
             </div>
 
             <div>
-              <label htmlFor="pf-tags" className="mb-1 block text-sm font-medium text-ink dark:text-paper">
+              <label
+                htmlFor="pf-tags"
+                className="mb-1 block text-sm font-medium text-ink dark:text-paper"
+              >
                 Tags
               </label>
               <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-border bg-cream/50 px-2 py-1.5 focus-within:border-coral-400 focus-within:ring-2 focus-within:ring-coral-200 dark:border-night-border dark:bg-night dark:focus-within:ring-coral-500/30">
@@ -334,9 +346,7 @@ export function PromptForm({
                   library, shown as one-click chips. Hidden when none
                   remain to suggest (all already added). */}
               {(() => {
-                const remaining = (suggestedTags ?? []).filter(
-                  (t) => !tags.includes(t),
-                );
+                const remaining = (suggestedTags ?? []).filter((t) => !tags.includes(t));
                 if (remaining.length === 0) return null;
                 // Cap at 8 to keep the form compact.
                 const visible = remaining.slice(0, 8);

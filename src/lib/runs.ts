@@ -135,13 +135,9 @@ export function removeRun(promptId: string, runId: string): StoredRun[] {
  * caller can put it into state without re-loading from storage. An empty
  * string clears the label.
  */
-export function setRunLabel(
-  promptId: string,
-  runId: string,
-  label: string,
-): StoredRun[] {
+export function setRunLabel(promptId: string, runId: string, label: string): StoredRun[] {
   const next = loadRuns(promptId).map((r) =>
-    r.id === runId ? { ...r, label: label.trim() || undefined } : r,
+    r.id === runId ? { ...r, label: label.trim() || undefined } : r
   );
   saveRuns(promptId, next);
   return next;
@@ -238,9 +234,10 @@ export function generateRunId(): string {
 
 // ---- presentation helpers --------------------------------------------------
 
-const RELATIVE = typeof Intl !== "undefined" && "RelativeTimeFormat" in Intl
-  ? new Intl.RelativeTimeFormat("en", { numeric: "auto" })
-  : null;
+const RELATIVE =
+  typeof Intl !== "undefined" && "RelativeTimeFormat" in Intl
+    ? new Intl.RelativeTimeFormat("en", { numeric: "auto" })
+    : null;
 
 /**
  * Render a recent ISO timestamp as "just now" / "5 min ago" / "2 hr ago" /

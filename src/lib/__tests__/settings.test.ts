@@ -12,18 +12,17 @@
  *  - modelLabel: known id → human label; unknown id → raw id (so a future
  *    model rolled out before this catalog is updated still renders).
  *  - loadSettings: applies the documented defaults, falls back gracefully
- *    when localStorage is missing/disabled, and validates the stored model.
+ *    when localStorage is missing/disabled, validates the stored model,
+ *    and clamps stored maxTokens into [MIN_MAX_TOKENS, MAX_MAX_TOKENS]
+ *    (closed 2026-05-25 — load-time and save-time now share one range).
  *  - saveSettings: round-trips through loadSettings.
- *  - **Known issue documented as a test**: loadSettings does NOT clamp the
- *    upper bound of maxTokens, only the "must be finite" rule. A stored
- *    `Infinity`-coerced or absurdly large value flows through. Once the
- *    fix lands (proposed in the existing QA report), flip this test from
- *    `toBe(1e9)` to the clamped value.
  */
 
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_MODEL,
+  MAX_MAX_TOKENS,
+  MIN_MAX_TOKENS,
   MODELS,
   loadSettings,
   modelLabel,
@@ -34,25 +33,25 @@ import {
 // settings.ts only uses get/set; that's all we need to emulate.
 function installLocalStorage(): Record<string, string> {
   const store: Record<string, string> = {};
-  const storage: Pick<Storage, "getItem" | "setItem" | "removeItem" | "clear" | "length" | "key"> = {
-    getItem: (k: string) => (k in store ? store[k]! : null),
-    setItem: (k: string, v: string) => {
-      store[k] = String(v);
-    },
-    removeItem: (k: string) => {
-      delete store[k];
-    },
-    clear: () => {
-      for (const k of Object.keys(store)) delete store[k];
-    },
-    length: 0,
-    key: () => null,
-  };
+  const storage: Pick<Storage, "getItem" | "setItem" | "removeItem" | "clear" | "length" | "key"> =
+    {
+      getItem: (k: string) => (k in store ? store[k]! : null),
+      setItem: (k: string, v: string) => {
+        store[k] = String(v);
+      },
+      removeItem: (k: string) => {
+        delete store[k];
+      },
+      clear: () => {
+        for (const k of Object.keys(store)) delete store[k];
+      },
+      length: 0,
+      key: () => null,
+    };
   (globalThis as unknown as { window: { localStorage: Storage } }).window = {
     localStorage: storage as Storage,
   };
-  (globalThis as unknown as { localStorage: Storage }).localStorage =
-    storage as Storage;
+  (globalThis as unknown as { localStorage: Storage }).localStorage = storage as Storage;
   return store;
 }
 
@@ -148,16 +147,27 @@ describe("loadSettings + saveSettings (client)", () => {
   });
 });
 
-describe("loadSettings — known upper-bound gap (documented, not fixed)", () => {
-  // loadSettings only enforces Number.isFinite, so an absurdly large stored
-  // value passes through. The SettingsModal clamps on the save path, but if
-  // someone hand-edits localStorage (or migrates from an older settings
-  // schema) the unclamped value will load. This test pins the *current*
-  // behaviour so the day someone adds upper-bound clamping, the test will
-  // fail loudly and remind them to also remove this comment.
-  it("currently does not clamp absurdly-large stored maxTokens (gap to close)", () => {
+describe("loadSettings — maxTokens clamp (load-time and save-time share one range)", () => {
+  // Closed 2026-05-25 (Dana data/auto-2026-05-25-dana-clamp-maxtokens):
+  // loadSettings now applies the same [MIN_MAX_TOKENS, MAX_MAX_TOKENS]
+  // clamp that SettingsModal.handleSave already enforces on the save path,
+  // so a hand-edited or pre-clamp localStorage value can never reach the
+  // Anthropic API as an absurd number.
+  it("clamps an absurdly-large stored maxTokens down to MAX_MAX_TOKENS", () => {
     const store = installLocalStorage();
     store["promptlib:maxTokens"] = "1000000000";
-    expect(loadSettings().maxTokens).toBe(1_000_000_000);
+    expect(loadSettings().maxTokens).toBe(MAX_MAX_TOKENS);
+  });
+
+  it("clamps a stored maxTokens below MIN_MAX_TOKENS up to MIN_MAX_TOKENS", () => {
+    const store = installLocalStorage();
+    store["promptlib:maxTokens"] = "10";
+    expect(loadSettings().maxTokens).toBe(MIN_MAX_TOKENS);
+  });
+
+  it("rounds a fractional stored maxTokens to the nearest integer inside the range", () => {
+    const store = installLocalStorage();
+    store["promptlib:maxTokens"] = "512.7";
+    expect(loadSettings().maxTokens).toBe(513);
   });
 });

@@ -9,8 +9,7 @@ import { useEffect, useRef, type TextareaHTMLAttributes } from "react";
 // (resize-y) — once the user drags, our measurement stops being authoritative
 // for THAT keystroke but resumes on the next one. Acceptable tradeoff
 // for ~30 lines of code vs ResizeObserver + drag tracking.
-interface AutoGrowTextareaProps
-  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "rows"> {
+interface AutoGrowTextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "rows"> {
   value: string;
   /** Minimum rows-equivalent height — used for the initial render before
    *  the ref attaches. Falls back to 5 (matches the previous fixed-rows). */
@@ -41,13 +40,5 @@ export function AutoGrowTextarea({
     return () => cancelAnimationFrame(id);
   }, [value, maxHeightPx]);
 
-  return (
-    <textarea
-      ref={ref}
-      value={value}
-      rows={minRows}
-      className={className}
-      {...rest}
-    />
-  );
+  return <textarea ref={ref} value={value} rows={minRows} className={className} {...rest} />;
 }

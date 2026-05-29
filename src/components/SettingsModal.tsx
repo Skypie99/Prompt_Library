@@ -66,6 +66,10 @@ export function SettingsModal({
   // F-n2-10 — destructive "Reset all data" confirm gate.
   const [confirmingReset, setConfirmingReset] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  // F5 — retain reference to the element that triggered the modal so we can
+  // restore focus when it closes.
+  const triggerRef = useRef<Element | null>(null);
 
   // Sync the form to the saved settings each time the modal opens, and
   // reset any in-flight import state so a closed-then-reopened modal is
@@ -95,6 +99,53 @@ export function SettingsModal({
       setStorageUsage(getStorageUsage());
     }
   }, [importState]);
+
+  // F5 — Focus management: move focus into the modal on open, return it on close.
+  useEffect(() => {
+    if (open) {
+      triggerRef.current = document.activeElement;
+      const modal = modalRef.current;
+      if (modal) {
+        const focusable = modal.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        focusable[0]?.focus();
+      }
+    } else {
+      (triggerRef.current as HTMLElement | null)?.focus();
+    }
+  }, [open]);
+
+  // F5 — Keyboard focus trap: Tab/Shift+Tab cycle within the modal.
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Tab") return;
+      const modal = modalRef.current;
+      if (!modal) return;
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => !el.hasAttribute("disabled"));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
 
   if (!open) return null;
 
@@ -170,13 +221,19 @@ export function SettingsModal({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-md animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-modal-title"
+        className="relative w-full max-w-md animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface"
+      >
         <div className="flex items-center justify-between border-b border-border px-6 py-4 dark:border-night-border">
-          <h2 className="font-display text-xl font-semibold text-ink dark:text-paper">Settings</h2>
+          <h2 id="settings-modal-title" className="font-display text-xl font-semibold text-ink dark:text-paper">Settings</h2>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
           >
             <CloseIcon className="h-[18px] w-[18px]" />
           </button>
@@ -197,7 +254,7 @@ export function SettingsModal({
               </label>
               <button
                 onClick={() => setShowKey((s) => !s)}
-                className="text-xs font-medium text-coral-600 hover:text-coral-700 dark:text-coral-400"
+                className="text-xs font-medium text-coral-700 hover:text-coral-800 dark:text-coral-400"
               >
                 {showKey ? "Hide" : "Show"}
               </button>
@@ -213,14 +270,17 @@ export function SettingsModal({
               className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
             />
             <p className="mt-1.5 text-xs text-ink-soft dark:text-paper-muted">
-              Your key is stored locally in your browser and is only sent to Anthropic when you run a
-              prompt.
+              Your key is stored locally in your browser and is only sent to Anthropic when you run
+              a prompt.
             </p>
           </div>
 
           {/* Model */}
           <div>
-            <label htmlFor="model" className="mb-1 block text-sm font-medium text-ink dark:text-paper">
+            <label
+              htmlFor="model"
+              className="mb-1 block text-sm font-medium text-ink dark:text-paper"
+            >
               Model
             </label>
             <select
@@ -355,9 +415,7 @@ export function SettingsModal({
                     </button>
                     <button
                       type="button"
-                      onClick={() =>
-                        setImportState({ ...importState, confirmingReplace: true })
-                      }
+                      onClick={() => setImportState({ ...importState, confirmingReplace: true })}
                       className="rounded-md border border-coral-300 px-3 py-1.5 text-sm font-medium text-coral-700 transition hover:bg-coral-50 dark:border-coral-500/40 dark:text-coral-300 dark:hover:bg-coral-500/10"
                     >
                       Replace my library
@@ -377,15 +435,13 @@ export function SettingsModal({
                   <div className="mt-3 rounded-md border border-coral-300 bg-coral-50 p-2.5 dark:border-coral-500/40 dark:bg-coral-500/10">
                     <p className="text-xs text-coral-900 dark:text-coral-100">
                       This will delete your existing prompts, favorites, recent, and run history,
-                      then load the file. Settings (API key, model, theme) are kept. This
-                      can&apos;t be undone.
+                      then load the file. Settings (API key, model, theme) are kept. This can&apos;t
+                      be undone.
                     </p>
                     <div className="mt-2 flex gap-2">
                       <button
                         type="button"
-                        onClick={() =>
-                          setImportState({ ...importState, confirmingReplace: false })
-                        }
+                        onClick={() => setImportState({ ...importState, confirmingReplace: false })}
                         className="rounded-md border border-coral-300 px-2.5 py-1 text-xs font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
                       >
                         Cancel
@@ -451,8 +507,7 @@ export function SettingsModal({
                     ))}
                 </ul>
                 <p className="mt-2 text-[11px] text-ink-soft dark:text-paper-muted">
-                  All stored in this browser. Typical browser quota is ~5–10 MB
-                  per site.
+                  All stored in this browser. Typical browser quota is ~5–10 MB per site.
                 </p>
               </section>
             )}
@@ -474,8 +529,8 @@ export function SettingsModal({
               {!confirmingReset ? (
                 <div className="mt-2 flex items-center justify-between gap-3">
                   <p className="text-xs text-ink-muted dark:text-paper-muted">
-                    Delete every prompt, favorite, recent, run, and saved
-                    value. Keeps your API key and theme.
+                    Delete every prompt, favorite, recent, run, and saved value. Keeps your API key
+                    and theme.
                   </p>
                   <button
                     type="button"
@@ -488,9 +543,8 @@ export function SettingsModal({
               ) : (
                 <div className="mt-2">
                   <p className="text-xs text-coral-900 dark:text-coral-100">
-                    Permanently delete every prompt, favorite, recent, run, and
-                    saved value? This can&apos;t be undone. (Export first if
-                    you might want it back.)
+                    Permanently delete every prompt, favorite, recent, run, and saved value? This
+                    can&apos;t be undone. (Export first if you might want it back.)
                   </p>
                   <div className="mt-2 flex justify-end gap-2">
                     <button

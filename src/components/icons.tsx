@@ -72,10 +72,7 @@ export function CheckIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function StarIcon({
-  filled,
-  ...props
-}: SVGProps<SVGSVGElement> & { filled?: boolean }) {
+export function StarIcon({ filled, ...props }: SVGProps<SVGSVGElement> & { filled?: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -208,7 +205,10 @@ export function SparkleIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
       <path d="M12 2c.6 4.2 2.3 5.9 6.5 6.5-4.2.6-5.9 2.3-6.5 6.5-.6-4.2-2.3-5.9-6.5-6.5C9.7 7.9 11.4 6.2 12 2Z" />
-      <path d="M18.5 14c.3 2 1.1 2.8 3.1 3.1-2 .3-2.8 1.1-3.1 3.1-.3-2-1.1-2.8-3.1-3.1 2-.3 2.8-1.1 3.1-3.1Z" opacity="0.8" />
+      <path
+        d="M18.5 14c.3 2 1.1 2.8 3.1 3.1-2 .3-2.8 1.1-3.1 3.1-.3-2-1.1-2.8-3.1-3.1 2-.3 2.8-1.1 3.1-3.1Z"
+        opacity="0.8"
+      />
     </svg>
   );
 }
