@@ -781,6 +781,7 @@ export function PromptDetail({
                 <div className="flex shrink-0 gap-2">
                   <button
                     type="button"
+                    aria-label="Fill empty variables"
                     onClick={() => {
                       setShowUnfilledWarning(false);
                       // Focus the first unfilled variable input or textarea.
@@ -789,9 +790,19 @@ export function PromptDetail({
                       );
                       if (firstEmpty) {
                         requestAnimationFrame(() => {
-                          panelRef.current
-                            ?.querySelector<HTMLElement>(`#var-${firstEmpty.name}`)
-                            ?.focus();
+                          // Steve hardening 2 — variable names come from
+                          // user-authored prompts and could contain chars that
+                          // produce an invalid CSS selector. Wrap in try/catch;
+                          // on failure fall back to the first field in the form.
+                          try {
+                            panelRef.current
+                              ?.querySelector<HTMLElement>(`#var-${firstEmpty.name}`)
+                              ?.focus();
+                          } catch {
+                            panelRef.current
+                              ?.querySelector<HTMLElement>("input, textarea")
+                              ?.focus();
+                          }
                         });
                       }
                     }}
@@ -803,6 +814,11 @@ export function PromptDetail({
                     type="button"
                     onClick={() => {
                       setShowUnfilledWarning(false);
+                      // P1 — move focus to the response panel before removing
+                      // this button from DOM; prevents focus from dropping to
+                      // <body>. The panel has tabIndex={-1} to accept
+                      // programmatic focus without entering the tab order.
+                      responsePanelRef.current?.focus();
                       void runWithValues(values);
                     }}
                     className="font-medium underline underline-offset-2"
@@ -850,7 +866,9 @@ export function PromptDetail({
             {showResponsePanel && (
               <div
                 ref={responsePanelRef}
-                className="mt-5 border-t border-border pt-4 dark:border-night-border"
+                id="response-panel"
+                tabIndex={-1}
+                className="mt-5 border-t border-border pt-4 focus:outline-none dark:border-night-border"
               >
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-xs font-medium uppercase tracking-wider text-ink-soft">
@@ -869,6 +887,8 @@ export function PromptDetail({
                         type="button"
                         onClick={() => setResponseExpanded((prev) => !prev)}
                         aria-label={responseExpanded ? "Collapse response" : "Expand response"}
+                        aria-expanded={responseExpanded}
+                        aria-controls="response-content"
                         title={responseExpanded ? "Collapse response" : "Expand response"}
                         className="flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
                       >
@@ -941,13 +961,16 @@ export function PromptDetail({
                     {/* F3a — overloaded retry. 503/529 errors are transient;
                         no retry-after header, so just a plain Retry button.
                         Same handleRetry path as rate-limit — clears the error
-                        and re-invokes streamClaude with the same values. */}
+                        and re-invokes streamClaude with the same values.
+                        disabled={running} prevents concurrent request stacking
+                        while a retry is in flight (Steve hardening 1). */}
                     {error.kind === "overloaded" && (
                       <div className="mt-2">
                         <button
                           onClick={handleRetry}
+                          disabled={running}
                           aria-label="Retry"
-                          className="font-medium underline underline-offset-2"
+                          className="font-medium underline underline-offset-2 disabled:opacity-50"
                         >
                           Retry
                         </button>
@@ -956,6 +979,7 @@ export function PromptDetail({
                   </div>
                 ) : (
                   <div
+                    id="response-content"
                     className={clsx(
                       "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper",
                       // F3d — collapse to max-h-72 by default; remove cap when expanded.

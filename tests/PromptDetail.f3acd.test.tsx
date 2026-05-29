@@ -268,8 +268,8 @@ describe("PromptDetail — F3c: unfilled variable soft warning", () => {
     fireEvent.click(screen.getByRole("button", { name: "Run with Claude" }));
     expect(screen.getByRole("alert")).toBeInTheDocument();
 
-    // Click "Fill it"
-    fireEvent.click(screen.getByRole("button", { name: "Fill it" }));
+    // Click "Fill it" — accessible name is now "Fill empty variables" (P2 a11y polish)
+    fireEvent.click(screen.getByRole("button", { name: "Fill empty variables" }));
 
     // Warning dismissed
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
