@@ -142,6 +142,9 @@ export function PromptDetail({
   const [response, setResponse] = useState("");
   const [error, setError] = useState<ClaudeError | null>(null);
   const [responseCopied, setResponseCopied] = useState(false);
+  // F-r2 — countdown seconds remaining until "Retry" is enabled after a
+  // rate-limit error. null when no countdown is active.
+  const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
 
   // History state — hydrated from localStorage when a prompt opens.
   const [runs, setRuns] = useState<StoredRun[]>([]);
@@ -150,6 +153,9 @@ export function PromptDetail({
   const templateCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const responseCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // F-r2 — interval that ticks the rate-limit countdown; cleared on unmount,
+  // dismiss, or when the countdown reaches zero.
+  const retryCountdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   // F-eve-4 — used to scroll the response panel into view when "Run again"
   // is triggered from the history panel below it; otherwise the user stays
@@ -163,12 +169,18 @@ export function PromptDetail({
   // hydrate persisted variable values + run history; then focus the first field.
   useEffect(() => {
     abortRef.current?.abort();
+    // F-r2 — clear any active rate-limit countdown.
+    if (retryCountdownRef.current) {
+      clearInterval(retryCountdownRef.current);
+      retryCountdownRef.current = null;
+    }
     setValues(prompt ? loadValues(prompt.id) : {});
     setCopied(false);
     setConfirmingDelete(false);
     setRunning(false);
     setResponse("");
     setError(null);
+    setRetryCountdown(null);
     setRuns(prompt ? loadRuns(prompt.id) : []);
     if (prompt) {
       requestAnimationFrame(() => {
@@ -183,6 +195,8 @@ export function PromptDetail({
       if (copyTimer.current) clearTimeout(copyTimer.current);
       if (templateCopyTimer.current) clearTimeout(templateCopyTimer.current);
       if (responseCopyTimer.current) clearTimeout(responseCopyTimer.current);
+      // F-r2 — clear countdown interval to avoid a state update after unmount.
+      if (retryCountdownRef.current) clearInterval(retryCountdownRef.current);
       abortRef.current?.abort();
     };
   }, []);
@@ -250,6 +264,12 @@ export function PromptDetail({
     if (!prompt) return;
 
     setError(null);
+    // F-r2 — clear any stale rate-limit countdown when a new run starts.
+    if (retryCountdownRef.current) {
+      clearInterval(retryCountdownRef.current);
+      retryCountdownRef.current = null;
+    }
+    setRetryCountdown(null);
     setResponse("");
     setRunning(true);
 
@@ -292,6 +312,23 @@ export function PromptDetail({
         setError(err);
         status = "errored";
         errorMessage = err.message;
+        // F-r2 — start a countdown when the Anthropic API told us how long to
+        // wait. Clear any stale interval first (defensive; shouldn't overlap).
+        if (err.kind === "rate-limit" && err.retryAfterSeconds !== undefined) {
+          if (retryCountdownRef.current) clearInterval(retryCountdownRef.current);
+          let remaining = err.retryAfterSeconds;
+          setRetryCountdown(remaining);
+          retryCountdownRef.current = setInterval(() => {
+            remaining -= 1;
+            if (remaining <= 0) {
+              clearInterval(retryCountdownRef.current!);
+              retryCountdownRef.current = null;
+              setRetryCountdown(null);
+            } else {
+              setRetryCountdown(remaining);
+            }
+          }, 1000);
+        }
       } else {
         const fallback = new ClaudeError(
           "unknown",
@@ -373,6 +410,20 @@ export function PromptDetail({
 
   function handleStop() {
     abortRef.current?.abort();
+  }
+
+  // F-r2 — retry after a rate-limit error. Clears the countdown interval,
+  // dismisses the error, and re-invokes the run with the same variable values
+  // (no form re-fill, no lost state). Only callable when no countdown is active
+  // (or when the user clicks "Retry now" to override regardless).
+  function handleRetry() {
+    if (retryCountdownRef.current) {
+      clearInterval(retryCountdownRef.current);
+      retryCountdownRef.current = null;
+    }
+    setRetryCountdown(null);
+    setError(null);
+    void runWithValues(values);
   }
 
   function handleModalKeyDown(event: React.KeyboardEvent) {
@@ -764,6 +815,43 @@ export function PromptDetail({
                       >
                         Open Settings
                       </button>
+                    )}
+                    {/* F-r2 — rate-limit retry. When the API gives us a
+                        retry-after value, show a countdown; otherwise just
+                        an immediate "Retry now" button. The live region
+                        announces the countdown update to screen readers but
+                        only when the value changes (aria-live="polite"). We
+                        update once per second so SR isn't spammed; the
+                        aria-label on the button carries the remaining time. */}
+                    {error.kind === "rate-limit" && (
+                      <div className="mt-2 flex items-center gap-3">
+                        {retryCountdown !== null ? (
+                          <>
+                            <span
+                              aria-live="polite"
+                              aria-atomic="true"
+                              className="text-xs tabular-nums text-coral-700 dark:text-coral-300"
+                            >
+                              Retry in {retryCountdown}s
+                            </span>
+                            <button
+                              onClick={handleRetry}
+                              aria-label={`Retry — available in ${retryCountdown} seconds`}
+                              className="font-medium underline underline-offset-2 opacity-60"
+                            >
+                              Retry now
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={handleRetry}
+                            aria-label="Retry"
+                            className="font-medium underline underline-offset-2"
+                          >
+                            Retry
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 ) : (
