@@ -45,45 +45,44 @@ Everything in this app lives in this browser. If I clear my data, switch laptops
 
 **Dependencies** — None new. Builds on the existing `library.ts` helpers + `runs.ts` per-prompt storage.
 
-### F6 — Markdown rendering of Claude responses  (M)
+### F-r1 — API key nudge on first run  (S)  <!-- STATUS: partial — fix/a11y-api-nudge-2026-05-26, pending merge -->
 **User story**
-Claude's responses come back with headings, lists, code blocks, bold/italic — and the app shows them as a wall of plain text. I want them rendered so what I read matches what Claude wrote.
+New users may not realize they need to enter an API key to use the app. A gentle in-app prompt guides them.
 
 **Scope**
-- A tiny dependency-free safe-subset Markdown renderer (~150 lines): headings (h1-h3), paragraphs, bold/italic, inline code, fenced code blocks (no syntax highlighting in v1), unordered + ordered lists, line breaks, and links (`https://` / `http://` / `mailto:` only).
-- Renders both during streaming (response panel in `PromptDetail`) and in the History expanded row.
-- No raw HTML support. No images. No tables. No script execution. Steve double-checks the escape-everything-by-default rule.
+- First-run detection: show a dismissible banner if `apiKey` is empty.
+- Banner content: "Paste your Claude API key in Settings to start running prompts" with a Settings link.
+- Dismissible once per session; reappears on next app load if the key is still missing.
+- Fully accessible (a11y pass complete on the branch).
 
 **Acceptance**
 | # | Behaviour |
 |---|---|
-| 1 | A response with `# Heading\nSome text **bold** *italic*` renders accordingly. |
-| 2 | Fenced code blocks render in a mono font with a soft background. |
-| 3 | Lists with `-` or `1.` items render as `<ul>` / `<ol>`. |
-| 4 | Any `<script>` tag in the response renders as literal text, not executed. |
-| 5 | An `<img>` tag in the response is escaped (no network request). |
-| 6 | Plain text without markdown renders as plain text (idempotent). |
-| 7 | Streaming partial markdown ("# Head") shows a partial render without flicker. |
-| 8 | Typecheck green. |
+| 1 | Banner appears on first load with no API key. |
+| 2 | Banner disappears if user pastes a key into Settings. |
+| 3 | Banner is accessible (label, focus, keyboard). |
+| 4 | Typecheck green. |
 
 **Dependencies** — None.
 
-### F7 — Customize seed → save as your own  (S)
+### F-r2 — Rate-limit retry with countdown  (S)  <!-- STATUS: partial — feat/rate-limit-retry-2026-05-28, pending merge -->
 **User story**
-I love that there are starter prompts but I want to tweak one without losing the original. Today the only way is "Duplicate" — fine, but the action label doesn't tell me that's what's happening.
+When I hit the Claude API rate limit, the app shows me how long to wait before retrying, not just "Error — try again."
 
 **Scope**
-- On a seed prompt's detail header, the existing **Duplicate** action gains an explicit **Customize** button (or replaces Duplicate's label for seeds only — Dani's call).
-- "Customize" opens the create form pre-filled with the seed's content and `(custom)` appended to the title.
-- The original seed is untouched.
+- On rate-limit error (HTTP 429), parse the `Retry-After` header.
+- Show an inline countdown (e.g., "Retry in 45 seconds…").
+- Auto-retry when the countdown expires.
+- Fully accessible (aria labels, keyboard support).
 
 **Acceptance**
 | # | Behaviour |
 |---|---|
-| 1 | Clicking Customize on a seed opens the form pre-filled. |
-| 2 | Saving creates a NEW user prompt; the seed remains in the library. |
-| 3 | The button shows on seeds, not on user prompts. |
-| 4 | Typecheck green. |
+| 1 | Rate-limit error shows countdown instead of generic "Error". |
+| 2 | Countdown is live; decrement is visible. |
+| 3 | Auto-retry triggers when countdown reaches 0. |
+| 4 | Accessible form elements and labels. |
+| 5 | Typecheck green. |
 
 **Dependencies** — None.
 
@@ -91,15 +90,21 @@ I love that there are starter prompts but I want to tweak one without losing the
 
 ## Stretch
 
-### F8 — Better empty states  (S)
+### F8 — Better empty states  (S)  <!-- STATUS: partial — code exists, integration pending -->
 Friendly empty states for: search-with-no-results (already exists, polish it), Favorites tab when you have none (today: section hidden — give a "Star prompts to see them here" tile instead), Recent (same pattern), and the All Prompts grid if a user somehow deletes all seeds. Consistent affordance: small icon + one sentence + a one-click CTA.
-
-### F9 — Respect `prefers-color-scheme` on first visit  (XS)
-On first load (no stored theme preference), pick dark or light from the user's system preference. The toggle remains the source of truth from that moment forward.
 
 ---
 
 ## Done (most recent first)
+
+### F9 — Respect `prefers-color-scheme` on first visit  (XS)  ✅ landed on main
+On first load (no stored theme preference), pick dark or light from the user's system preference. The toggle remains the source of truth from that moment forward. Pre-paint script in `layout.tsx` prevents flash; `ThemeToggle` component wired in Header.
+
+### F7 — Customize seed → save as your own  (S)  ✅ landed on main
+On a seed prompt's detail header, **Customize** button opens the create form pre-filled with the seed's content and `(custom)` appended to the title. Gated by `prompt.isSeed` in `PromptDetail.tsx`. The original seed is untouched.
+
+### F6 — Markdown rendering of Claude responses  (M)  ✅ landed on main
+Dependency-free safe-subset Markdown renderer: headings (h1-h3), paragraphs, bold/italic, inline code, fenced code blocks, unordered + ordered lists, line breaks, and links. Wired into response panels in `PromptDetail.tsx` and `RunHistory.tsx`; renders both during streaming and in history.
 
 ### F1 — Run history per prompt  (M)  ✅ landed on `cycle/auto-2026-05-23`
 Last 10 runs per prompt with restore-inputs, copy-response, delete-one, clear-all. Storage: `promptlib:runs:<id>`, cap 10, 32KB per-response trim.
