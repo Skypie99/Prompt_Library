@@ -118,6 +118,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       setStorageWarning(msg);
     });
 
+    // All setters below are one-time client-side hydration from localStorage.
+    // useState initializers cannot be used here: SSR renders defaults first to
+    // avoid hydration mismatch (localStorage unavailable on server). Intentional.
+    /* eslint-disable react-hooks/set-state-in-effect */
     const loadedSettings = loadSettings();
     setSettings(loadedSettings);
     setUserPrompts(loadUserPrompts());
@@ -143,6 +147,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setDensity(loadDensity());
     setSortMode(loadSort());
     setShowOnboarding(!loadOnboarded());
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     return () => {
       setStorageWriteFailureHandler(null);
@@ -188,9 +193,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
   // If the active tag stops existing (e.g. last prompt with it was deleted),
   // silently clear the filter so the user doesn't end up stuck on an empty
-  // grid forever.
+  // grid forever. This responds to derived data (tagsWithCounts), not a loop.
   useEffect(() => {
-    if (activeTag && !tagsWithCounts.some((t) => t.tag === activeTag)) setActiveTag(null);
+    if (activeTag && !tagsWithCounts.some((t) => t.tag === activeTag))
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTag(null);
   }, [activeTag, tagsWithCounts]);
 
   const favoritePrompts = useMemo(

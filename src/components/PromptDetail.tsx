@@ -167,6 +167,8 @@ export function PromptDetail({
 
   // Reset everything whenever a different prompt opens; abort any in-flight run;
   // hydrate persisted variable values + run history; then focus the first field.
+  // Resetting state here is intentional: it responds to the user navigating
+  // to a different prompt, not to a reactive side-effect loop.
   useEffect(() => {
     abortRef.current?.abort();
     // F-r2 — clear any active rate-limit countdown.
@@ -174,6 +176,7 @@ export function PromptDetail({
       clearInterval(retryCountdownRef.current);
       retryCountdownRef.current = null;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValues(prompt ? loadValues(prompt.id) : {});
     setCopied(false);
     setConfirmingDelete(false);

@@ -73,9 +73,11 @@ export function SettingsModal({
 
   // Sync the form to the saved settings each time the modal opens, and
   // reset any in-flight import state so a closed-then-reopened modal is
-  // a clean slate.
+  // a clean slate. State resets are intentional — they respond to the modal
+  // opening/closing (prop change), not a reactive side-effect loop.
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setApiKey(settings.apiKey);
       setModel(settings.model);
       setMaxTokens(String(settings.maxTokens));
@@ -95,6 +97,7 @@ export function SettingsModal({
   // Refresh the count + usage after a successful import — both just changed.
   useEffect(() => {
     if (importState.kind === "success") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserPromptCount(loadUserPrompts().length);
       setStorageUsage(getStorageUsage());
     }
