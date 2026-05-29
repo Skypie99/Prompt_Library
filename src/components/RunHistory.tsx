@@ -418,7 +418,7 @@ export function RunHistory({
                           Only rendered when tokensUsed is present. */}
                       {run.tokensUsed && (
                         <p
-                          className="text-[11px] text-ink-soft dark:text-paper-muted"
+                          className="text-[11px] text-ink-muted dark:text-paper-muted"
                           aria-label={`Token usage: ${formatTokens(run.tokensUsed.input)} input tokens, ${formatTokens(run.tokensUsed.output)} output tokens`}
                         >
                           {formatTokens(run.tokensUsed.input)} in · {formatTokens(run.tokensUsed.output)} out

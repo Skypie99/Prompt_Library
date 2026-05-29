@@ -845,7 +845,7 @@ export function PromptDetail({
                     error or abort). */}
                 {!running && !error && currentTokensUsed && (
                   <p
-                    className="mb-1 text-xs text-ink-soft dark:text-paper-muted"
+                    className="mb-1 text-xs text-ink-muted dark:text-paper-muted"
                     aria-label={`Token usage: ${formatTokens(currentTokensUsed.input)} input tokens, ${formatTokens(currentTokensUsed.output)} output tokens`}
                   >
                     Tokens: {formatTokens(currentTokensUsed.input)} in · {formatTokens(currentTokensUsed.output)} out
