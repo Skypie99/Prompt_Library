@@ -383,6 +383,7 @@ export function RunHistory({
                             }}
                             aria-label="Run label"
                             placeholder="e.g. first draft"
+                            maxLength={100}
                             className="ml-2 inline-block w-32 rounded border border-coral-300 bg-surface px-1 text-xs text-ink outline-none focus:border-coral-400 dark:border-coral-500/40 dark:bg-night dark:text-paper"
                           />
                         ) : run.label ? (
