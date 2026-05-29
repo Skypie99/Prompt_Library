@@ -94,10 +94,7 @@ export function substituteBody(body: string, values: Record<string, string>): st
 }
 
 // How many of the detected variables currently have a non-empty value.
-export function countFilled(
-  variables: ResolvedVariable[],
-  values: Record<string, string>,
-): number {
+export function countFilled(variables: ResolvedVariable[], values: Record<string, string>): number {
   return variables.filter((variable) => (values[variable.name] ?? "").trim() !== "").length;
 }
 

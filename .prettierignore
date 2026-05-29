@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+dist
+coverage
+*.tsbuildinfo
+# Documentation — Prettier should not reformat these
+*.md
+CYCLE_LOG.md
+CYCLE_LOG_PM.md
+FEATURES.md
+LEARNINGS.md
+PROJECT_EXTRACTION.md
+qa-reports/
+specs/

@@ -213,14 +213,17 @@ export function SettingsModal({
               className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
             />
             <p className="mt-1.5 text-xs text-ink-soft dark:text-paper-muted">
-              Your key is stored locally in your browser and is only sent to Anthropic when you run a
-              prompt.
+              Your key is stored locally in your browser and is only sent to Anthropic when you run
+              a prompt.
             </p>
           </div>
 
           {/* Model */}
           <div>
-            <label htmlFor="model" className="mb-1 block text-sm font-medium text-ink dark:text-paper">
+            <label
+              htmlFor="model"
+              className="mb-1 block text-sm font-medium text-ink dark:text-paper"
+            >
               Model
             </label>
             <select
@@ -355,9 +358,7 @@ export function SettingsModal({
                     </button>
                     <button
                       type="button"
-                      onClick={() =>
-                        setImportState({ ...importState, confirmingReplace: true })
-                      }
+                      onClick={() => setImportState({ ...importState, confirmingReplace: true })}
                       className="rounded-md border border-coral-300 px-3 py-1.5 text-sm font-medium text-coral-700 transition hover:bg-coral-50 dark:border-coral-500/40 dark:text-coral-300 dark:hover:bg-coral-500/10"
                     >
                       Replace my library
@@ -377,15 +378,13 @@ export function SettingsModal({
                   <div className="mt-3 rounded-md border border-coral-300 bg-coral-50 p-2.5 dark:border-coral-500/40 dark:bg-coral-500/10">
                     <p className="text-xs text-coral-900 dark:text-coral-100">
                       This will delete your existing prompts, favorites, recent, and run history,
-                      then load the file. Settings (API key, model, theme) are kept. This
-                      can&apos;t be undone.
+                      then load the file. Settings (API key, model, theme) are kept. This can&apos;t
+                      be undone.
                     </p>
                     <div className="mt-2 flex gap-2">
                       <button
                         type="button"
-                        onClick={() =>
-                          setImportState({ ...importState, confirmingReplace: false })
-                        }
+                        onClick={() => setImportState({ ...importState, confirmingReplace: false })}
                         className="rounded-md border border-coral-300 px-2.5 py-1 text-xs font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
                       >
                         Cancel
@@ -451,8 +450,7 @@ export function SettingsModal({
                     ))}
                 </ul>
                 <p className="mt-2 text-[11px] text-ink-soft dark:text-paper-muted">
-                  All stored in this browser. Typical browser quota is ~5–10 MB
-                  per site.
+                  All stored in this browser. Typical browser quota is ~5–10 MB per site.
                 </p>
               </section>
             )}
@@ -474,8 +472,8 @@ export function SettingsModal({
               {!confirmingReset ? (
                 <div className="mt-2 flex items-center justify-between gap-3">
                   <p className="text-xs text-ink-muted dark:text-paper-muted">
-                    Delete every prompt, favorite, recent, run, and saved
-                    value. Keeps your API key and theme.
+                    Delete every prompt, favorite, recent, run, and saved value. Keeps your API key
+                    and theme.
                   </p>
                   <button
                     type="button"
@@ -488,9 +486,8 @@ export function SettingsModal({
               ) : (
                 <div className="mt-2">
                   <p className="text-xs text-coral-900 dark:text-coral-100">
-                    Permanently delete every prompt, favorite, recent, run, and
-                    saved value? This can&apos;t be undone. (Export first if
-                    you might want it back.)
+                    Permanently delete every prompt, favorite, recent, run, and saved value? This
+                    can&apos;t be undone. (Export first if you might want it back.)
                   </p>
                   <div className="mt-2 flex justify-end gap-2">
                     <button

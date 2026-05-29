@@ -14,8 +14,7 @@ interface DensityToggleProps {
 // ACTION the next click will perform, matching the ThemeToggle convention).
 export function DensityToggle({ density, onChange }: DensityToggleProps) {
   const next: Density = density === "compact" ? "comfortable" : "compact";
-  const label =
-    density === "compact" ? "Switch to comfortable view" : "Switch to compact view";
+  const label = density === "compact" ? "Switch to comfortable view" : "Switch to compact view";
 
   return (
     <button

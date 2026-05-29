@@ -52,7 +52,9 @@ export function Header({
             title="Keyboard shortcuts (?)"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-coral-400 dark:focus-visible:ring-offset-night"
           >
-            <span aria-hidden className="text-base font-semibold">?</span>
+            <span aria-hidden className="text-base font-semibold">
+              ?
+            </span>
           </button>
           <DensityToggle density={density} onChange={onChangeDensity} />
           <ThemeToggle />

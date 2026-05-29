@@ -10,7 +10,11 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "typecheck": "tsc --noEmit",
-    "typecheck:test": "tsc --noEmit -p tsconfig.test.json"
+    "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.0.0",

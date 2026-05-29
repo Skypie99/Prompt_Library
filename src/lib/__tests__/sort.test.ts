@@ -3,14 +3,7 @@
  * Same jsdom-agnostic localStorage stub pattern as the other test files.
  */
 
-import {
-  DEFAULT_SORT,
-  SORT_LABELS,
-  loadSort,
-  saveSort,
-  sortPrompts,
-  type SortMode,
-} from "../sort";
+import { DEFAULT_SORT, SORT_LABELS, loadSort, saveSort, sortPrompts, type SortMode } from "../sort";
 import type { Prompt } from "../types";
 
 function installFakeStorage(): void {

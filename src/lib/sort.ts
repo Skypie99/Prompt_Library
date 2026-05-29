@@ -64,9 +64,7 @@ export function sortPrompts(
       return arr;
     case "az":
       // Locale-aware case-insensitive sort so "Alpha" / "alpha" don't swap.
-      arr.sort((a, b) =>
-        a.title.localeCompare(b.title, undefined, { sensitivity: "base" }),
-      );
+      arr.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: "base" }));
       return arr;
     case "most-run":
       arr.sort((a, b) => {

@@ -5,11 +5,7 @@
  * scoring details. getHighlightSegments is pure and gets exhaustive cases.
  */
 
-import {
-  createPromptFuse,
-  searchPrompts,
-  getHighlightSegments,
-} from "../search";
+import { createPromptFuse, searchPrompts, getHighlightSegments } from "../search";
 import type { Prompt } from "../types";
 
 function makePrompt(overrides: Partial<Prompt> = {}): Prompt {
@@ -125,9 +121,7 @@ describe("getHighlightSegments", () => {
   });
 
   it("highlights a match at the end", () => {
-    const matches = [
-      { key: "title", value: "abc", indices: [[2, 2]] as [number, number][] },
-    ];
+    const matches = [{ key: "title", value: "abc", indices: [[2, 2]] as [number, number][] }];
     expect(getHighlightSegments("abc", matches, "title")).toEqual([
       { text: "ab", highlight: false },
       { text: "c", highlight: true },
@@ -171,9 +165,7 @@ describe("getHighlightSegments", () => {
   });
 
   it("returns the plain segment when match has zero indices", () => {
-    const matches = [
-      { key: "title", value: "hello", indices: [] as [number, number][] },
-    ];
+    const matches = [{ key: "title", value: "hello", indices: [] as [number, number][] }];
     expect(getHighlightSegments("hello", matches, "title")).toEqual([
       { text: "hello", highlight: false },
     ]);

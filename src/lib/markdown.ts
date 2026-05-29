@@ -262,7 +262,11 @@ export function parseMarkdown(input: string): BlockNode[] {
         if (m) {
           codeLines.push(m[1]);
           i++;
-        } else if (lines[i].trim() === "" && i + 1 < lines.length && INDENT_CODE_RE.test(lines[i + 1])) {
+        } else if (
+          lines[i].trim() === "" &&
+          i + 1 < lines.length &&
+          INDENT_CODE_RE.test(lines[i + 1])
+        ) {
           // blank line embedded inside an indented code block
           codeLines.push("");
           i++;

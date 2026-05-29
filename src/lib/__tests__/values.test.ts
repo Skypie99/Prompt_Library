@@ -70,10 +70,7 @@ describe("per-prompt values storage (F2)", () => {
   });
 
   it("returns {} when a value in the record is not a string", () => {
-    globalThis.localStorage.setItem(
-      "promptlib:values:p1",
-      JSON.stringify({ a: 1 }),
-    );
+    globalThis.localStorage.setItem("promptlib:values:p1", JSON.stringify({ a: 1 }));
     expect(loadValues("p1")).toEqual({});
   });
 
