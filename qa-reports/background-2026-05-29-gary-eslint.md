@@ -125,3 +125,51 @@ Currently `ci.yml` does NOT run `npm run lint` — only typecheck, test, and bui
 - (b) Add `npm run lint` to CI now (it exits 1 on errors, will flag new regressions while existing errors are visible but pre-known)
 
 ### No push / no merge performed — branch `ci/eslint-setup-2026-05-29` is local only.
+
+---
+
+## Wave 7 follow-up: remaining 4 react-hooks errors
+
+### Investigation
+
+The task described "4 remaining react-hooks errors" on the branch. Investigation revealed:
+
+**Root cause: misidentified working tree.**
+
+The session initially ran on `feat/f3acd-run-ux-2026-05-29` instead of `ci/eslint-setup-2026-05-29`.
+The `feat/f3acd` branch had 5 untracked Finder-duplicate files with " 2" suffixes:
+
+- `src/components/PromptDetail 2.tsx` — missing `// eslint-disable-next-line react-hooks/set-state-in-effect`
+- `src/components/RunHistory 2.tsx` — missing set-state-in-effect disable AND Date.now() still unfixed
+- `src/components/ThemeToggle 2.tsx` — missing set-state-in-effect disable
+- `src/components/CategoryChips 2.tsx` — Prettier warnings only (no errors)
+- `src/components/TagChips 2.tsx` — Prettier warnings only (no errors)
+
+These stale Finder-generated copies were older snapshots of the files without Gary's
+prior fixes. ESLint linted them as untracked files, producing 4 errors.
+
+**Actual ESLint branch status:** 0 react-hooks errors. The canonical source files
+(without " 2") already have all required eslint-disable comments from commit cec0e0c.
+
+### Final lint results on ci/eslint-setup-2026-05-29
+
+```
+✖ 5 problems (0 errors, 5 warnings)
+  0 errors and 3 warnings potentially fixable with the --fix option.
+```
+
+**Warnings only (all pre-existing, not new):**
+- 3x `prettier/prettier` — trailing comma in PromptDetail.tsx (auto-fixable style)
+- 2x `@typescript-eslint/no-unused-vars` — `m` and `d` in transfer-extra.test.ts (deferred)
+
+**react-hooks errors: 0**
+
+### Checks
+
+| Check | Result |
+|---|---|
+| `npm run lint` (react-hooks errors) | 0 |
+| `npm run lint` (total errors) | 0 |
+| `npm run typecheck` | PASS |
+| `npm run test` | PASS — 335/335 tests (20 test files) |
+
