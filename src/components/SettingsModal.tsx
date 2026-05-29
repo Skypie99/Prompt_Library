@@ -70,6 +70,10 @@ export function SettingsModal({
   // F5 — retain reference to the element that triggered the modal so we can
   // restore focus when it closes.
   const triggerRef = useRef<Element | null>(null);
+  // F5 a11y polish — focus moves to the destructive confirm button as soon as
+  // the replace confirmation panel appears so keyboard users don't have to
+  // hunt for it.
+  const replaceConfirmBtnRef = useRef<HTMLButtonElement>(null);
 
   // Sync the form to the saved settings each time the modal opens, and
   // reset any in-flight import state so a closed-then-reopened modal is
@@ -97,6 +101,15 @@ export function SettingsModal({
     if (importState.kind === "success") {
       setUserPromptCount(loadUserPrompts().length);
       setStorageUsage(getStorageUsage());
+    }
+  }, [importState]);
+
+  // F5 a11y polish — when the replace confirmation panel appears, move focus
+  // to its confirm button so keyboard and screen-reader users don't have to
+  // Tab through the entire panel to reach the primary action.
+  useEffect(() => {
+    if (importState.kind === "preview" && importState.confirmingReplace) {
+      replaceConfirmBtnRef.current?.focus();
     }
   }, [importState]);
 
@@ -359,7 +372,7 @@ export function SettingsModal({
               <button
                 type="button"
                 onClick={handleExport}
-                className="rounded-md bg-teal-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
+                className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
               >
                 Export library
               </button>
@@ -380,6 +393,12 @@ export function SettingsModal({
                 {userPromptCount} custom prompt{userPromptCount === 1 ? "" : "s"} in this browser
               </span>
             </div>
+
+            {/* F5 a11y polish — proactive helper text telling users the
+                accepted format and size limit before they pick a file. */}
+            <p className="mt-1.5 text-xs text-ink-soft dark:text-paper-muted">
+              Accepts .json files up to 10 MB.
+            </p>
 
             {/* Import status */}
             {importState.kind === "error" && (
@@ -425,7 +444,7 @@ export function SettingsModal({
                     <button
                       type="button"
                       onClick={handleApplyMerge}
-                      className="rounded-md bg-teal-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95"
+                      className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95"
                     >
                       Merge into my library
                     </button>
@@ -463,6 +482,7 @@ export function SettingsModal({
                         Cancel
                       </button>
                       <button
+                        ref={replaceConfirmBtnRef}
                         type="button"
                         onClick={handleApplyReplace}
                         className="rounded-md bg-teal-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
