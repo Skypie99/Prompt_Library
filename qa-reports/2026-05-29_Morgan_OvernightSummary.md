@@ -55,6 +55,9 @@ Quinn's spec has 3 open questions that block Shamus from building it:
 ### Teal chip contrast note (documented, not blocking)
 Active chip text (white on teal-500) = 3.255:1. WCAG SC 1.4.3 requires 4.5:1 for normal text. Alex cleared this as PASS_WITH_NOTES because `aria-pressed` + `aria-label` communicate state correctly and the ratio is above the non-text threshold (3:1). Shamus's `font-semibold` fix was the Wave 3 remediation. If Sky wants strict 4.5:1 conformance: use teal-600 (`#238178`, yields ~4.1:1) or teal-700 as chip background. Not a merge blocker.
 
+### `a11y/auto-2026-05-25-alex-header-focus-visible` — NOT in current merge queue
+This branch (1 commit ahead of main: Header focus-visible fix) predates the teal re-skin. It was written against coral tokens and has **not been re-verified against teal**. Do not merge until Alex re-reviews it against the teal baseline. Queue it for the session after `feat/teal-reskin-2026-05-29` lands on main.
+
 ### 14 lint errors remain on ESLint branch (deferred, not blocking)
 All 14 are `@typescript-eslint/ban-ts-comment` in 7 test files — pre-existing patterns, not introduced by Gary or tonight's work. Recommend a Shamus or Gary cleanup cycle before the next CI enforcement pass. 2 `no-unused-vars` in `transfer-extra.test.ts` also deferred.
 
@@ -72,14 +75,23 @@ All 14 are `@typescript-eslint/ban-ts-comment` in 7 test files — pre-existing 
 8. **Finder dupe cleanup** — CI housekeeping; independent, no functional impact.
 9. **Rate-limit retry fix** — single-line a11y/UX hardening; merge any order after F3.
 
+> ⚠️  MERGE ORDER DEPENDENCY:
+> `ci/eslint-setup-2026-05-29` MUST be merged before `fix/ratelimit-retry-disabled-2026-05-29`
+> The ratelimit branch is stacked on the ESLint branch.
+
 ---
 
 ## Next priorities (for next session)
 
 1. **F3b** — unblocked the moment Sky answers the 3 placement/behavior questions above. Single Shamus cycle, M-effort.
-2. **Shamus react-hooks + ban-ts-comment cleanup** — 14 test-file lint errors remain on the ESLint branch; a targeted Gary/Shamus pass would clear CI to green.
-3. **F5 — Export/Import library** — next big user-facing feature in the backlog; Quinn's spec is ready.
-4. **Peter's remaining open finding** — `querySelector` in variable extraction should be wrapped in try/catch (or sanitize variable names at extraction point). Low-risk; worth a short Shamus pass after the Wave 8 merges land.
+2. **Token usage display** (Quinn spec ready, no Sky decisions needed for base case):
+   - Quinn spec: `qa-reports/2026-05-29_Quinn_NextFeatureSpec.md`
+   - F-usage-a/b/c: wire SSE usage events in streamClaude → StoredRun → display
+   - 2 open questions for Sky (cost display, which panels to show in)
+   - Shamus can build this as next cycle's first task
+3. **Shamus react-hooks + ban-ts-comment cleanup** — 14 test-file lint errors remain on the ESLint branch; a targeted Gary/Shamus pass would clear CI to green.
+4. **F5 — Export/Import library** — next big user-facing feature in the backlog; Quinn's spec is ready.
+5. **Peter's remaining open finding** — `querySelector` in variable extraction should be wrapped in try/catch (or sanitize variable names at extraction point). Low-risk; worth a short Shamus pass after the Wave 8 merges land.
 
 ---
 
