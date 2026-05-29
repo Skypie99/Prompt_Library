@@ -237,6 +237,64 @@ describe("parseImport — success and silent drops", () => {
     }
   });
 
+  // Security test — Steve
+  // Trust-boundary validation: malformed `variables` entries inside an
+  // otherwise-valid prompt must be rejected so downstream code (PromptForm
+  // input rendering) never sees `name`/`label` of the wrong type.
+  it("drops a prompt whose variables array contains malformed entries", () => {
+    const file = {
+      version: 1,
+      exportedAt: "2026-05-23T12:00:00.000Z",
+      userPrompts: [
+        makePrompt({ id: "p-good" }),
+        // Looks like a Prompt but the variables array has garbage —
+        // pre-fix, this passed validation and stored junk into localStorage.
+        makePrompt({
+          id: "p-bad-vars",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          variables: [{ name: "ok", label: "OK" }, { foo: "bar" } as any, null as any],
+        }),
+      ],
+      favorites: [],
+      recent: [],
+      runs: {},
+      values: {},
+    };
+    const r = parseImport(JSON.stringify(file));
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.userPrompts.map((p) => p.id)).toEqual(["p-good"]);
+      expect(r.preview.droppedCount).toBeGreaterThan(0);
+    }
+  });
+
+  // Security test — Steve
+  it("accepts a prompt with well-formed variables (including optional placeholder)", () => {
+    const file = {
+      version: 1,
+      exportedAt: "2026-05-23T12:00:00.000Z",
+      userPrompts: [
+        makePrompt({
+          id: "p-ok",
+          variables: [
+            { name: "topic", label: "Topic" },
+            { name: "tone", label: "Tone", placeholder: "friendly" },
+          ],
+        }),
+      ],
+      favorites: [],
+      recent: [],
+      runs: {},
+      values: {},
+    };
+    const r = parseImport(JSON.stringify(file));
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.userPrompts).toHaveLength(1);
+      expect(r.data.userPrompts[0].variables).toHaveLength(2);
+    }
+  });
+
   it("drops non-string entries from favorites/recent silently", () => {
     const file = {
       version: 1,

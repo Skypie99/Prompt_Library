@@ -396,9 +396,20 @@ function isValidPromptShape(value: unknown): value is Prompt {
   if (!Array.isArray(p.tags)) return false;
   if (!p.tags.every((t) => typeof t === "string")) return false;
   if (!Array.isArray(p.variables)) return false;
+  if (!p.variables.every(isValidVariableShape)) return false;
   if (typeof p.createdAt !== "string") return false;
   // isSeed will be coerced to false on import — accept any boolean (or missing).
   if (p.isSeed !== undefined && typeof p.isSeed !== "boolean") return false;
+  return true;
+}
+
+function isValidVariableShape(value: unknown): boolean {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const v = value as Record<string, unknown>;
+  if (typeof v.name !== "string" || !v.name) return false;
+  if (typeof v.label !== "string" || !v.label) return false;
+  // placeholder is optional; if present it must be a string.
+  if (v.placeholder !== undefined && typeof v.placeholder !== "string") return false;
   return true;
 }
 
