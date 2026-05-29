@@ -62,7 +62,7 @@ export const PromptCard = memo(function PromptCard({
       onClick={onOpen}
       onKeyDown={handleKeyDown}
       className={clsx(
-        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-coral-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-coral-300 dark:border-night-border dark:bg-night-surface dark:hover:border-coral-500/40",
+        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-teal-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300 dark:border-night-border dark:bg-night-surface dark:hover:border-teal-500/40",
         isCompact ? "p-3.5" : "p-5"
       )}
     >
@@ -82,7 +82,7 @@ export const PromptCard = memo(function PromptCard({
       />
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="inline-flex w-fit items-center rounded-full bg-coral-50 px-2.5 py-0.5 text-xs font-medium text-coral-700 dark:bg-coral-500/15 dark:text-coral-300">
+          <span className="inline-flex w-fit items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-teal-700 dark:bg-teal-500/15 dark:text-teal-300">
             {prompt.category}
           </span>
           {runCount !== undefined && runCount > 0 && (
@@ -120,8 +120,8 @@ export const PromptCard = memo(function PromptCard({
           className={clsx(
             "-mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90",
             isFavorite
-              ? "text-coral-500"
-              : "text-ink-soft opacity-0 hover:text-coral-500 focus-visible:opacity-100 group-hover:opacity-100"
+              ? "text-teal-500"
+              : "text-ink-soft opacity-0 hover:text-teal-500 focus-visible:opacity-100 group-hover:opacity-100"
           )}
         >
           <StarIcon
@@ -133,7 +133,7 @@ export const PromptCard = memo(function PromptCard({
 
       <h3
         className={clsx(
-          "mt-3 font-display font-semibold leading-snug text-ink transition-colors group-hover:text-coral-600 dark:text-paper dark:group-hover:text-coral-300",
+          "mt-3 font-display font-semibold leading-snug text-ink transition-colors group-hover:text-teal-600 dark:text-paper dark:group-hover:text-teal-300",
           isCompact ? "text-base" : "text-lg"
         )}
       >
@@ -174,7 +174,7 @@ export const PromptCard = memo(function PromptCard({
                 onSelectTag(tag);
               }}
               aria-label={`Filter by #${tag}`}
-              className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+              className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
             >
               #{tag}
             </button>

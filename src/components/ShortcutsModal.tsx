@@ -84,7 +84,7 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Close keyboard shortcuts"
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
           >
             <CloseIcon className="h-4 w-4" />
           </button>

@@ -80,8 +80,8 @@ function HeaderButton({
       title={label}
       onClick={onClick}
       className={
-        "flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface transition hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:hover:text-coral-300 " +
-        (active ? "text-coral-500" : "text-ink-muted dark:text-paper-muted")
+        "flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface transition hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:hover:text-teal-300 " +
+        (active ? "text-teal-500" : "text-ink-muted dark:text-paper-muted")
       }
     >
       {children}
@@ -458,7 +458,7 @@ export function PromptDetail({
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4 dark:border-night-border">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="rounded-full bg-coral-50 px-2.5 py-0.5 text-xs font-medium text-coral-700 dark:bg-coral-500/15 dark:text-coral-300">
+              <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-teal-700 dark:bg-teal-500/15 dark:text-teal-300">
                 {prompt.category}
               </span>
               {prompt.tags.map((tag) =>
@@ -468,7 +468,7 @@ export function PromptDetail({
                     type="button"
                     onClick={() => onSelectTag(tag)}
                     aria-label={`Filter by #${tag}`}
-                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                   >
                     #{tag}
                   </button>
@@ -537,20 +537,20 @@ export function PromptDetail({
 
         {/* Inline delete confirmation */}
         {confirmingDelete && (
-          <div className="flex items-center justify-between gap-3 border-b border-coral-200 bg-coral-50 px-6 py-3 dark:border-coral-500/30 dark:bg-coral-500/10">
-            <span className="text-sm text-coral-900 dark:text-coral-100">
+          <div className="flex items-center justify-between gap-3 border-b border-teal-200 bg-teal-50 px-6 py-3 dark:border-teal-500/30 dark:bg-teal-500/10">
+            <span className="text-sm text-teal-900 dark:text-teal-100">
               Delete this prompt? This can&apos;t be undone.
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => setConfirmingDelete(false)}
-                className="rounded-md border border-coral-300 px-3 py-1.5 text-sm font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
+                className="rounded-md border border-teal-300 px-3 py-1.5 text-sm font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
               >
                 Cancel
               </button>
               <button
                 onClick={onDelete}
-                className="rounded-md bg-coral-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-coral-700 active:scale-95"
+                className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95"
               >
                 Delete
               </button>
@@ -575,14 +575,14 @@ export function PromptDetail({
                 return isFilled ? (
                   <span
                     key={index}
-                    className="rounded bg-coral-100/70 px-1 text-ink dark:bg-coral-500/20 dark:text-paper"
+                    className="rounded bg-teal-100/70 px-1 text-ink dark:bg-teal-500/20 dark:text-paper"
                   >
                     {value}
                   </span>
                 ) : (
                   <span
                     key={index}
-                    className="rounded border border-dashed border-coral-300 px-1 text-coral-600 dark:border-coral-500/50 dark:text-coral-300"
+                    className="rounded border border-dashed border-teal-300 px-1 text-teal-600 dark:border-teal-500/50 dark:text-teal-300"
                   >
                     {segment.raw}
                   </span>
@@ -608,7 +608,7 @@ export function PromptDetail({
                         setValues({});
                         if (prompt) clearValues(prompt.id);
                       }}
-                      className="font-medium text-coral-600 hover:text-coral-700 dark:text-coral-400"
+                      className="font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
                     >
                       Clear
                     </button>
@@ -649,7 +649,7 @@ export function PromptDetail({
                             onClick={() => setValue(variable.name, lastValue)}
                             aria-label={`Use last value for ${variable.label}: ${lastValue}`}
                             title={lastValue}
-                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                           >
                             Use last: <span className="font-mono">{display}</span>
                           </button>
@@ -667,7 +667,7 @@ export function PromptDetail({
                         placeholder={variable.placeholder}
                         minRows={5}
                         maxHeightPx={480}
-                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
+                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30"
                       />
                     ) : (
                       // F-n2-4 — single-line input with an inline × clear
@@ -681,7 +681,7 @@ export function PromptDetail({
                           onChange={(event) => setValue(variable.name, event.target.value)}
                           placeholder={variable.placeholder}
                           className={clsx(
-                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30",
+                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30",
                             (values[variable.name] ?? "") !== "" && "pr-8"
                           )}
                         />
@@ -713,8 +713,8 @@ export function PromptDetail({
                 className={clsx(
                   "flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95",
                   copied
-                    ? "border-coral-500 bg-coral-500 text-white"
-                    : "border-border text-ink hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:text-paper dark:hover:text-coral-300"
+                    ? "border-teal-500 bg-teal-500 text-white"
+                    : "border-border text-ink hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:text-paper dark:hover:text-teal-300"
                 )}
               >
                 {copied ? (
@@ -735,13 +735,13 @@ export function PromptDetail({
                   onClick={handleStop}
                   className="flex flex-1 items-center justify-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium text-ink transition active:scale-95 dark:border-night-border dark:text-paper"
                 >
-                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-coral-300 border-t-coral-600" />
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-teal-300 border-t-teal-600" />
                   Stop
                 </button>
               ) : (
                 <button
                   onClick={handleRun}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-coral-500 px-4 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-coral-600 active:scale-95"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-teal-600 active:scale-95"
                 >
                   Run with Claude
                 </button>
@@ -775,7 +775,7 @@ export function PromptDetail({
                     ? "Template copied"
                     : "Copy the prompt template with unfilled variables"
                 }
-                className="rounded text-xs font-medium text-coral-600 transition hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-coral-400 dark:focus-visible:ring-offset-night"
+                className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
               >
                 {templateCopied ? "Template copied" : "Copy template (with {{variables}})"}
               </button>
@@ -792,15 +792,15 @@ export function PromptDetail({
                     Response
                   </span>
                   {running && (
-                    <span className="flex items-center gap-1.5 text-xs text-coral-600 dark:text-coral-400">
-                      <span className="h-3 w-3 animate-spin rounded-full border-2 border-coral-300 border-t-coral-600" />
+                    <span className="flex items-center gap-1.5 text-xs text-teal-600 dark:text-teal-400">
+                      <span className="h-3 w-3 animate-spin rounded-full border-2 border-teal-300 border-t-teal-600" />
                       Streaming…
                     </span>
                   )}
                   {!running && response.length > 0 && !error && (
                     <button
                       onClick={handleCopyResponse}
-                      className="text-xs font-medium text-coral-600 hover:text-coral-700 dark:text-coral-400"
+                      className="text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
                     >
                       {responseCopied ? "Copied" : "Copy response"}
                     </button>
@@ -808,7 +808,7 @@ export function PromptDetail({
                 </div>
 
                 {error ? (
-                  <div className="rounded-md border border-coral-300 bg-coral-50 px-3 py-2.5 text-sm text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200">
+                  <div className="rounded-md border border-teal-300 bg-teal-50 px-3 py-2.5 text-sm text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200">
                     <p>{error.message}</p>
                     {error.kind === "auth" && (
                       <button
@@ -832,7 +832,7 @@ export function PromptDetail({
                             <span
                               aria-live="polite"
                               aria-atomic="true"
-                              className="text-xs tabular-nums text-coral-700 dark:text-coral-300"
+                              className="text-xs tabular-nums text-teal-700 dark:text-teal-300"
                             >
                               Retry in {retryCountdown}s
                             </span>
@@ -860,7 +860,7 @@ export function PromptDetail({
                   <div className="scrollbar-soft max-h-72 overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
                     <Markdown source={response} />
                     {running && (
-                      <span className="ml-0.5 inline-block animate-pulse font-semibold text-coral-500">
+                      <span className="ml-0.5 inline-block animate-pulse font-semibold text-teal-500">
                         ▋
                       </span>
                     )}

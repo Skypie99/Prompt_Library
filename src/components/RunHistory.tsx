@@ -50,7 +50,7 @@ const STATUS_LABEL: Record<StoredRun["status"], string> = {
 const STATUS_DOT_CLASS: Record<StoredRun["status"], string> = {
   completed: "bg-emerald-500",
   aborted: "bg-ink-soft dark:bg-paper-muted",
-  errored: "bg-coral-600",
+  errored: "bg-teal-600",
 };
 
 // F-night-4 — status filter values used by the history-panel dropdown.
@@ -202,7 +202,7 @@ export function RunHistory({
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
           aria-controls={listId}
-          className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
+          className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
         >
           <ClockIcon className="h-3.5 w-3.5" />
           <span>{headerLabel}</span>
@@ -223,7 +223,7 @@ export function RunHistory({
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
                 aria-label="Filter history by status"
-                className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-coral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
+                className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
               >
                 {(Object.keys(STATUS_FILTER_LABELS) as StatusFilter[]).map((s) => (
                   <option key={s} value={s}>
@@ -238,10 +238,10 @@ export function RunHistory({
               onClick={() => setLast24Only((v) => !v)}
               aria-pressed={last24Only}
               className={clsx(
-                "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400",
+                "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400",
                 last24Only
-                  ? "border-coral-500 bg-coral-500 text-white"
-                  : "border-border bg-surface text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300"
+                  ? "border-teal-500 bg-teal-500 text-white"
+                  : "border-border bg-surface text-ink-muted hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
               )}
             >
               Last 24h
@@ -267,14 +267,14 @@ export function RunHistory({
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
               }}
-              className="text-xs font-medium text-coral-600 transition hover:text-coral-700 dark:text-coral-400"
+              className="text-xs font-medium text-teal-600 transition hover:text-teal-700 dark:text-teal-400"
             >
               Export
             </button>
             <button
               type="button"
               onClick={() => setConfirmingClear(true)}
-              className="text-xs font-medium text-coral-600 transition hover:text-coral-700 dark:text-coral-400"
+              className="text-xs font-medium text-teal-600 transition hover:text-teal-700 dark:text-teal-400"
             >
               Clear all
             </button>
@@ -289,22 +289,22 @@ export function RunHistory({
       )}
 
       {expanded && confirmingClear && (
-        <div className="mb-3 flex items-center justify-between gap-3 rounded-md border border-coral-200 bg-coral-50 px-3 py-2 dark:border-coral-500/30 dark:bg-coral-500/10">
-          <span className="text-xs text-coral-900 dark:text-coral-100">
+        <div className="mb-3 flex items-center justify-between gap-3 rounded-md border border-teal-200 bg-teal-50 px-3 py-2 dark:border-teal-500/30 dark:bg-teal-500/10">
+          <span className="text-xs text-teal-900 dark:text-teal-100">
             Delete all {runs.length} {runs.length === 1 ? "entry" : "entries"} for this prompt?
           </span>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setConfirmingClear(false)}
-              className="rounded-md border border-coral-300 px-2 py-1 text-xs font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
+              className="rounded-md border border-teal-300 px-2 py-1 text-xs font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleClearAll}
-              className="rounded-md bg-coral-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-coral-700 active:scale-95"
+              className="rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
             >
               Clear
             </button>
@@ -322,7 +322,7 @@ export function RunHistory({
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
-            className="ml-2 font-medium text-coral-600 underline-offset-2 hover:underline dark:text-coral-400"
+            className="ml-2 font-medium text-teal-600 underline-offset-2 hover:underline dark:text-teal-400"
           >
             Show all
           </button>
@@ -383,14 +383,14 @@ export function RunHistory({
                             }}
                             aria-label="Run label"
                             placeholder="e.g. first draft"
-                            className="ml-2 inline-block w-32 rounded border border-coral-300 bg-surface px-1 text-xs text-ink outline-none focus:border-coral-400 dark:border-coral-500/40 dark:bg-night dark:text-paper"
+                            className="ml-2 inline-block w-32 rounded border border-teal-300 bg-surface px-1 text-xs text-ink outline-none focus:border-teal-400 dark:border-teal-500/40 dark:bg-night dark:text-paper"
                           />
                         ) : run.label ? (
                           <button
                             type="button"
                             onClick={() => startEditingLabel(run)}
                             aria-label={`Edit label "${run.label}"`}
-                            className="ml-2 rounded bg-coral-50 px-1.5 py-0.5 text-[11px] text-coral-700 hover:bg-coral-100 dark:bg-coral-500/15 dark:text-coral-300 dark:hover:bg-coral-500/25"
+                            className="ml-2 rounded bg-teal-50 px-1.5 py-0.5 text-[11px] text-teal-700 hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
                           >
                             {run.label}
                           </button>
@@ -399,7 +399,7 @@ export function RunHistory({
                             type="button"
                             onClick={() => startEditingLabel(run)}
                             aria-label="Add a label to this run"
-                            className="ml-2 text-[11px] text-ink-soft underline-offset-2 opacity-0 transition hover:text-coral-600 hover:underline focus:opacity-100 group-hover/row:opacity-100 dark:text-paper-muted dark:hover:text-coral-300"
+                            className="ml-2 text-[11px] text-ink-soft underline-offset-2 opacity-0 transition hover:text-teal-600 hover:underline focus:opacity-100 group-hover/row:opacity-100 dark:text-paper-muted dark:hover:text-teal-300"
                           >
                             + label
                           </button>
@@ -411,7 +411,7 @@ export function RunHistory({
                           onClick={() => onRestoreInputs(run.values)}
                           aria-label="Restore inputs from this run"
                           title="Restore inputs"
-                          className="flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
+                          className="flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <RotateCcwIcon className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">Restore</span>
@@ -425,7 +425,7 @@ export function RunHistory({
                             onClick={() => onRunAgain(run.values)}
                             aria-label="Restore these inputs and run again"
                             title="Run again with these inputs"
-                            className="flex items-center gap-1 rounded-md border border-coral-300 bg-coral-50 px-2 py-1 text-xs font-medium text-coral-700 transition hover:bg-coral-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-300 dark:hover:bg-coral-500/20 dark:focus-visible:ring-offset-night"
+                            className="flex items-center gap-1 rounded-md border border-teal-300 bg-teal-50 px-2 py-1 text-xs font-medium text-teal-700 transition hover:bg-teal-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20 dark:focus-visible:ring-offset-night"
                           >
                             <PlayIcon className="h-3 w-3" aria-hidden />
                             <span className="hidden sm:inline">Run again</span>
@@ -437,8 +437,8 @@ export function RunHistory({
                           aria-label={isCopied ? "Response copied" : "Copy this response"}
                           title={isCopied ? "Copied" : "Copy response"}
                           className={clsx(
-                            "flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night",
-                            isCopied && "border-coral-500 text-coral-600"
+                            "flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night",
+                            isCopied && "border-teal-500 text-teal-600"
                           )}
                         >
                           {isCopied ? (
@@ -452,7 +452,7 @@ export function RunHistory({
                           onClick={() => handleDeleteOne(run.id)}
                           aria-label="Delete this run"
                           title="Delete this run"
-                          className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
+                          className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <TrashIcon className="h-3.5 w-3.5" />
                         </button>
@@ -462,7 +462,7 @@ export function RunHistory({
                           aria-expanded={isOpen}
                           aria-label={isOpen ? "Hide full response" : "Show full response"}
                           title={isOpen ? "Collapse" : "Show details"}
-                          className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
+                          className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <ChevronIcon
                             className={clsx(
@@ -481,7 +481,7 @@ export function RunHistory({
                       </p>
                     )}
                     {!isOpen && run.status === "errored" && run.errorMessage && (
-                      <p className="mt-1 truncate text-xs text-coral-700 dark:text-coral-300">
+                      <p className="mt-1 truncate text-xs text-teal-700 dark:text-teal-300">
                         {run.errorMessage}
                       </p>
                     )}
@@ -513,7 +513,7 @@ export function RunHistory({
                             Response
                           </div>
                           {run.status === "errored" ? (
-                            <div className="rounded-md border border-coral-300 bg-coral-50 px-2.5 py-2 text-xs text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200">
+                            <div className="rounded-md border border-teal-300 bg-teal-50 px-2.5 py-2 text-xs text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200">
                               {run.errorMessage ?? "Run failed."}
                             </div>
                           ) : run.response ? (

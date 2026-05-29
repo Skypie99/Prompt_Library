@@ -14,7 +14,7 @@
   }
 
   ::selection {
-    @apply bg-coral-200/60 text-ink;
+    @apply bg-teal-200/60 text-ink;
   }
 }
 
@@ -22,14 +22,14 @@
   /* Thin, warm scrollbars that match the palette. */
   .scrollbar-soft {
     scrollbar-width: thin;
-    scrollbar-color: theme("colors.coral.200") transparent;
+    scrollbar-color: theme("colors.teal.200") transparent;
   }
   .scrollbar-soft::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   .scrollbar-soft::-webkit-scrollbar-thumb {
-    background-color: theme("colors.coral.200");
+    background-color: theme("colors.teal.200");
     border-radius: 9999px;
   }
   .dark .scrollbar-soft {

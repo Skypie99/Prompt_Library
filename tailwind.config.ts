@@ -32,18 +32,18 @@ const config: Config = {
           muted: "#A89E90",
         },
 
-        // The single accent: a muted, earthy coral
-        coral: {
-          50: "#FDF3EF",
-          100: "#FAE3DA",
-          200: "#F4C7B6",
-          300: "#ECA88E",
-          400: "#E48468",
-          500: "#DC6B4E",
-          600: "#C85539",
-          700: "#A6442D",
-          800: "#853828",
-          900: "#6E3024",
+        // The single accent: a soft, blue-leaning teal
+        teal: {
+          50:  "#EEF8F7",
+          100: "#D4EFED",
+          200: "#A9DED9",
+          300: "#75CAC3",
+          400: "#47B5AC",
+          500: "#2F9E96",
+          600: "#238178",
+          700: "#1C6660",
+          800: "#174E49",
+          900: "#103B37",
         },
       },
       fontFamily: {
@@ -52,7 +52,7 @@ const config: Config = {
       },
       boxShadow: {
         card: "0 1px 2px rgba(42, 37, 32, 0.04), 0 8px 24px -12px rgba(42, 37, 32, 0.12)",
-        cardHover: "0 2px 4px rgba(42, 37, 32, 0.06), 0 16px 40px -16px rgba(220, 107, 78, 0.28)",
+        cardHover: "0 2px 4px rgba(42, 37, 32, 0.06), 0 16px 40px -16px rgba(47, 158, 150, 0.28)",
         palette: "0 24px 60px -20px rgba(42, 37, 32, 0.35)",
       },
       keyframes: {

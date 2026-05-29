@@ -29,7 +29,7 @@ interface PromptFormProps {
 }
 
 const fieldClass =
-  "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30";
+  "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30";
 
 // F-n2-20 — given a variable name, produce a short readable sample so
 // the preview shows what a filled body looks like without the user
@@ -56,7 +56,7 @@ function sampleFor(name: string): string {
 // (e.g. typing into the tags input).
 //
 // F-n2-20 — "Sample fill" mode renders each {{var}} as its sampleFor()
-// value with a coral-tinted fill, mirroring PromptDetail's filled-value
+// value with a teal-tinted fill, mirroring PromptDetail's filled-value
 // chip treatment. Lets the author see "what does it look like in flight"
 // without leaving the form.
 function PromptBodyPreview({ body, sampleFill }: { body: string; sampleFill: boolean }) {
@@ -72,14 +72,14 @@ function PromptBodyPreview({ body, sampleFill }: { body: string; sampleFill: boo
           ) : sampleFill ? (
             <span
               key={index}
-              className="rounded bg-coral-100/70 px-1 text-ink dark:bg-coral-500/20 dark:text-paper"
+              className="rounded bg-teal-100/70 px-1 text-ink dark:bg-teal-500/20 dark:text-paper"
             >
               {sampleFor(segment.name)}
             </span>
           ) : (
             <span
               key={index}
-              className="rounded border border-dashed border-coral-300 px-1 text-coral-600 dark:border-coral-500/50 dark:text-coral-300"
+              className="rounded border border-dashed border-teal-300 px-1 text-teal-600 dark:border-teal-500/50 dark:text-teal-300"
             >
               {segment.raw}
             </span>
@@ -170,7 +170,7 @@ export function PromptForm({
           <button
             onClick={onCancel}
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
           >
             <CloseIcon className="h-[18px] w-[18px]" />
           </button>
@@ -182,7 +182,7 @@ export function PromptForm({
               htmlFor="pf-title"
               className="mb-1 block text-sm font-medium text-ink dark:text-paper"
             >
-              Title <span className="text-coral-500">*</span>
+              Title <span className="text-teal-500">*</span>
             </label>
             <input
               id="pf-title"
@@ -215,7 +215,7 @@ export function PromptForm({
                 htmlFor="pf-body"
                 className="block text-sm font-medium text-ink dark:text-paper"
               >
-                Prompt body <span className="text-coral-500">*</span>
+                Prompt body <span className="text-teal-500">*</span>
               </label>
               {/* F-n2-8 — one-click insert of {{}} at the caret. Caret
                   lands between the braces so the user immediately types
@@ -224,7 +224,7 @@ export function PromptForm({
                 type="button"
                 onClick={insertVariableAtCaret}
                 aria-label="Insert a variable placeholder at the cursor"
-                className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300"
+                className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
               >
                 {"{{}}"}
               </button>
@@ -275,7 +275,7 @@ export function PromptForm({
                       type="checkbox"
                       checked={sampleFill}
                       onChange={(e) => setSampleFill(e.target.checked)}
-                      className="h-3 w-3 accent-coral-500"
+                      className="h-3 w-3 accent-teal-500"
                     />
                     Sample fill
                   </label>
@@ -315,18 +315,18 @@ export function PromptForm({
               >
                 Tags
               </label>
-              <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-border bg-cream/50 px-2 py-1.5 focus-within:border-coral-400 focus-within:ring-2 focus-within:ring-coral-200 dark:border-night-border dark:bg-night dark:focus-within:ring-coral-500/30">
+              <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-border bg-cream/50 px-2 py-1.5 focus-within:border-teal-400 focus-within:ring-2 focus-within:ring-teal-200 dark:border-night-border dark:bg-night dark:focus-within:ring-teal-500/30">
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="flex items-center gap-1 rounded bg-coral-50 px-1.5 py-0.5 text-xs text-coral-700 dark:bg-coral-500/15 dark:text-coral-300"
+                    className="flex items-center gap-1 rounded bg-teal-50 px-1.5 py-0.5 text-xs text-teal-700 dark:bg-teal-500/15 dark:text-teal-300"
                   >
                     #{tag}
                     <button
                       type="button"
                       aria-label={`Remove ${tag}`}
                       onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
-                      className="text-coral-500 hover:text-coral-700"
+                      className="text-teal-500 hover:text-teal-700"
                     >
                       <CloseIcon className="h-3 w-3" />
                     </button>
@@ -362,7 +362,7 @@ export function PromptForm({
                           type="button"
                           onClick={() => addTag(tag)}
                           aria-label={`Add tag #${tag}`}
-                          className="rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-coral-50 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:bg-night dark:text-paper-muted dark:hover:bg-coral-500/15 dark:hover:text-coral-300"
+                          className="rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                         >
                           #{tag}
                         </button>
@@ -385,7 +385,7 @@ export function PromptForm({
           <button
             onClick={handleSubmit}
             disabled={!canSave}
-            className="rounded-md bg-coral-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-coral-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {mode === "edit" ? "Save changes" : "Create prompt"}
           </button>

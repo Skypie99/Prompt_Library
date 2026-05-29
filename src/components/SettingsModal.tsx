@@ -233,7 +233,7 @@ export function SettingsModal({
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
           >
             <CloseIcon className="h-[18px] w-[18px]" />
           </button>
@@ -241,7 +241,7 @@ export function SettingsModal({
 
         <div className="scrollbar-soft max-h-[70vh] space-y-5 overflow-y-auto px-6 py-5">
           {notice && (
-            <div className="rounded-md border border-coral-300 bg-coral-50 px-3 py-2 text-sm text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200">
+            <div className="rounded-md border border-teal-300 bg-teal-50 px-3 py-2 text-sm text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200">
               {notice}
             </div>
           )}
@@ -254,7 +254,7 @@ export function SettingsModal({
               </label>
               <button
                 onClick={() => setShowKey((s) => !s)}
-                className="text-xs font-medium text-coral-700 hover:text-coral-800 dark:text-coral-400"
+                className="text-xs font-medium text-teal-700 hover:text-teal-800 dark:text-teal-400"
               >
                 {showKey ? "Hide" : "Show"}
               </button>
@@ -267,7 +267,7 @@ export function SettingsModal({
               placeholder="sk-ant-…"
               autoComplete="off"
               spellCheck={false}
-              className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
+              className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30"
             />
             <p className="mt-1.5 text-xs text-ink-soft dark:text-paper-muted">
               Your key is stored locally in your browser and is only sent to Anthropic when you run
@@ -287,7 +287,7 @@ export function SettingsModal({
               id="model"
               value={model}
               onChange={(event) => setModel(event.target.value)}
-              className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
+              className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30"
             >
               {MODELS.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -313,7 +313,7 @@ export function SettingsModal({
               step={256}
               value={maxTokens}
               onChange={(event) => setMaxTokens(event.target.value)}
-              className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
+              className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30"
             />
             <p className="mt-1.5 text-xs text-ink-soft dark:text-paper-muted">
               The longest a response can be. Default 2048.
@@ -324,7 +324,7 @@ export function SettingsModal({
             href="https://console.anthropic.com/"
             target="_blank"
             rel="noreferrer"
-            className="inline-block text-sm font-medium text-coral-600 hover:text-coral-700 dark:text-coral-400"
+            className="inline-block text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
           >
             Get an API key from the Anthropic Console →
           </a>
@@ -343,12 +343,12 @@ export function SettingsModal({
               <button
                 type="button"
                 onClick={handleExport}
-                className="rounded-md bg-coral-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-coral-600 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
+                className="rounded-md bg-teal-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
               >
                 Export library
               </button>
 
-              <label className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-within:ring-2 focus-within:ring-coral-400 dark:border-night-border dark:bg-night dark:text-paper-muted">
+              <label className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-within:ring-2 focus-within:ring-teal-400 dark:border-night-border dark:bg-night dark:text-paper-muted">
                 Import library
                 <input
                   ref={fileInputRef}
@@ -369,7 +369,7 @@ export function SettingsModal({
             {importState.kind === "error" && (
               <div
                 role="alert"
-                className="mt-3 rounded-md border border-coral-300 bg-coral-50 px-3 py-2 text-sm text-coral-800 dark:border-coral-500/40 dark:bg-coral-500/10 dark:text-coral-200"
+                className="mt-3 rounded-md border border-teal-300 bg-teal-50 px-3 py-2 text-sm text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200"
               >
                 {importState.message}
               </div>
@@ -394,7 +394,7 @@ export function SettingsModal({
                     </li>
                   )}
                   {importState.preview.droppedCount > 0 && (
-                    <li className="mt-1 text-coral-700 dark:text-coral-300">
+                    <li className="mt-1 text-teal-700 dark:text-teal-300">
                       {importState.preview.droppedCount} corrupt entry(ies) will be skipped.
                     </li>
                   )}
@@ -409,14 +409,14 @@ export function SettingsModal({
                     <button
                       type="button"
                       onClick={handleApplyMerge}
-                      className="rounded-md bg-coral-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-coral-600 active:scale-95"
+                      className="rounded-md bg-teal-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95"
                     >
                       Merge into my library
                     </button>
                     <button
                       type="button"
                       onClick={() => setImportState({ ...importState, confirmingReplace: true })}
-                      className="rounded-md border border-coral-300 px-3 py-1.5 text-sm font-medium text-coral-700 transition hover:bg-coral-50 dark:border-coral-500/40 dark:text-coral-300 dark:hover:bg-coral-500/10"
+                      className="rounded-md border border-teal-300 px-3 py-1.5 text-sm font-medium text-teal-700 transition hover:bg-teal-50 dark:border-teal-500/40 dark:text-teal-300 dark:hover:bg-teal-500/10"
                     >
                       Replace my library
                     </button>
@@ -432,8 +432,8 @@ export function SettingsModal({
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-md border border-coral-300 bg-coral-50 p-2.5 dark:border-coral-500/40 dark:bg-coral-500/10">
-                    <p className="text-xs text-coral-900 dark:text-coral-100">
+                  <div className="mt-3 rounded-md border border-teal-300 bg-teal-50 p-2.5 dark:border-teal-500/40 dark:bg-teal-500/10">
+                    <p className="text-xs text-teal-900 dark:text-teal-100">
                       This will delete your existing prompts, favorites, recent, and run history,
                       then load the file. Settings (API key, model, theme) are kept. This can&apos;t
                       be undone.
@@ -442,14 +442,14 @@ export function SettingsModal({
                       <button
                         type="button"
                         onClick={() => setImportState({ ...importState, confirmingReplace: false })}
-                        className="rounded-md border border-coral-300 px-2.5 py-1 text-xs font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
+                        className="rounded-md border border-teal-300 px-2.5 py-1 text-xs font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
                         onClick={handleApplyReplace}
-                        className="rounded-md bg-coral-600 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-coral-700 active:scale-95"
+                        className="rounded-md bg-teal-600 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
                       >
                         Replace
                       </button>
@@ -518,11 +518,11 @@ export function SettingsModal({
                 the export's "what's in / what's out" contract. */}
             <section
               aria-labelledby="reset-heading"
-              className="mt-4 rounded-md border border-coral-200 bg-coral-50/40 p-3 dark:border-coral-500/30 dark:bg-coral-500/5"
+              className="mt-4 rounded-md border border-teal-200 bg-teal-50/40 p-3 dark:border-teal-500/30 dark:bg-teal-500/5"
             >
               <h3
                 id="reset-heading"
-                className="text-xs font-medium uppercase tracking-wider text-coral-700 dark:text-coral-300"
+                className="text-xs font-medium uppercase tracking-wider text-teal-700 dark:text-teal-300"
               >
                 Danger zone
               </h3>
@@ -535,14 +535,14 @@ export function SettingsModal({
                   <button
                     type="button"
                     onClick={() => setConfirmingReset(true)}
-                    className="shrink-0 rounded-md border border-coral-300 px-2 py-1 text-xs font-medium text-coral-700 transition hover:bg-coral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 dark:border-coral-500/40 dark:text-coral-300 dark:hover:bg-coral-500/10"
+                    className="shrink-0 rounded-md border border-teal-300 px-2 py-1 text-xs font-medium text-teal-700 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:border-teal-500/40 dark:text-teal-300 dark:hover:bg-teal-500/10"
                   >
                     Reset all data
                   </button>
                 </div>
               ) : (
                 <div className="mt-2">
-                  <p className="text-xs text-coral-900 dark:text-coral-100">
+                  <p className="text-xs text-teal-900 dark:text-teal-100">
                     Permanently delete every prompt, favorite, recent, run, and saved value? This
                     can&apos;t be undone. (Export first if you might want it back.)
                   </p>
@@ -550,7 +550,7 @@ export function SettingsModal({
                     <button
                       type="button"
                       onClick={() => setConfirmingReset(false)}
-                      className="rounded-md border border-coral-300 px-2 py-1 text-xs font-medium text-coral-800 transition hover:bg-coral-100 dark:border-coral-500/40 dark:text-coral-100 dark:hover:bg-coral-500/20"
+                      className="rounded-md border border-teal-300 px-2 py-1 text-xs font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
                     >
                       Cancel
                     </button>
@@ -565,7 +565,7 @@ export function SettingsModal({
                         setStorageUsage(getStorageUsage());
                         onLibraryImported?.();
                       }}
-                      className="rounded-md bg-coral-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-coral-700 active:scale-95"
+                      className="rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
                     >
                       Reset all data
                     </button>
@@ -585,7 +585,7 @@ export function SettingsModal({
           </button>
           <button
             onClick={handleSave}
-            className="rounded-md bg-coral-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-coral-600 active:scale-95"
+            className="rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95"
           >
             Save
           </button>

@@ -6,18 +6,17 @@
 // no storage). Visual purpose only: gives the grid a quick scannable
 // "category cluster" signal without users having to read the chip text.
 
-// Palette intentionally avoids coral (the primary accent) so the stripes
-// don't compete with stars / CTAs. All shades are mid-saturation so the
-// 3px stripe reads at a glance but doesn't shout.
+// Palette intentionally stays in teal-to-mauve cool range so stripes
+// don't compete with the primary teal accent on chips / CTAs.
 const PALETTE: ReadonlyArray<{ light: string; dark: string }> = [
-  { light: "#7C9EB2", dark: "#A6C4D8" }, // dusty blue
-  { light: "#8FA982", dark: "#B3CDA6" }, // sage
-  { light: "#C29A66", dark: "#DDB789" }, // ochre
-  { light: "#A07AB4", dark: "#C6A1D7" }, // muted plum
-  { light: "#B4847A", dark: "#D2A89E" }, // terracotta
-  { light: "#6E9B91", dark: "#94BFB5" }, // jade
-  { light: "#B59F58", dark: "#D6BF7F" }, // mustard
-  { light: "#8889AB", dark: "#AEAFD0" }, // periwinkle
+  { light: "#6FA09A", dark: "#93C1BB" }, // seafoam
+  { light: "#5E9E97", dark: "#84BFB9" }, // lagoon
+  { light: "#6292AA", dark: "#88B5CC" }, // steel
+  { light: "#6880AE", dark: "#8FA4CE" }, // cornflower
+  { light: "#7880B8", dark: "#9FA8D5" }, // periwinkle
+  { light: "#8A82B8", dark: "#ADA7D4" }, // violet slate
+  { light: "#9680B0", dark: "#BAA8CE" }, // soft plum
+  { light: "#9E80A4", dark: "#C0A8C4" }, // dusty mauve
 ];
 
 /** Stable djb2-style hash of a string. Tiny and good enough for indexing

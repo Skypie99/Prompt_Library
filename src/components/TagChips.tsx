@@ -40,10 +40,10 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
             aria-pressed={isActive}
             aria-label={`Filter by #${tag}, ${count} ${count === 1 ? "prompt" : "prompts"}`}
             className={clsx(
-              "rounded-full border px-3 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
+              "rounded-full border px-3 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
               isActive
-                ? "border-coral-500 bg-coral-500 text-white shadow-sm"
-                : "border-border bg-cream text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300"
+                ? "border-teal-500 bg-teal-500 text-white shadow-sm"
+                : "border-border bg-cream text-ink-muted hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
             )}
           >
             <span>#{tag}</span>
@@ -68,7 +68,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-coral-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
+          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-teal-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
         >
           +{hiddenCount} more
         </button>
@@ -78,7 +78,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
         <button
           type="button"
           onClick={() => setExpanded(false)}
-          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-coral-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
+          className="rounded-full px-3 py-1 text-xs font-medium text-ink-muted underline-offset-4 hover:text-teal-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
         >
           Show fewer
         </button>

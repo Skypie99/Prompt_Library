@@ -59,10 +59,10 @@ function CategoryChip({
       aria-pressed={isActive}
       aria-label={`Filter by ${label}, ${count} ${count === 1 ? "prompt" : "prompts"}`}
       className={clsx(
-        "rounded-full border px-4 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
+        "rounded-full border px-4 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
         isActive
-          ? "border-coral-500 bg-coral-500 text-white shadow-sm"
-          : "border-border bg-surface text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-coral-300"
+          ? "border-teal-500 bg-teal-500 text-white shadow-sm"
+          : "border-border bg-surface text-ink-muted hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
       )}
     >
       <span>{label}</span>

@@ -56,7 +56,7 @@ function Block({ node }: { node: BlockNode }) {
       return <CodeBlock value={node.value} />;
     case "blockquote":
       return (
-        <blockquote className="my-3 border-l-2 border-coral-300 bg-cream/40 px-3 py-2 text-sm italic leading-relaxed text-ink-muted dark:border-coral-500/40 dark:bg-night/40 dark:text-paper-muted">
+        <blockquote className="my-3 border-l-2 border-teal-300 bg-cream/40 px-3 py-2 text-sm italic leading-relaxed text-ink-muted dark:border-teal-500/40 dark:bg-night/40 dark:text-paper-muted">
           {node.children.map((c, i) => (
             <Inline key={i} node={c} />
           ))}
@@ -127,7 +127,7 @@ function CodeBlock({ value }: { value: string }) {
         type="button"
         onClick={handleCopy}
         aria-label={copied ? "Code copied" : "Copy code"}
-        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-0.5 text-[10px] font-medium text-ink-muted opacity-0 transition hover:border-coral-300 hover:text-coral-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-coral-300"
+        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-0.5 text-[10px] font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
       >
         {copied ? "Copied" : "Copy"}
       </button>
@@ -169,7 +169,7 @@ function Inline({ node }: { node: InlineNode }) {
           href={node.href}
           target="_blank"
           rel="noreferrer noopener"
-          className="text-coral-700 underline underline-offset-2 hover:text-coral-800 dark:text-coral-300 dark:hover:text-coral-200"
+          className="text-teal-700 underline underline-offset-2 hover:text-teal-800 dark:text-teal-300 dark:hover:text-teal-200"
         >
           {node.children.map((c, i) => (
             <Inline key={i} node={c} />

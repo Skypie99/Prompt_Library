@@ -39,7 +39,7 @@ function Highlighted({
         segment.highlight ? (
           <mark
             key={index}
-            className="rounded-[2px] bg-coral-200/70 text-ink dark:bg-coral-500/30 dark:text-paper"
+            className="rounded-[2px] bg-teal-200/70 text-ink dark:bg-teal-500/30 dark:text-paper"
           >
             {segment.text}
           </mark>
@@ -189,8 +189,8 @@ export function CommandPalette({
                     className={clsx(
                       "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors",
                       isActive
-                        ? "bg-coral-100 dark:bg-coral-500/20"
-                        : "hover:bg-coral-50/70 dark:hover:bg-night-border/40"
+                        ? "bg-teal-100 dark:bg-teal-500/20"
+                        : "hover:bg-teal-50/70 dark:hover:bg-night-border/40"
                     )}
                   >
                     <div className="min-w-0 flex-1">
@@ -198,7 +198,7 @@ export function CommandPalette({
                         className={clsx(
                           "truncate text-sm font-medium",
                           isActive
-                            ? "text-coral-800 dark:text-coral-200"
+                            ? "text-teal-800 dark:text-teal-200"
                             : "text-ink dark:text-paper"
                         )}
                       >

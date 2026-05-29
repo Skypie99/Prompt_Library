@@ -1,7 +1,7 @@
 import type { SVGProps } from "react";
 
 // Small, dependency-free icon set. Each takes standard SVG props so size and
-// color come from Tailwind classes (e.g. className="h-4 w-4 text-coral-500").
+// color come from Tailwind classes (e.g. className="h-4 w-4 text-teal-500").
 
 const base = {
   viewBox: "0 0 24 24",
