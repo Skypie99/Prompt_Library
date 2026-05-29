@@ -108,9 +108,9 @@ function installFakeStorage(): FakeStore {
 }
 
 function uninstallFakeStorage(): void {
-  // @ts-expect-error
+  // @ts-expect-error -- globalThis.window is not typed as optional but delete is safe in jsdom test teardown
   delete globalThis.window;
-  // @ts-expect-error
+  // @ts-expect-error -- globalThis.localStorage is not typed as optional but delete is safe in jsdom test teardown
   delete globalThis.localStorage;
 }
 
