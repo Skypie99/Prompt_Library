@@ -448,7 +448,7 @@ export function SettingsModal({
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-md border border-teal-300 bg-teal-50 p-2.5 dark:border-teal-500/40 dark:bg-teal-500/10">
+                  <div className="mt-3 rounded-md border border-teal-300 bg-teal-50 p-3 dark:border-teal-500/40 dark:bg-teal-500/10">
                     <p className="text-xs text-teal-900 dark:text-teal-100">
                       This will delete your existing prompts, favorites, recent, and run history,
                       then load the file. Settings (API key, model, theme) are kept. This can&apos;t
@@ -458,14 +458,14 @@ export function SettingsModal({
                       <button
                         type="button"
                         onClick={() => setImportState({ ...importState, confirmingReplace: false })}
-                        className="rounded-md border border-teal-300 px-2.5 py-1 text-xs font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
+                        className="rounded-md border border-teal-300 px-3 py-1 text-xs font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
                         onClick={handleApplyReplace}
-                        className="rounded-md bg-teal-600 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
+                        className="rounded-md bg-teal-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
                       >
                         Replace
                       </button>
@@ -478,7 +478,7 @@ export function SettingsModal({
             {importState.kind === "success" && (
               <div
                 role="status"
-                className="mt-3 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-100"
+                className="mt-3 rounded-md border border-success-300 bg-success-50 px-3 py-2 text-sm text-success-900 dark:border-success-300/40 dark:bg-success-300/10 dark:text-success-300"
               >
                 Imported {importState.result.promptsAdded} prompt(s),{" "}
                 {importState.result.favoritesAdded} favorite(s),{" "}
@@ -510,19 +510,19 @@ export function SettingsModal({
                     ~{formatBytes(storageUsage.totalBytes)}
                   </span>
                 </div>
-                <ul className="mt-2 space-y-0.5 text-xs text-ink-muted dark:text-paper-muted">
+                <ul className="mt-2 space-y-1 text-xs text-ink-muted dark:text-paper-muted">
                   {storageUsage.buckets
                     .filter((b) => b.bytes > 0)
                     .map((b) => (
                       <li key={b.label} className="flex items-center justify-between gap-3">
                         <span>{b.label}</span>
-                        <span className="font-mono text-[11px] text-ink-soft dark:text-paper-muted">
+                        <span className="font-mono text-xs text-ink-soft dark:text-paper-muted">
                           {formatBytes(b.bytes)}
                         </span>
                       </li>
                     ))}
                 </ul>
-                <p className="mt-2 text-[11px] text-ink-soft dark:text-paper-muted">
+                <p className="mt-2 text-xs text-ink-soft dark:text-paper-muted">
                   All stored in this browser. Typical browser quota is ~5–10 MB per site.
                 </p>
               </section>
@@ -534,11 +534,11 @@ export function SettingsModal({
                 the export's "what's in / what's out" contract. */}
             <section
               aria-labelledby="reset-heading"
-              className="mt-4 rounded-md border border-teal-200 bg-teal-50/40 p-3 dark:border-teal-500/30 dark:bg-teal-500/5"
+              className="mt-4 rounded-md border border-danger-200 bg-danger-50 p-3 dark:border-danger-300/30 dark:bg-danger-300/5"
             >
               <h3
                 id="reset-heading"
-                className="text-xs font-medium uppercase tracking-wider text-teal-700 dark:text-teal-300"
+                className="text-xs font-medium uppercase tracking-wider text-danger-800 dark:text-danger-300"
               >
                 Danger zone
               </h3>
@@ -551,14 +551,14 @@ export function SettingsModal({
                   <button
                     type="button"
                     onClick={() => setConfirmingReset(true)}
-                    className="shrink-0 rounded-md border border-teal-300 px-2 py-1 text-xs font-medium text-teal-700 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:border-teal-500/40 dark:text-teal-300 dark:hover:bg-teal-500/10"
+                    className="shrink-0 rounded-md border border-danger-700 px-2 py-1 text-xs font-medium text-danger-700 transition hover:bg-danger-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-600 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/10"
                   >
                     Reset all data
                   </button>
                 </div>
               ) : (
                 <div className="mt-2">
-                  <p className="text-xs text-teal-900 dark:text-teal-100">
+                  <p className="text-xs text-danger-900 dark:text-danger-300">
                     Permanently delete every prompt, favorite, recent, run, and saved value? This
                     can&apos;t be undone. (Export first if you might want it back.)
                   </p>
@@ -566,7 +566,7 @@ export function SettingsModal({
                     <button
                       type="button"
                       onClick={() => setConfirmingReset(false)}
-                      className="rounded-md border border-teal-300 px-2 py-1 text-xs font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
+                      className="rounded-md border border-danger-200 px-2 py-1 text-xs font-medium text-danger-700 transition hover:bg-danger-50 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/20"
                     >
                       Cancel
                     </button>
@@ -581,7 +581,7 @@ export function SettingsModal({
                         setStorageUsage(getStorageUsage());
                         onLibraryImported?.();
                       }}
-                      className="rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
+                      className="rounded-md bg-danger-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-danger-700 active:scale-95"
                     >
                       Reset all data
                     </button>
