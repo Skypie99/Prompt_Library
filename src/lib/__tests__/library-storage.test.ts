@@ -46,11 +46,17 @@ function installFakeStorage(): FakeStore {
   const store: FakeStore = new Map();
   const stub = {
     getItem: (k: string) => store.get(k) ?? null,
-    setItem: (k: string, v: string) => { store.set(k, String(v)); },
-    removeItem: (k: string) => { store.delete(k); },
+    setItem: (k: string, v: string) => {
+      store.set(k, String(v));
+    },
+    removeItem: (k: string) => {
+      store.delete(k);
+    },
     clear: () => store.clear(),
     key: (i: number) => Array.from(store.keys())[i] ?? null,
-    get length() { return store.size; },
+    get length() {
+      return store.size;
+    },
   };
   // @ts-expect-error — test stub
   globalThis.window = { localStorage: stub };
@@ -321,10 +327,7 @@ describe("loadRecent / saveRecent", () => {
   });
 
   it("filters out non-string entries on load", () => {
-    globalThis.localStorage.setItem(
-      "promptlib:recent",
-      JSON.stringify(["a", 42, "b"]),
-    );
+    globalThis.localStorage.setItem("promptlib:recent", JSON.stringify(["a", 42, "b"]));
     expect(loadRecent()).toEqual(["a", "b"]);
   });
 });

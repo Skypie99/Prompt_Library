@@ -112,7 +112,7 @@ describe("sortPrompts", () => {
         makePrompt({ id: "new", createdAt: "2026-01-01T00:00:00.000Z" }),
         makePrompt({ id: "mid", createdAt: "2025-01-01T00:00:00.000Z" }),
       ],
-      "newest"
+      "newest",
     );
     expect(sorted.map((p) => p.id)).toEqual(["new", "mid", "old"]);
   });
@@ -124,7 +124,7 @@ describe("sortPrompts", () => {
         makePrompt({ id: "2", title: "Apple" }),
         makePrompt({ id: "3", title: "banana" }),
       ],
-      "az"
+      "az",
     );
     expect(sorted.map((p) => p.title)).toEqual(["Apple", "banana", "zebra"]);
   });
@@ -138,7 +138,7 @@ describe("sortPrompts", () => {
     const sorted = sortPrompts(
       [makePrompt({ id: "c" }), makePrompt({ id: "a" }), makePrompt({ id: "b" })],
       "most-run",
-      counts
+      counts,
     );
     expect(sorted.map((p) => p.id)).toEqual(["a", "b", "c"]);
   });
@@ -154,7 +154,7 @@ describe("sortPrompts", () => {
         makePrompt({ id: "b", createdAt: "2026-01-01T00:00:00.000Z" }),
       ],
       "most-run",
-      counts
+      counts,
     );
     expect(sorted.map((p) => p.id)).toEqual(["b", "a"]);
   });
@@ -165,7 +165,7 @@ describe("sortPrompts", () => {
         makePrompt({ id: "old", createdAt: "2024-01-01T00:00:00.000Z" }),
         makePrompt({ id: "new", createdAt: "2026-01-01T00:00:00.000Z" }),
       ],
-      "most-run"
+      "most-run",
     );
     expect(sorted.map((p) => p.id)).toEqual(["new", "old"]);
   });

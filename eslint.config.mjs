@@ -1,19 +1,14 @@
 // eslint.config.mjs — ESLint v9 flat config
-// Uses FlatCompat to bridge eslint-config-next (legacy format) into v9.
-import { FlatCompat } from "@eslint/eslintrc";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+// eslint-config-next v16 exports native flat config arrays — no FlatCompat needed.
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const compat = new FlatCompat({ baseDirectory: __dirname });
-
 export default [
   // Bring in Next.js recommended rules (core-web-vitals + TypeScript)
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
 
   // Disable any Prettier-conflicting ESLint style rules
   prettierConfig,

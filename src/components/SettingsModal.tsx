@@ -229,7 +229,12 @@ export function SettingsModal({
         className="relative w-full max-w-md animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface"
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-4 dark:border-night-border">
-          <h2 id="settings-modal-title" className="font-display text-xl font-semibold text-ink dark:text-paper">Settings</h2>
+          <h2
+            id="settings-modal-title"
+            className="font-display text-xl font-semibold text-ink dark:text-paper"
+          >
+            Settings
+          </h2>
           <button
             onClick={onClose}
             aria-label="Close"

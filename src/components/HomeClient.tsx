@@ -152,7 +152,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // ---- Derived data ----
   const allPrompts = useMemo(
     () => mergePrompts(userPrompts, seedPrompts),
-    [userPrompts, seedPrompts]
+    [userPrompts, seedPrompts],
   );
   const promptById = useMemo(() => {
     const map = new Map<string, Prompt>();
@@ -165,7 +165,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // String-only list is what the PromptForm category combobox needs.
   const categories = useMemo(
     () => categoriesWithCounts.map((c) => c.category),
-    [categoriesWithCounts]
+    [categoriesWithCounts],
   );
   // F-eve-2 — each entry carries its count for the TagChips badge. Named
   // `tagsWithCounts` (not just `tags`) so every call site below reads
@@ -195,11 +195,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
   const favoritePrompts = useMemo(
     () => favorites.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
-    [favorites, promptById]
+    [favorites, promptById],
   );
   const recentPrompts = useMemo(
     () => recent.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
-    [recent, promptById]
+    [recent, promptById],
   );
 
   const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites]);
@@ -251,7 +251,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       setActivePrompt(prompt);
       recordRecent(prompt.id);
     },
-    [recordRecent]
+    [recordRecent],
   );
 
   const dismissOnboarding = useCallback(() => {
@@ -358,7 +358,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       }
       setForm(null);
     },
-    [form, recordRecent]
+    [form, recordRecent],
   );
 
   // Global shortcuts

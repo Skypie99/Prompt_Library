@@ -137,7 +137,7 @@ export function removeRun(promptId: string, runId: string): StoredRun[] {
  */
 export function setRunLabel(promptId: string, runId: string, label: string): StoredRun[] {
   const next = loadRuns(promptId).map((r) =>
-    r.id === runId ? { ...r, label: label.trim() || undefined } : r
+    r.id === runId ? { ...r, label: label.trim() || undefined } : r,
   );
   saveRuns(promptId, next);
   return next;
