@@ -45,6 +45,7 @@ import { PromptDetail } from "./PromptDetail";
 import { SettingsModal } from "./SettingsModal";
 import { EmptyHint } from "./EmptyHint";
 import { OnboardingHint } from "./OnboardingHint";
+import { ApiKeyNudge } from "./ApiKeyNudge";
 import { PromptForm, type PromptFormValues } from "./PromptForm";
 import { ShortcutsModal } from "./ShortcutsModal";
 import { ClockIcon, PlusIcon, SearchIcon, SparkleIcon, StarIcon } from "./icons";
@@ -97,6 +98,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // F-eve-1 — sort mode for the All prompts grid. Defaults to "newest"
   // (the same createdAt-desc order the app has always used).
   const [sortMode, setSortMode] = useState<SortMode>(DEFAULT_SORT);
+  // F-r1 — first-run API key nudge. False initially to avoid SSR hydration
+  // mismatch; set on mount if no key + no prior runs + not session-dismissed.
+  const [showApiKeyNudge, setShowApiKeyNudge] = useState(false);
 
   useEffect(() => {
     // Migrate the on-disk shape BEFORE any reader runs, so v0 -> v1 keys are
@@ -114,12 +118,28 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       setStorageWarning(msg);
     });
 
-    setSettings(loadSettings());
+    const loadedSettings = loadSettings();
+    setSettings(loadedSettings);
     setUserPrompts(loadUserPrompts());
     setFavorites(loadFavorites());
     setRecent(loadRecent());
-    setRunCounts(loadAllRunCounts());
+    const loadedCounts = loadAllRunCounts();
+    setRunCounts(loadedCounts);
     setLastRunIsos(loadAllLastRunIsos());
+
+    // F-r1 — show nudge only when: no API key stored, not session-dismissed,
+    // and no prior runs (a completed run is proof the key works).
+    if (!loadedSettings.apiKey) {
+      const nudgeDismissed = (() => {
+        try {
+          return sessionStorage.getItem("promptlib:keyNudgeDismissed") === "1";
+        } catch {
+          return false;
+        }
+      })();
+      const hasAnyRun = Array.from(loadedCounts.values()).some((c) => c > 0);
+      setShowApiKeyNudge(!nudgeDismissed && !hasAnyRun);
+    }
     setDensity(loadDensity());
     setSortMode(loadSort());
     setShowOnboarding(!loadOnboarded());
@@ -132,7 +152,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // ---- Derived data ----
   const allPrompts = useMemo(
     () => mergePrompts(userPrompts, seedPrompts),
-    [userPrompts, seedPrompts],
+    [userPrompts, seedPrompts]
   );
   const promptById = useMemo(() => {
     const map = new Map<string, Prompt>();
@@ -145,7 +165,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // String-only list is what the PromptForm category combobox needs.
   const categories = useMemo(
     () => categoriesWithCounts.map((c) => c.category),
-    [categoriesWithCounts],
+    [categoriesWithCounts]
   );
   // F-eve-2 — each entry carries its count for the TagChips badge. Named
   // `tagsWithCounts` (not just `tags`) so every call site below reads
@@ -175,11 +195,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
   const favoritePrompts = useMemo(
     () => favorites.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
-    [favorites, promptById],
+    [favorites, promptById]
   );
   const recentPrompts = useMemo(
     () => recent.map((id) => promptById.get(id)).filter((p): p is Prompt => Boolean(p)),
-    [recent, promptById],
+    [recent, promptById]
   );
 
   const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites]);
@@ -188,6 +208,20 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const updateSettings = useCallback((next: Settings) => {
     setSettings(next);
     saveSettings(next);
+    // F-r1 — once a key is saved, suppress the nudge for this session.
+    if (next.apiKey) {
+      setShowApiKeyNudge(false);
+      try {
+        sessionStorage.setItem("promptlib:keyNudgeDismissed", "1");
+      } catch {}
+    }
+  }, []);
+
+  const dismissApiKeyNudge = useCallback(() => {
+    setShowApiKeyNudge(false);
+    try {
+      sessionStorage.setItem("promptlib:keyNudgeDismissed", "1");
+    } catch {}
   }, []);
 
   const openSettings = useCallback((notice?: string) => {
@@ -217,7 +251,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       setActivePrompt(prompt);
       recordRecent(prompt.id);
     },
-    [recordRecent],
+    [recordRecent]
   );
 
   const dismissOnboarding = useCallback(() => {
@@ -324,7 +358,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       }
       setForm(null);
     },
-    [form, recordRecent],
+    [form, recordRecent]
   );
 
   // Global shortcuts
@@ -393,6 +427,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
             </button>
           </div>
         </div>
+      )}
+
+      {showApiKeyNudge && (
+        <ApiKeyNudge onOpenSettings={() => openSettings()} onDismiss={dismissApiKeyNudge} />
       )}
 
       <main className="mx-auto max-w-5xl px-6">

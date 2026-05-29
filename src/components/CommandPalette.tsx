@@ -45,7 +45,7 @@ function Highlighted({
           </mark>
         ) : (
           <span key={index}>{segment.text}</span>
-        ),
+        )
       )}
     </>
   );
@@ -190,7 +190,7 @@ export function CommandPalette({
                       "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors",
                       isActive
                         ? "bg-coral-100 dark:bg-coral-500/20"
-                        : "hover:bg-coral-50/70 dark:hover:bg-night-border/40",
+                        : "hover:bg-coral-50/70 dark:hover:bg-night-border/40"
                     )}
                   >
                     <div className="min-w-0 flex-1">
@@ -199,7 +199,7 @@ export function CommandPalette({
                           "truncate text-sm font-medium",
                           isActive
                             ? "text-coral-800 dark:text-coral-200"
-                            : "text-ink dark:text-paper",
+                            : "text-ink dark:text-paper"
                         )}
                       >
                         <Highlighted

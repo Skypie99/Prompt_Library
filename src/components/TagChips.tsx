@@ -43,7 +43,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
               "rounded-full border px-3 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
               isActive
                 ? "border-coral-500 bg-coral-500 text-white shadow-sm"
-                : "border-border bg-cream text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300",
+                : "border-border bg-cream text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300"
             )}
           >
             <span>#{tag}</span>
@@ -55,7 +55,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
                 // Inactive count uses ink-muted (not ink-soft) so 10px text
                 // clears AA contrast on bg-cream / dark on bg-night.
                 "ml-1.5 text-[10px] font-normal tabular-nums",
-                isActive ? "text-white/80" : "text-ink-muted dark:text-paper-muted",
+                isActive ? "text-white/80" : "text-ink-muted dark:text-paper-muted"
               )}
             >
               {count}

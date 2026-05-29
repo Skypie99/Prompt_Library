@@ -68,12 +68,12 @@ function mapHttpError(status: number, detail: string, retryAfterHeader?: string 
     case status === 401 || status === 403:
       return new ClaudeError(
         "auth",
-        "That API key was rejected. Double-check it in Settings and re-paste it.",
+        "That API key was rejected. Double-check it in Settings and re-paste it."
       );
     case status === 429: {
       const err = new ClaudeError(
         "rate-limit",
-        "Rate limit reached. Wait a moment, or switch to a faster model in Settings.",
+        "Rate limit reached. Wait a moment, or switch to a faster model in Settings."
       );
       const seconds = parseRetryAfter(retryAfterHeader ?? null);
       if (seconds !== undefined) err.retryAfterSeconds = seconds;
@@ -82,7 +82,7 @@ function mapHttpError(status: number, detail: string, retryAfterHeader?: string 
     case status === 503 || status === 529:
       return new ClaudeError(
         "overloaded",
-        "Claude is overloaded right now. Give it a few seconds and try again.",
+        "Claude is overloaded right now. Give it a few seconds and try again."
       );
     case status >= 400 && status < 500:
       return new ClaudeError("bad-request", `Claude rejected the request${suffix}.`);
@@ -148,7 +148,7 @@ export async function streamClaude({
     if ((error as Error)?.name === "AbortError") throw error;
     throw new ClaudeError(
       "network",
-      "Couldn't reach Claude — check your connection and try again.",
+      "Couldn't reach Claude — check your connection and try again."
     );
   }
 

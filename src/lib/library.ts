@@ -49,7 +49,7 @@ let onStorageWriteFailure: ((result: Exclude<StorageWriteResult, { ok: true }>) 
   null;
 
 export function setStorageWriteFailureHandler(
-  handler: ((result: Exclude<StorageWriteResult, { ok: true }>) => void) | null,
+  handler: ((result: Exclude<StorageWriteResult, { ok: true }>) => void) | null
 ): void {
   onStorageWriteFailure = handler;
 }

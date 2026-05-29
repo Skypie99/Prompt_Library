@@ -23,6 +23,13 @@ export const MODELS: ModelOption[] = [
 export const DEFAULT_MODEL = "claude-opus-4-7";
 export const DEFAULT_MAX_TOKENS = 2048;
 
+// Inclusive bounds on maxTokens. Must match the clamp inside
+// SettingsModal.handleSave — load-time and save-time enforce the same
+// range so a hand-edited or pre-clamp localStorage value can never reach
+// the Anthropic API as an absurd number.
+export const MIN_MAX_TOKENS = 256;
+export const MAX_MAX_TOKENS = 8192;
+
 const STORAGE_KEYS = {
   apiKey: "promptlib:apiKey",
   model: "promptlib:model",
@@ -39,6 +46,11 @@ function isKnownModel(id: string): boolean {
   return MODELS.some((model) => model.id === id);
 }
 
+function clampMaxTokens(n: number): number {
+  if (!Number.isFinite(n)) return DEFAULT_MAX_TOKENS;
+  return Math.min(MAX_MAX_TOKENS, Math.max(MIN_MAX_TOKENS, Math.round(n)));
+}
+
 /** Human-friendly model name for display (falls back to the raw id). */
 export function modelLabel(id: string): string {
   return MODELS.find((model) => model.id === id)?.label ?? id;
@@ -51,8 +63,7 @@ export function loadSettings(): Settings {
     const storedModel = localStorage.getItem(STORAGE_KEYS.model) ?? DEFAULT_MODEL;
     const model = isKnownModel(storedModel) ? storedModel : DEFAULT_MODEL;
     const rawMax = localStorage.getItem(STORAGE_KEYS.maxTokens);
-    const parsedMax = rawMax ? Number(rawMax) : NaN;
-    const maxTokens = Number.isFinite(parsedMax) ? parsedMax : DEFAULT_MAX_TOKENS;
+    const maxTokens = rawMax !== null ? clampMaxTokens(Number(rawMax)) : DEFAULT_MAX_TOKENS;
     return { apiKey, model, maxTokens };
   } catch {
     return FALLBACK;

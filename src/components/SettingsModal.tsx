@@ -66,6 +66,10 @@ export function SettingsModal({
   // F-n2-10 — destructive "Reset all data" confirm gate.
   const [confirmingReset, setConfirmingReset] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  // F5 — retain reference to the element that triggered the modal so we can
+  // restore focus when it closes.
+  const triggerRef = useRef<Element | null>(null);
 
   // Sync the form to the saved settings each time the modal opens, and
   // reset any in-flight import state so a closed-then-reopened modal is
@@ -95,6 +99,53 @@ export function SettingsModal({
       setStorageUsage(getStorageUsage());
     }
   }, [importState]);
+
+  // F5 — Focus management: move focus into the modal on open, return it on close.
+  useEffect(() => {
+    if (open) {
+      triggerRef.current = document.activeElement;
+      const modal = modalRef.current;
+      if (modal) {
+        const focusable = modal.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        focusable[0]?.focus();
+      }
+    } else {
+      (triggerRef.current as HTMLElement | null)?.focus();
+    }
+  }, [open]);
+
+  // F5 — Keyboard focus trap: Tab/Shift+Tab cycle within the modal.
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Tab") return;
+      const modal = modalRef.current;
+      if (!modal) return;
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => !el.hasAttribute("disabled"));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
 
   if (!open) return null;
 
@@ -170,13 +221,19 @@ export function SettingsModal({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-md animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-modal-title"
+        className="relative w-full max-w-md animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface"
+      >
         <div className="flex items-center justify-between border-b border-border px-6 py-4 dark:border-night-border">
-          <h2 className="font-display text-xl font-semibold text-ink dark:text-paper">Settings</h2>
+          <h2 id="settings-modal-title" className="font-display text-xl font-semibold text-ink dark:text-paper">Settings</h2>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
           >
             <CloseIcon className="h-[18px] w-[18px]" />
           </button>
@@ -197,7 +254,7 @@ export function SettingsModal({
               </label>
               <button
                 onClick={() => setShowKey((s) => !s)}
-                className="text-xs font-medium text-coral-600 hover:text-coral-700 dark:text-coral-400"
+                className="text-xs font-medium text-coral-700 hover:text-coral-800 dark:text-coral-400"
               >
                 {showKey ? "Hide" : "Show"}
               </button>

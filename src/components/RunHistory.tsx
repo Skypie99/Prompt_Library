@@ -96,7 +96,7 @@ export function RunHistory({
     () => () => {
       if (copyTimer.current) clearTimeout(copyTimer.current);
     },
-    [],
+    []
   );
 
   // If the active prompt or its history changes, drop transient row state.
@@ -126,7 +126,7 @@ export function RunHistory({
       onChange(next);
       if (openRunId === runId) setOpenRunId(null);
     },
-    [onChange, openRunId, promptId],
+    [onChange, openRunId, promptId]
   );
 
   const handleClearAll = useCallback(() => {
@@ -181,7 +181,7 @@ export function RunHistory({
         run,
         relative: formatRelativeTime(run.ranAt, now),
       })),
-    [filteredRuns, now],
+    [filteredRuns, now]
   );
 
   // Empty history → render nothing. The cue to run is the existing Run button.
@@ -209,7 +209,7 @@ export function RunHistory({
           <ChevronIcon
             className={clsx(
               "h-3.5 w-3.5 transition-transform",
-              expanded ? "rotate-180" : "rotate-0",
+              expanded ? "rotate-180" : "rotate-0"
             )}
           />
         </button>
@@ -241,7 +241,7 @@ export function RunHistory({
                 "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400",
                 last24Only
                   ? "border-coral-500 bg-coral-500 text-white"
-                  : "border-border bg-surface text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300",
+                  : "border-border bg-surface text-ink-muted hover:border-coral-300 hover:text-coral-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300"
               )}
             >
               Last 24h
@@ -255,7 +255,7 @@ export function RunHistory({
                 const json = JSON.stringify(
                   { version: 1, exportedAt: new Date().toISOString(), promptId, runs },
                   null,
-                  2,
+                  2
                 );
                 const blob = new Blob([json], { type: "application/json" });
                 const url = URL.createObjectURL(blob);
@@ -345,7 +345,7 @@ export function RunHistory({
                     aria-hidden
                     className={clsx(
                       "mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full",
-                      STATUS_DOT_CLASS[run.status],
+                      STATUS_DOT_CLASS[run.status]
                     )}
                   />
                   <div className="min-w-0 flex-1">
@@ -438,7 +438,7 @@ export function RunHistory({
                           title={isCopied ? "Copied" : "Copy response"}
                           className={clsx(
                             "flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-coral-300 hover:text-coral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night",
-                            isCopied && "border-coral-500 text-coral-600",
+                            isCopied && "border-coral-500 text-coral-600"
                           )}
                         >
                           {isCopied ? (
@@ -467,7 +467,7 @@ export function RunHistory({
                           <ChevronIcon
                             className={clsx(
                               "h-3.5 w-3.5 transition-transform",
-                              isOpen ? "rotate-180" : "rotate-0",
+                              isOpen ? "rotate-180" : "rotate-0"
                             )}
                           />
                         </button>

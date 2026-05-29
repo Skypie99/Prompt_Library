@@ -52,7 +52,7 @@ export function saveSort(value: SortMode): void {
 export function sortPrompts(
   prompts: Prompt[],
   mode: SortMode,
-  runCounts?: Map<string, number>,
+  runCounts?: Map<string, number>
 ): Prompt[] {
   // Copy first — sort mutates in place.
   const arr = [...prompts];

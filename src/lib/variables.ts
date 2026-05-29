@@ -38,7 +38,7 @@ function isLikelyMultiline(name: string, placeholder?: string): boolean {
 // formally declared (e.g. user-added prompts later).
 export function extractVariables(prompt: Prompt): ResolvedVariable[] {
   const declared = new Map<string, PromptVariable>(
-    prompt.variables.map((variable) => [variable.name, variable]),
+    prompt.variables.map((variable) => [variable.name, variable])
   );
   const seen = new Set<string>();
   const result: ResolvedVariable[] = [];
