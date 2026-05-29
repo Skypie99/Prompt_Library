@@ -168,8 +168,8 @@ function Inline({ node }: { node: InlineNode }) {
         <a
           href={node.href}
           target="_blank"
-          rel="noreferrer noopener"
-          className="text-teal-700 underline underline-offset-2 hover:text-teal-800 dark:text-teal-300 dark:hover:text-teal-200"
+          rel="noopener noreferrer"
+          className="text-teal-700 underline underline-offset-2 hover:text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 dark:text-teal-300 dark:hover:text-teal-200"
         >
           {node.children.map((c, i) => (
             <Inline key={i} node={c} />
