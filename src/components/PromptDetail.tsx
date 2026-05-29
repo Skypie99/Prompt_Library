@@ -445,7 +445,9 @@ export function PromptDetail({
   function handleModalKeyDown(event: React.KeyboardEvent) {
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
-      if (!running) handleRun();
+      // F3c — ⌘↵ is the power-user bypass path: skip the unfilled variable
+      // warning and run immediately with whatever values are present.
+      if (!running) void runWithValues(values);
       return;
     }
     // F-night-7 — "s" toggles favorite on the active prompt. Only when
