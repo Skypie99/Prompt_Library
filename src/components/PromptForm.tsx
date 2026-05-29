@@ -31,6 +31,14 @@ interface PromptFormProps {
 const fieldClass =
   "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30";
 
+// Character caps. Kept together so they're easy to update and easy to
+// reference from both the input `maxLength` attr and any future validation.
+const MAX_TITLE_CHARS = 200;
+const MAX_DESCRIPTION_CHARS = 500;
+const MAX_BODY_CHARS = 50_000;
+const MAX_CATEGORY_CHARS = 100;
+const MAX_TAG_CHARS = 50;
+
 // F-n2-20 — given a variable name, produce a short readable sample so
 // the preview shows what a filled body looks like without the user
 // having to mentally substitute. Pulls a few common shapes from the
@@ -189,6 +197,7 @@ export function PromptForm({
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               placeholder="e.g. Weekly Status Update"
+              maxLength={MAX_TITLE_CHARS}
               className={fieldClass}
             />
           </div>
@@ -205,6 +214,7 @@ export function PromptForm({
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               placeholder="One line shown on the card and in search"
+              maxLength={MAX_DESCRIPTION_CHARS}
               className={fieldClass}
             />
           </div>
@@ -236,6 +246,7 @@ export function PromptForm({
               onChange={(event) => setBody(event.target.value)}
               placeholder="Write your prompt. Use {{variableName}} for fill-in-the-blanks."
               rows={8}
+              maxLength={MAX_BODY_CHARS}
               className={`${fieldClass} resize-y font-mono text-xs leading-relaxed`}
             />
             <div className="mt-1.5 flex items-baseline justify-between gap-3">
@@ -299,6 +310,7 @@ export function PromptForm({
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
                 placeholder="Pick or type a new one"
+                maxLength={MAX_CATEGORY_CHARS}
                 className={fieldClass}
               />
               <datalist id="pf-category-options">
@@ -339,6 +351,7 @@ export function PromptForm({
                   onKeyDown={handleTagKeyDown}
                   onBlur={() => tagInput && addTag(tagInput)}
                   placeholder={tags.length ? "" : "Type and press Enter"}
+                  maxLength={MAX_TAG_CHARS}
                   className="min-w-[6rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink-soft dark:text-paper"
                 />
               </div>

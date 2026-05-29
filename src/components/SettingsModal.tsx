@@ -176,6 +176,18 @@ export function SettingsModal({
   function handleFileChosen(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    // Guard against enormous files (e.g. accidentally picked the wrong file).
+    // 10 MB is very generous for a prompt library export — a typical export
+    // is < 1 MB even with dozens of prompts and full run history.
+    const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
+    if (file.size > MAX_IMPORT_BYTES) {
+      setImportState({
+        kind: "error",
+        message: "That file is too large to be a valid library export (max 10 MB). Did you pick the right file?",
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onerror = () => {
       setImportState({
@@ -267,6 +279,7 @@ export function SettingsModal({
               placeholder="sk-ant-…"
               autoComplete="off"
               spellCheck={false}
+              maxLength={300}
               className="w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-coral-400 focus:ring-2 focus:ring-coral-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-coral-500/30"
             />
             <p className="mt-1.5 text-xs text-ink-soft dark:text-paper-muted">
