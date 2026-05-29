@@ -16,8 +16,12 @@ export type ClaudeErrorKind =
 
 // One error type with a machine-readable `kind` so the UI can react (e.g. show
 // an "Open Settings" button for auth errors) and a friendly, human message.
+// For `rate-limit` errors, `retryAfterSeconds` is set when the Anthropic API
+// returns a `retry-after` header on the 429 response; otherwise undefined.
 export class ClaudeError extends Error {
   kind: ClaudeErrorKind;
+  /** Populated from the `retry-after` response header on 429 errors. */
+  retryAfterSeconds?: number;
   constructor(kind: ClaudeErrorKind, message: string) {
     super(message);
     this.name = "ClaudeError";
@@ -35,7 +39,30 @@ export interface StreamClaudeParams {
   onText: (chunk: string) => void;
 }
 
-function mapHttpError(status: number, detail: string): ClaudeError {
+/**
+ * Parse the `retry-after` response header into seconds.
+ * Handles both integer-seconds form ("60") and HTTP-date form
+ * ("Wed, 28 May 2026 23:00:00 GMT"). Returns undefined if the header is
+ * absent or unparseable.
+ */
+export function parseRetryAfter(headerValue: string | null): number | undefined {
+  if (!headerValue) return undefined;
+  const trimmed = headerValue.trim();
+  // Integer seconds form.
+  const asInt = parseInt(trimmed, 10);
+  if (!isNaN(asInt) && String(asInt) === trimmed) {
+    return asInt > 0 ? asInt : undefined;
+  }
+  // HTTP-date form.
+  const asDate = new Date(trimmed).getTime();
+  if (!isNaN(asDate)) {
+    const delta = Math.ceil((asDate - Date.now()) / 1000);
+    return delta > 0 ? delta : undefined;
+  }
+  return undefined;
+}
+
+function mapHttpError(status: number, detail: string, retryAfterHeader?: string | null): ClaudeError {
   const suffix = detail ? ` (${detail})` : "";
   switch (true) {
     case status === 401 || status === 403:
@@ -43,11 +70,15 @@ function mapHttpError(status: number, detail: string): ClaudeError {
         "auth",
         "That API key was rejected. Double-check it in Settings and re-paste it.",
       );
-    case status === 429:
-      return new ClaudeError(
+    case status === 429: {
+      const err = new ClaudeError(
         "rate-limit",
         "Rate limit reached. Wait a moment, or switch to a faster model in Settings.",
       );
+      const seconds = parseRetryAfter(retryAfterHeader ?? null);
+      if (seconds !== undefined) err.retryAfterSeconds = seconds;
+      return err;
+    }
     case status === 503 || status === 529:
       return new ClaudeError(
         "overloaded",
@@ -129,7 +160,9 @@ export async function streamClaude({
     } catch {
       /* no JSON body — leave detail empty */
     }
-    throw mapHttpError(response.status, detail);
+    // Pass the `retry-after` header so 429 errors can surface a countdown.
+    const retryAfterHeader = response.headers.get("retry-after");
+    throw mapHttpError(response.status, detail, retryAfterHeader);
   }
 
   if (!response.body) {
