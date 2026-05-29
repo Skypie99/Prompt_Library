@@ -176,6 +176,22 @@ export function SettingsModal({
   function handleFileChosen(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    // F5 security: reject files larger than 10 MB before reading the full
+    // buffer. A valid prompt-library export is < 1 MB even for heavy users;
+    // a 10 MB guard catches accidental wrong-file picks (video, binary dump)
+    // without ever stalling the UI on a multi-second FileReader load.
+    const MAX_IMPORT_BYTES = 10 * 1024 * 1024; // 10 MB
+    if (file.size > MAX_IMPORT_BYTES) {
+      setImportState({
+        kind: "error",
+        message:
+          "That file is too large to be a valid library export (max 10 MB). Did you pick the right file?",
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     const reader = new FileReader();
     reader.onerror = () => {
       setImportState({
