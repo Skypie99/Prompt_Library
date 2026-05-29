@@ -17,10 +17,7 @@ interface EmptyHintProps {
 export function EmptyHint({ icon: Icon, heading, body }: EmptyHintProps) {
   return (
     <div className="rounded-xl border border-dashed border-border bg-cream/40 px-5 py-6 text-center dark:border-night-border dark:bg-night/40">
-      <Icon
-        aria-hidden
-        className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted"
-      />
+      <Icon aria-hidden className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted" />
       <p className="mt-2 text-sm font-medium text-ink dark:text-paper">{heading}</p>
       <p className="mt-1 text-xs text-ink-muted dark:text-paper-muted">{body}</p>
     </div>

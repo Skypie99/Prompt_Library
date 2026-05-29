@@ -52,8 +52,7 @@ const config: Config = {
       },
       boxShadow: {
         card: "0 1px 2px rgba(42, 37, 32, 0.04), 0 8px 24px -12px rgba(42, 37, 32, 0.12)",
-        cardHover:
-          "0 2px 4px rgba(42, 37, 32, 0.06), 0 16px 40px -16px rgba(220, 107, 78, 0.28)",
+        cardHover: "0 2px 4px rgba(42, 37, 32, 0.06), 0 16px 40px -16px rgba(220, 107, 78, 0.28)",
         palette: "0 24px 60px -20px rgba(42, 37, 32, 0.35)",
       },
       keyframes: {

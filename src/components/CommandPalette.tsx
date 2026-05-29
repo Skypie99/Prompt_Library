@@ -171,7 +171,8 @@ export function CommandPalette({
         {results.length === 0 ? (
           <div className="px-4 py-12 text-center">
             <p className="text-sm text-ink-muted dark:text-paper-muted">
-              No prompts match <span className="font-medium text-ink dark:text-paper">“{query}”</span>
+              No prompts match{" "}
+              <span className="font-medium text-ink dark:text-paper">“{query}”</span>
             </p>
             <p className="mt-1 text-xs text-ink-soft">Try a different word or a tag.</p>
           </div>
@@ -222,9 +223,7 @@ export function CommandPalette({
                     {(() => {
                       const c = categoryColor(result.prompt.category);
                       return (
-                        <span
-                          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
-                        >
+                        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted">
                           <span
                             aria-hidden
                             className="h-2 w-2 rounded-full dark:hidden"

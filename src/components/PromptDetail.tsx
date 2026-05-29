@@ -5,19 +5,9 @@ import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import { ClaudeError, streamClaude } from "@/lib/anthropic";
 import { modelLabel, type Settings } from "@/lib/settings";
-import {
-  appendRun,
-  generateRunId,
-  loadRuns,
-  type StoredRun,
-} from "@/lib/runs";
+import { appendRun, generateRunId, loadRuns, type StoredRun } from "@/lib/runs";
 import { clearValues, loadValues, saveValues } from "@/lib/library";
-import {
-  countFilled,
-  extractVariables,
-  parseBody,
-  substituteBody,
-} from "@/lib/variables";
+import { countFilled, extractVariables, parseBody, substituteBody } from "@/lib/variables";
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
 import { Markdown } from "./Markdown";
 import { RunHistory } from "./RunHistory";
@@ -650,7 +640,9 @@ export function PromptDetail({
                             tabIndex={-1}
                             className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-ink-soft transition hover:bg-cream hover:text-ink dark:hover:bg-night-border dark:hover:text-paper"
                           >
-                            <span aria-hidden className="text-base leading-none">×</span>
+                            <span aria-hidden className="text-base leading-none">
+                              ×
+                            </span>
                           </button>
                         )}
                       </div>
@@ -711,7 +703,8 @@ export function PromptDetail({
               <span
                 aria-label={`Estimated length: ${finalText.length.toLocaleString()} characters, about ${tokenEstimate.toLocaleString()} tokens`}
               >
-                ~{finalText.length.toLocaleString()} chars · ~{tokenEstimate.toLocaleString()} tokens
+                ~{finalText.length.toLocaleString()} chars · ~{tokenEstimate.toLocaleString()}{" "}
+                tokens
               </span>
               <span className="mx-2 text-ink-soft/60">·</span>
               {modelLabel(settings.model)} · <kbd className="font-sans">⌘↵</kbd> to run

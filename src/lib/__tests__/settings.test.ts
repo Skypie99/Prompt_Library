@@ -34,25 +34,25 @@ import {
 // settings.ts only uses get/set; that's all we need to emulate.
 function installLocalStorage(): Record<string, string> {
   const store: Record<string, string> = {};
-  const storage: Pick<Storage, "getItem" | "setItem" | "removeItem" | "clear" | "length" | "key"> = {
-    getItem: (k: string) => (k in store ? store[k]! : null),
-    setItem: (k: string, v: string) => {
-      store[k] = String(v);
-    },
-    removeItem: (k: string) => {
-      delete store[k];
-    },
-    clear: () => {
-      for (const k of Object.keys(store)) delete store[k];
-    },
-    length: 0,
-    key: () => null,
-  };
+  const storage: Pick<Storage, "getItem" | "setItem" | "removeItem" | "clear" | "length" | "key"> =
+    {
+      getItem: (k: string) => (k in store ? store[k]! : null),
+      setItem: (k: string, v: string) => {
+        store[k] = String(v);
+      },
+      removeItem: (k: string) => {
+        delete store[k];
+      },
+      clear: () => {
+        for (const k of Object.keys(store)) delete store[k];
+      },
+      length: 0,
+      key: () => null,
+    };
   (globalThis as unknown as { window: { localStorage: Storage } }).window = {
     localStorage: storage as Storage,
   };
-  (globalThis as unknown as { localStorage: Storage }).localStorage =
-    storage as Storage;
+  (globalThis as unknown as { localStorage: Storage }).localStorage = storage as Storage;
   return store;
 }
 

@@ -141,10 +141,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   }, [allPrompts]);
 
   // F-night-12 — counts come along for the CategoryChips badge.
-  const categoriesWithCounts = useMemo(
-    () => getCategoriesWithCounts(allPrompts),
-    [allPrompts],
-  );
+  const categoriesWithCounts = useMemo(() => getCategoriesWithCounts(allPrompts), [allPrompts]);
   // String-only list is what the PromptForm category combobox needs.
   const categories = useMemo(
     () => categoriesWithCounts.map((c) => c.category),
@@ -369,7 +366,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const filteredHeading =
     activeCategory && activeTag
       ? `${activeCategory} · #${activeTag}`
-      : activeCategory ?? (activeTag ? `#${activeTag}` : "All prompts");
+      : (activeCategory ?? (activeTag ? `#${activeTag}` : "All prompts"));
 
   return (
     <div className="min-h-screen">
@@ -444,8 +441,12 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                   className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-coral-300 hover:text-coral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-coral-300 dark:focus-visible:ring-offset-night"
                 >
                   <ClockIcon className="h-3.5 w-3.5 shrink-0 text-coral-500" aria-hidden />
-                  <span aria-hidden className="shrink-0">Resume</span>
-                  <span aria-hidden className="shrink-0 text-ink-soft/60">→</span>
+                  <span aria-hidden className="shrink-0">
+                    Resume
+                  </span>
+                  <span aria-hidden className="shrink-0 text-ink-soft/60">
+                    →
+                  </span>
                   {/* flex-1 + min-w-0 are the magic that lets `truncate`
                       actually clip — without min-w-0 a flex child stays
                       at its content's intrinsic width and overflows. */}
@@ -460,7 +461,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
         {showOnboarding && <OnboardingHint onDismiss={dismissOnboarding} />}
 
-        <CategoryChips categories={categoriesWithCounts} active={activeCategory} onSelect={setActiveCategory} />
+        <CategoryChips
+          categories={categoriesWithCounts}
+          active={activeCategory}
+          onSelect={setActiveCategory}
+        />
         <TagChips tags={tagsWithCounts} active={activeTag} onSelect={setActiveTag} />
 
         {/* Favorites: either the populated grid, or a soft "you haven't
@@ -513,7 +518,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
               <ClockIcon className="h-5 w-5 text-coral-500" />
-              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">Recent</h2>
+              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
+                Recent
+              </h2>
             </div>
             <PromptGrid
               prompts={recentPrompts}
@@ -530,7 +537,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
               <ClockIcon className="h-5 w-5 text-coral-500" />
-              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">Recent</h2>
+              <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
+                Recent
+              </h2>
             </div>
             <EmptyHint
               icon={ClockIcon}
@@ -621,7 +630,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               // filtered case (dashed tile) but a forward-looking CTA that
               // matches the header's "New prompt" affordance — no dead end.
               <div className="rounded-xl border border-dashed border-border bg-cream/40 px-6 py-10 text-center text-sm text-ink-muted dark:border-night-border dark:bg-night/40 dark:text-paper-muted">
-                <SparkleIcon aria-hidden className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted" />
+                <SparkleIcon
+                  aria-hidden
+                  className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted"
+                />
                 <p className="mt-2 font-medium text-ink dark:text-paper">Your library is empty</p>
                 <p className="mt-1 text-xs">Create your first prompt to get started.</p>
                 <button
@@ -653,13 +665,15 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           const totalRuns = Array.from(runCounts.values()).reduce((a, b) => a + b, 0);
           return (
             <footer className="border-t border-border/50 py-6 text-center text-xs text-ink-soft dark:border-night-border/50 dark:text-paper-muted">
-              <span aria-label={`Library stats: ${allPrompts.length} prompts, ${favorites.length} favorites, ${totalRuns} total runs`}>
+              <span
+                aria-label={`Library stats: ${allPrompts.length} prompts, ${favorites.length} favorites, ${totalRuns} total runs`}
+              >
                 {allPrompts.length} prompts · {favorites.length} favorites · {totalRuns} total runs
               </span>
-              <span aria-hidden className="mx-2">·</span>
-              <span>
-                Prompt Library v0.1 · All data stays in this browser
+              <span aria-hidden className="mx-2">
+                ·
               </span>
+              <span>Prompt Library v0.1 · All data stays in this browser</span>
             </footer>
           );
         })()}

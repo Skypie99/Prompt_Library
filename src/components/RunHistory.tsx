@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import {
-  clearRuns,
-  formatRelativeTime,
-  removeRun,
-  setRunLabel,
-  type StoredRun,
-} from "@/lib/runs";
+import { clearRuns, formatRelativeTime, removeRun, setRunLabel, type StoredRun } from "@/lib/runs";
 import { modelLabel } from "@/lib/settings";
 import { Markdown } from "./Markdown";
 import {
@@ -98,9 +92,12 @@ export function RunHistory({
   const now = useNowEvery(30_000, expanded);
 
   // Cleanup any pending "Copied" timer on unmount or prompt switch.
-  useEffect(() => () => {
-    if (copyTimer.current) clearTimeout(copyTimer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+    },
+    [],
+  );
 
   // If the active prompt or its history changes, drop transient row state.
   useEffect(() => {
@@ -503,9 +500,7 @@ export function RunHistory({
                                     {name}
                                   </dt>
                                   <dd className="break-words text-ink dark:text-paper">
-                                    {value || (
-                                      <span className="italic text-ink-soft">(empty)</span>
-                                    )}
+                                    {value || <span className="italic text-ink-soft">(empty)</span>}
                                   </dd>
                                 </div>
                               ))}

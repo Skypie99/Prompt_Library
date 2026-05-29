@@ -226,10 +226,7 @@ describe("loadAllRunCounts (F-fast-2)", () => {
       "promptlib:runs:p-1",
       JSON.stringify([{ id: "r1" }, { id: "r2" }, { id: "r3" }]),
     );
-    globalThis.localStorage.setItem(
-      "promptlib:runs:p-2",
-      JSON.stringify([{ id: "r4" }]),
-    );
+    globalThis.localStorage.setItem("promptlib:runs:p-2", JSON.stringify([{ id: "r4" }]));
     const counts = loadAllRunCounts();
     expect(counts.get("p-1")).toBe(3);
     expect(counts.get("p-2")).toBe(1);
@@ -238,10 +235,7 @@ describe("loadAllRunCounts (F-fast-2)", () => {
 
   it("ignores corrupt entries silently", () => {
     globalThis.localStorage.setItem("promptlib:runs:bad", "{not valid json");
-    globalThis.localStorage.setItem(
-      "promptlib:runs:good",
-      JSON.stringify([{ id: "ok" }]),
-    );
+    globalThis.localStorage.setItem("promptlib:runs:good", JSON.stringify([{ id: "ok" }]));
     const counts = loadAllRunCounts();
     expect(counts.get("good")).toBe(1);
     expect(counts.has("bad")).toBe(false);

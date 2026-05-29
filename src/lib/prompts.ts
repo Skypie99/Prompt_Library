@@ -18,9 +18,7 @@ export function getCategories(prompts: Prompt[]): string[] {
  * shouldn't exist (the form defaults to "Uncategorized") but a defensive
  * filter beats a chip labeled "(3)".
  */
-export function getCategoriesWithCounts(
-  prompts: Prompt[],
-): { category: string; count: number }[] {
+export function getCategoriesWithCounts(prompts: Prompt[]): { category: string; count: number }[] {
   const counts = new Map<string, number>();
   for (const p of prompts) {
     const name = p.category.trim();
