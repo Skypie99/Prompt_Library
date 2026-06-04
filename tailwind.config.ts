@@ -32,7 +32,27 @@ const config: Config = {
           muted: "#7B8AA0",
         },
 
-        // Primary accent: electric cyan — replaces muted teal
+        // Semantic feedback scales (F5 export/import confirmation flows)
+        success: {
+          50:  "#F0FDF4",
+          100: "#DCFCE7",
+          300: "#86EFAC",
+          400: "#4ADE80",
+          700: "#15803D",
+          900: "#14532D",
+        },
+
+        danger: {
+          50:  "#FEF2F2",
+          200: "#FECACA",
+          300: "#FCA5A5",
+          600: "#DC2626",
+          700: "#B91C1C",
+          800: "#991B1B",
+          900: "#7F1D1D",
+        },
+
+        // Primary accent: electric cyan (cyberpunk rebrand)
         teal: {
           50:  "#ECFEFF",
           100: "#CFFAFE",

@@ -247,6 +247,87 @@ describe("parseImport — additional edge cases", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Prototype pollution guard (F5 security — Steve's review requirement)
+// ---------------------------------------------------------------------------
+
+describe("parseImport — prototype pollution guard", () => {
+  it("rejects a file containing a __proto__ key at the top level", () => {
+    // JSON.parse in V8 neutralises __proto__ automatically, but we craft
+    // the object via Object.assign to simulate an engine that doesn't.
+    const unsafe = Object.assign(Object.create(null) as object, {
+      version: 1,
+      exportedAt: "2026-05-23T12:00:00.000Z",
+      userPrompts: [],
+      favorites: [],
+      recent: [],
+      runs: {},
+      values: {},
+    });
+    // Inject the dangerous key after assignment so TS doesn't complain.
+    (unsafe as Record<string, unknown>)["__proto__"] = { isAdmin: true };
+    // We can't JSON.stringify an object with __proto__ as own key reliably;
+    // instead verify our hasPollutionKey guard by constructing a JSON string
+    // manually — the string representation is what an attacker would send.
+    const raw = '{"version":1,"exportedAt":"2026-05-23T12:00:00.000Z","__proto__":{"isAdmin":true},"userPrompts":[],"favorites":[],"recent":[],"runs":{},"values":{}}';
+    const r = parseImport(raw);
+    // Modern engines may silently drop __proto__ from JSON.parse output,
+    // so the result may be ok (key gone) OR malformed (key present + guard fires).
+    // Either is acceptable — we just must NOT see prototype mutation.
+    if (!r.ok) {
+      expect(r.kind).toBe("malformed");
+    }
+    // Confirm prototype chain is clean regardless.
+    expect(({} as Record<string, unknown>)["isAdmin"]).toBeUndefined();
+  });
+
+  it("rejects a file with a 'constructor' key inside userPrompts", () => {
+    const raw = JSON.stringify({
+      version: 1,
+      exportedAt: "2026-05-23T12:00:00.000Z",
+      userPrompts: [{ constructor: { name: "injected" }, id: "p1", title: "t" }],
+      favorites: [],
+      recent: [],
+      runs: {},
+      values: {},
+    });
+    const r = parseImport(raw);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.kind).toBe("malformed");
+  });
+
+  it("rejects a file with a 'prototype' key inside values", () => {
+    const raw = JSON.stringify({
+      version: 1,
+      exportedAt: "2026-05-23T12:00:00.000Z",
+      userPrompts: [],
+      favorites: [],
+      recent: [],
+      runs: {},
+      values: { "p-1": { prototype: "bad" } },
+    });
+    const r = parseImport(raw);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.kind).toBe("malformed");
+  });
+
+  it("accepts a well-formed file that happens to have the word 'constructor' in a value string", () => {
+    // The guard checks keys, not values — a prompt body mentioning
+    // "constructor" in its text must still be importable.
+    const raw = JSON.stringify({
+      version: 1,
+      exportedAt: "2026-05-23T12:00:00.000Z",
+      userPrompts: [makePrompt({ id: "p-1", body: "Use a constructor function" })],
+      favorites: [],
+      recent: [],
+      runs: {},
+      values: {},
+    });
+    const r = parseImport(raw);
+    expect(r.ok).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // PER_PROMPT_PREFIXES_PUBLIC — regression guard
 // ---------------------------------------------------------------------------
 

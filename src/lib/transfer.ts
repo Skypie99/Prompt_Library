@@ -120,6 +120,30 @@ export type ParseResult =
  * Refuses files that are malformed, missing the envelope, or from a future
  * schema version we don't know how to read.
  */
+/**
+ * Danger keys that can pollute the JS prototype chain when assigned to objects
+ * via `Object.assign` / spread. `JSON.parse` itself is safe in modern engines
+ * (V8 and SpiderMonkey both guard `__proto__`), but we explicitly reject any
+ * parsed object that contains these keys so downstream spread/assign is safe.
+ */
+const PROTOTYPE_POLLUTION_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
+/**
+ * Returns true if the value (or any nested object/array) contains a key that
+ * could be used for prototype pollution. Called once on the top-level parsed
+ * value before we touch any sub-keys. O(N) on total key count — cheap.
+ */
+function hasPollutionKey(value: unknown, depth = 0): boolean {
+  // Guard against deeply-nested circular references crafted in the JSON.
+  if (depth > 20) return false;
+  if (!value || typeof value !== "object") return false;
+  for (const key of Object.keys(value as object)) {
+    if (PROTOTYPE_POLLUTION_KEYS.has(key)) return true;
+    if (hasPollutionKey((value as Record<string, unknown>)[key], depth + 1)) return true;
+  }
+  return false;
+}
+
 export function parseImport(raw: string): ParseResult {
   let parsed: unknown;
   try {
@@ -137,6 +161,19 @@ export function parseImport(raw: string): ParseResult {
       ok: false,
       kind: "wrong-shape",
       message: "This file doesn't look like a Prompt Library export.",
+    };
+  }
+
+  // Prototype pollution guard — reject any file that contains __proto__,
+  // constructor, or prototype keys at any nesting level. In practice
+  // JSON.parse in modern engines already neutralises __proto__, but we
+  // add an explicit check so the app is resilient even in edge-case
+  // environments and clearly documents the security contract.
+  if (hasPollutionKey(parsed)) {
+    return {
+      ok: false,
+      kind: "malformed",
+      message: "This file contains unsafe keys and cannot be imported.",
     };
   }
 
