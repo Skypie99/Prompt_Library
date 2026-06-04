@@ -464,6 +464,15 @@ function isValidStoredRunShape(value: unknown): value is StoredRun {
   if (typeof r.response !== "string") return false;
   if (r.status !== "completed" && r.status !== "aborted" && r.status !== "errored") return false;
   if (r.errorMessage !== undefined && typeof r.errorMessage !== "string") return false;
+  // tokensUsed is optional; if present, both fields must be numbers.
+  if (r.tokensUsed !== undefined) {
+    if (
+      typeof r.tokensUsed !== "object" ||
+      r.tokensUsed === null ||
+      typeof r.tokensUsed.input !== "number" ||
+      typeof r.tokensUsed.output !== "number"
+    ) return false;
+  }
   return true;
 }
 

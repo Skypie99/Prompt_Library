@@ -63,6 +63,15 @@ const STATUS_FILTER_LABELS: Record<StatusFilter, string> = {
   errored: "Errored",
 };
 
+// F-usage — format a token count with thousands separators.
+function formatTokens(n: number): string {
+  try {
+    return n.toLocaleString("en");
+  } catch {
+    return String(n);
+  }
+}
+
 export function RunHistory({
   promptId,
   runs,
@@ -410,6 +419,16 @@ export function RunHistory({
                           </button>
                         )}
                       </div>
+                      {/* F-usage-c — token count for this history entry.
+                          Only rendered when tokensUsed is present. */}
+                      {run.tokensUsed && (
+                        <p
+                          className="text-[11px] text-ink-muted dark:text-paper-muted"
+                          aria-label={`Token usage: ${formatTokens(run.tokensUsed.input)} input tokens, ${formatTokens(run.tokensUsed.output)} output tokens`}
+                        >
+                          {formatTokens(run.tokensUsed.input)} in · {formatTokens(run.tokensUsed.output)} out
+                        </p>
+                      )}
                       <div className="flex shrink-0 items-center gap-1">
                         <button
                           type="button"

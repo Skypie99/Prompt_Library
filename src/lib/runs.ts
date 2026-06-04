@@ -32,6 +32,12 @@ export interface StoredRun {
   errorMessage?: string;
   /** F-n2-11 — optional user label for the run ("first draft", "with brand voice"). */
   label?: string;
+  /**
+   * F-usage — API-reported token counts for completed runs.
+   * Absent on aborted / errored runs and on runs stored before this feature
+   * shipped — callers should treat absence as "usage unknown."
+   */
+  tokensUsed?: { input: number; output: number };
 }
 
 export const RUNS_PER_PROMPT_CAP = 10;
@@ -67,6 +73,15 @@ function isStoredRun(value: unknown): value is StoredRun {
   if (typeof r.response !== "string") return false;
   if (r.status !== "completed" && r.status !== "aborted" && r.status !== "errored") return false;
   if (r.errorMessage !== undefined && typeof r.errorMessage !== "string") return false;
+  // tokensUsed is optional; if present, both fields must be numbers.
+  if (r.tokensUsed !== undefined) {
+    if (
+      typeof r.tokensUsed !== "object" ||
+      r.tokensUsed === null ||
+      typeof r.tokensUsed.input !== "number" ||
+      typeof r.tokensUsed.output !== "number"
+    ) return false;
+  }
   return true;
 }
 

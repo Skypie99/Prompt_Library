@@ -3,6 +3,7 @@
  *
  *   - setRunLabel (F-n2-11): update or clear a run's user label
  *   - loadAllLastRunIsos (F-n2-13): walk storage and map promptId → most-recent ranAt
+ *   - tokensUsed (F-usage-b): optional field persistence + backward compat
  *
  * Same jsdom-agnostic localStorage stub pattern as the rest of the suite.
  */
@@ -178,5 +179,92 @@ describe("loadAllLastRunIsos (F-n2-13)", () => {
   it("returns empty Map when window is undefined (SSR-safe)", () => {
     uninstallFakeStorage();
     expect(loadAllLastRunIsos().size).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// F-usage-b: tokensUsed optional field — persistence + backward compat
+// ---------------------------------------------------------------------------
+
+describe("StoredRun tokensUsed (F-usage-b)", () => {
+  beforeEach(() => installFakeStorage());
+  afterEach(() => uninstallFakeStorage());
+
+  it("saves and reloads tokensUsed when present on a completed run", () => {
+    const run = fixtureRun({
+      id: "r-with-tokens",
+      status: "completed",
+      tokensUsed: { input: 128, output: 512 },
+    });
+    appendRun("p-tokens", run);
+    const loaded = loadRuns("p-tokens");
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0]?.tokensUsed).toEqual({ input: 128, output: 512 });
+  });
+
+  it("does not set tokensUsed on old-format runs that lack the field", () => {
+    // Write a raw JSON blob that has no tokensUsed key — mimics pre-F-usage storage.
+    const oldRun = {
+      id: "r-legacy",
+      ranAt: "2026-01-01T00:00:00.000Z",
+      model: "claude-opus-4-7",
+      values: {},
+      sentPrompt: "Old prompt",
+      response: "Old response",
+      status: "completed",
+      // No tokensUsed key.
+    };
+    globalThis.localStorage.setItem("promptlib:runs:p-old", JSON.stringify([oldRun]));
+    const loaded = loadRuns("p-old");
+    expect(loaded).toHaveLength(1);
+    // The field must be absent — not null, not 0, not anything — so callers
+    // treating absence as "unknown" work correctly.
+    expect("tokensUsed" in (loaded[0] ?? {})).toBe(false);
+  });
+
+  it("drops a run whose tokensUsed has non-number fields (corrupt)", () => {
+    const corruptRun = {
+      id: "r-bad-tokens",
+      ranAt: "2026-01-01T00:00:00.000Z",
+      model: "claude-opus-4-7",
+      values: {},
+      sentPrompt: "P",
+      response: "R",
+      status: "completed",
+      tokensUsed: { input: "not-a-number", output: 5 }, // invalid
+    };
+    const validRun = fixtureRun({ id: "r-valid" });
+    globalThis.localStorage.setItem(
+      "promptlib:runs:p-mixed",
+      JSON.stringify([corruptRun, validRun]),
+    );
+    const loaded = loadRuns("p-mixed");
+    // Only the valid run should survive.
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0]?.id).toBe("r-valid");
+  });
+
+  it("preserves tokensUsed through appendRun and reloads correctly", () => {
+    // Append a run with tokensUsed, then append another without it.
+    appendRun("p-mix", fixtureRun({ id: "r1", tokensUsed: { input: 10, output: 20 } }));
+    appendRun("p-mix", fixtureRun({ id: "r2" })); // no tokensUsed
+
+    const loaded = loadRuns("p-mix");
+    expect(loaded).toHaveLength(2);
+    // newest is first (r2 appended last, so it's at index 0)
+    const r2 = loaded.find((r: StoredRun) => r.id === "r2");
+    const r1 = loaded.find((r: StoredRun) => r.id === "r1");
+    expect(r2?.tokensUsed).toBeUndefined();
+    expect(r1?.tokensUsed).toEqual({ input: 10, output: 20 });
+  });
+
+  it("saves large token counts (> 1000) without truncation", () => {
+    const run = fixtureRun({
+      id: "r-large",
+      tokensUsed: { input: 12_500, output: 98_000 },
+    });
+    appendRun("p-large", run);
+    const loaded = loadRuns("p-large");
+    expect(loaded[0]?.tokensUsed).toEqual({ input: 12_500, output: 98_000 });
   });
 });

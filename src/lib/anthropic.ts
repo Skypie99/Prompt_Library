@@ -29,6 +29,12 @@ export class ClaudeError extends Error {
   }
 }
 
+/** Input and output token counts reported by the Anthropic API at stream end. */
+export interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+}
+
 export interface StreamClaudeParams {
   apiKey: string;
   model: string;
@@ -37,6 +43,12 @@ export interface StreamClaudeParams {
   signal?: AbortSignal;
   /** Called with each chunk of text as it streams in. */
   onText: (chunk: string) => void;
+  /**
+   * Called once per completed run with the API-reported token counts.
+   * Only called when both `message_start` (input_tokens) and `message_delta`
+   * (output_tokens) events arrive — i.e. NOT on aborted or early-error runs.
+   */
+  onUsage?: (usage: TokenUsage) => void;
 }
 
 /**
@@ -95,9 +107,20 @@ function mapHttpError(
   }
 }
 
-// Parse one SSE event block and forward any text delta. Throws a ClaudeError if
-// the stream itself reports an error event.
-function handleEvent(rawEvent: string, onText: (chunk: string) => void): void {
+// Internal mutable bag for accumulating usage data across events in a stream.
+interface UsageAccumulator {
+  inputTokens: number | null;
+  outputTokens: number | null;
+}
+
+// Parse one SSE event block, forward any text delta, and accumulate token
+// usage from `message_start` and `message_delta` events.
+// Throws a ClaudeError if the stream itself reports an error event.
+function handleEvent(
+  rawEvent: string,
+  onText: (chunk: string) => void,
+  usage: UsageAccumulator,
+): void {
   let data = "";
   for (const line of rawEvent.split("\n")) {
     if (line.startsWith("data:")) data += line.slice(5).trim();
@@ -106,7 +129,9 @@ function handleEvent(rawEvent: string, onText: (chunk: string) => void): void {
 
   let payload: {
     type?: string;
-    delta?: { type?: string; text?: string };
+    message?: { usage?: { input_tokens?: number } };
+    delta?: { type?: string; text?: string; stop_reason?: string };
+    usage?: { output_tokens?: number };
     error?: { message?: string };
   };
   try {
@@ -115,7 +140,17 @@ function handleEvent(rawEvent: string, onText: (chunk: string) => void): void {
     return; // ignore keep-alives / unparseable lines
   }
 
-  if (payload.type === "content_block_delta" && payload.delta?.type === "text_delta") {
+  if (payload.type === "message_start") {
+    const inputTokens = payload.message?.usage?.input_tokens;
+    if (typeof inputTokens === "number") {
+      usage.inputTokens = inputTokens;
+    }
+  } else if (payload.type === "message_delta") {
+    const outputTokens = payload.usage?.output_tokens;
+    if (typeof outputTokens === "number") {
+      usage.outputTokens = outputTokens;
+    }
+  } else if (payload.type === "content_block_delta" && payload.delta?.type === "text_delta") {
     onText(payload.delta.text ?? "");
   } else if (payload.type === "error") {
     throw new ClaudeError("unknown", payload.error?.message ?? "Claude returned an error.");
@@ -129,6 +164,7 @@ export async function streamClaude({
   prompt,
   signal,
   onText,
+  onUsage,
 }: StreamClaudeParams): Promise<void> {
   let response: Response;
   try {
@@ -176,6 +212,7 @@ export async function streamClaude({
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  const usage: UsageAccumulator = { inputTokens: null, outputTokens: null };
 
   try {
     for (;;) {
@@ -188,12 +225,24 @@ export async function streamClaude({
       while ((separator = buffer.indexOf("\n\n")) !== -1) {
         const rawEvent = buffer.slice(0, separator);
         buffer = buffer.slice(separator + 2);
-        handleEvent(rawEvent, onText);
+        handleEvent(rawEvent, onText, usage);
       }
     }
   } catch (error) {
     if (error instanceof ClaudeError) throw error;
     if ((error as Error)?.name === "AbortError") throw error;
     throw new ClaudeError("network", "The connection to Claude was interrupted.");
+  }
+
+  // Call onUsage only when both counts were captured (i.e. the stream
+  // completed normally through message_delta). Aborted or early-errored
+  // streams will have null values and onUsage will NOT be called —
+  // callers should treat absence as "usage unknown."
+  if (
+    onUsage &&
+    usage.inputTokens !== null &&
+    usage.outputTokens !== null
+  ) {
+    onUsage({ inputTokens: usage.inputTokens, outputTokens: usage.outputTokens });
   }
 }

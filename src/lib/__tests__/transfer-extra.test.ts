@@ -355,3 +355,81 @@ describe("PER_PROMPT_PREFIXES_PUBLIC (export coverage guard)", () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// F-usage-b: transfer.ts round-trip for tokensUsed (export/import)
+// ---------------------------------------------------------------------------
+
+describe("parseImport — tokensUsed field (F-usage-b)", () => {
+  it("preserves tokensUsed when present in an imported run", () => {
+    const file = {
+      version: 1,
+      exportedAt: "2026-05-29T10:00:00.000Z",
+      userPrompts: [makePrompt({ id: "p-1" })],
+      favorites: [],
+      recent: [],
+      runs: {
+        "p-1": [makeRun({ id: "r-1", tokensUsed: { input: 312, output: 1204 } })],
+      },
+      values: {},
+    };
+    const r = parseImport(JSON.stringify(file));
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const run = r.data.runs["p-1"]?.[0];
+      expect(run?.tokensUsed).toEqual({ input: 312, output: 1204 });
+    }
+  });
+
+  it("accepts and passes through a run without tokensUsed (old-format backward compat)", () => {
+    // Runs exported before F-usage shipped have no tokensUsed key.
+    const file = {
+      version: 1,
+      exportedAt: "2026-05-01T00:00:00.000Z",
+      userPrompts: [makePrompt({ id: "p-old" })],
+      favorites: [],
+      recent: [],
+      runs: {
+        "p-old": [makeRun({ id: "r-old" })], // makeRun does not include tokensUsed
+      },
+      values: {},
+    };
+    const r = parseImport(JSON.stringify(file));
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      // Must NOT error — the run must survive import intact.
+      expect(r.data.runs["p-old"]).toHaveLength(1);
+      expect(r.data.runs["p-old"]?.[0]?.id).toBe("r-old");
+      expect(r.data.runs["p-old"]?.[0]?.tokensUsed).toBeUndefined();
+    }
+  });
+
+  it("drops a run whose tokensUsed has wrong-typed fields (invalid format)", () => {
+    const file = {
+      version: 1,
+      exportedAt: "2026-05-29T10:00:00.000Z",
+      userPrompts: [makePrompt({ id: "p-1" })],
+      favorites: [],
+      recent: [],
+      runs: {
+        "p-1": [
+          makeRun({ id: "r-good" }), // valid, no tokensUsed
+          makeRun({ id: "r-good-tokens", tokensUsed: { input: 10, output: 20 } }),
+          // @ts-expect-error — deliberate invalid shape for test
+          { ...makeRun({ id: "r-bad-tokens" }), tokensUsed: { input: "nope", output: 5 } },
+        ],
+      },
+      values: {},
+    };
+    const r = parseImport(JSON.stringify(file));
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      // The corrupt run must be dropped; valid ones survive.
+      const ids = r.data.runs["p-1"]?.map((run) => run.id) ?? [];
+      expect(ids).toContain("r-good");
+      expect(ids).toContain("r-good-tokens");
+      expect(ids).not.toContain("r-bad-tokens");
+      expect(r.preview.droppedCount).toBeGreaterThan(0);
+    }
+  });
+});
