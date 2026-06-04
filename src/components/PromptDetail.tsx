@@ -935,8 +935,9 @@ export function PromptDetail({
                             </span>
                             <button
                               onClick={handleRetry}
+                              disabled={running}
                               aria-label={`Retry — available in ${retryCountdown} seconds`}
-                              className="font-medium underline underline-offset-2 opacity-60"
+                              className="font-medium underline underline-offset-2 opacity-60 disabled:opacity-50"
                             >
                               Retry now
                             </button>
@@ -944,8 +945,9 @@ export function PromptDetail({
                         ) : (
                           <button
                             onClick={handleRetry}
+                            disabled={running}
                             aria-label="Retry"
-                            className="font-medium underline underline-offset-2"
+                            className="font-medium underline underline-offset-2 disabled:opacity-50"
                           >
                             Retry
                           </button>
