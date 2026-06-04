@@ -436,33 +436,29 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       <main className="mx-auto max-w-5xl px-6">
         {/* Hero */}
         <section className="relative pb-12 pt-16 sm:pt-24">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 -top-12 mx-auto h-64 max-w-3xl rounded-full bg-teal-200/40 blur-3xl dark:bg-teal-500/10"
-          />
-          <div className="relative text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface/70 px-3 py-1 text-xs font-medium uppercase tracking-wider text-ink-muted dark:border-night-border dark:bg-night-surface dark:text-paper-muted">
-              <SparkleIcon className="h-3.5 w-3.5 text-teal-500" />
-              Prompt Library
+          <div aria-hidden className="pointer-events-none absolute inset-0 hidden dark:block bg-dot-grid" />
+          <div className="relative">
+            <span className="inline-flex items-center gap-2 rounded border border-teal-400/30 bg-teal-400/5 px-3 py-1 font-mono text-xs font-medium uppercase tracking-widest text-teal-600 dark:border-teal-400/40 dark:bg-teal-400/10 dark:text-teal-400">
+              <span aria-hidden>&gt;_</span>prompt.library<span className="opacity-60">/v2</span>
             </span>
 
-            <h1 className="mx-auto mt-6 max-w-2xl font-display text-5xl font-semibold leading-[1.05] tracking-tight text-ink dark:text-paper sm:text-6xl">
+            <h1 className="mt-6 max-w-2xl font-display text-5xl font-semibold leading-[1.05] tracking-tight text-ink dark:text-paper sm:text-6xl">
               Your prompts, one keystroke away.
             </h1>
 
-            <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink-muted dark:text-paper-muted">
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-muted dark:text-paper-muted">
               Search, customize, and run your best prompts with Claude — in seconds.
             </p>
 
             <button
               onClick={() => setPaletteOpen(true)}
-              className="group mx-auto mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
+              className="group mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out hover:border-teal-400/50 hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
             >
-              <SearchIcon className="h-5 w-5 text-ink-soft transition-colors group-hover:text-teal-500" />
-              <span className="flex-1 text-ink-soft dark:text-paper-muted">
-                Search prompts by title, tag, or content…
+              <span aria-hidden className="font-mono text-sm font-medium text-teal-600 dark:text-teal-400">$</span>
+              <span className="flex-1 font-mono text-sm text-ink-soft dark:text-paper-muted">
+                search prompts...
               </span>
-              <kbd className="rounded-md border border-border bg-cream px-2 py-1 font-sans text-xs font-medium text-ink-soft dark:border-night-border dark:bg-night">
+              <kbd className="rounded-md border border-border bg-cream px-2 py-1 font-mono text-xs font-medium text-ink-soft dark:border-night-border dark:bg-night">
                 ⌘K
               </kbd>
             </button>
@@ -471,7 +467,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                 prompt; one click opens it. Quiet visual treatment so it
                 augments the hero without competing with the headline. */}
             {recentPrompts.length > 0 && (
-              <div className="mt-4 flex justify-center">
+              <div className="mt-4">
                 <button
                   type="button"
                   onClick={() => openPrompt(recentPrompts[0])}

@@ -6,17 +6,17 @@
 // no storage). Visual purpose only: gives the grid a quick scannable
 // "category cluster" signal without users having to read the chip text.
 
-// Palette intentionally stays in teal-to-mauve cool range so stripes
-// don't compete with the primary teal accent on chips / CTAs.
+// Electric cyberpunk palette — fully saturated in dark mode, readable in light.
+// Each pair passes WCAG AA against their respective card background colors.
 const PALETTE: ReadonlyArray<{ light: string; dark: string }> = [
-  { light: "#6FA09A", dark: "#93C1BB" }, // seafoam
-  { light: "#5E9E97", dark: "#84BFB9" }, // lagoon
-  { light: "#6292AA", dark: "#88B5CC" }, // steel
-  { light: "#6880AE", dark: "#8FA4CE" }, // cornflower
-  { light: "#7880B8", dark: "#9FA8D5" }, // periwinkle
-  { light: "#8A82B8", dark: "#ADA7D4" }, // violet slate
-  { light: "#9680B0", dark: "#BAA8CE" }, // soft plum
-  { light: "#9E80A4", dark: "#C0A8C4" }, // dusty mauve
+  { light: "#0E7490", dark: "#22D3EE" }, // electric cyan
+  { light: "#0369A1", dark: "#38BDF8" }, // sky blue
+  { light: "#4338CA", dark: "#818CF8" }, // indigo
+  { light: "#7C3AED", dark: "#A78BFA" }, // violet
+  { light: "#BE185D", dark: "#F472B6" }, // pink
+  { light: "#047857", dark: "#34D399" }, // emerald
+  { light: "#B45309", dark: "#FCD34D" }, // amber
+  { light: "#0F766E", dark: "#2DD4BF" }, // teal
 ];
 
 /** Stable djb2-style hash of a string. Tiny and good enough for indexing

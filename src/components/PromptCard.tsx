@@ -62,7 +62,7 @@ export const PromptCard = memo(function PromptCard({
       onClick={onOpen}
       onKeyDown={handleKeyDown}
       className={clsx(
-        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:border-teal-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300 dark:border-night-border dark:bg-night-surface dark:hover:border-teal-500/40",
+        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:border-teal-200 hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300 dark:border-night-border dark:bg-night-surface dark:hover:border-teal-400/40",
         isCompact ? "p-3.5" : "p-5"
       )}
     >
@@ -91,9 +91,9 @@ export const PromptCard = memo(function PromptCard({
             // it never competes with the category for attention.
             <span
               aria-label={`Run ${runCount} ${runCount === 1 ? "time" : "times"}`}
-              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
+              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 font-mono text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
             >
-              Run {runCount}×
+              &gt;{runCount}
             </span>
           )}
           {variableCount > 0 && (

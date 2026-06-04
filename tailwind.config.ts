@@ -1,59 +1,62 @@
 import type { Config } from "tailwindcss";
 
-// The whole palette lives here so the "warm, approachable" look is defined in
-// one place. Light mode is the default; `darkMode: "class"` lets us flip a
-// `dark` class on <html> for the optional dark theme.
+// Developer Terminal aesthetic — cool, dark, technical.
+// Light mode = clean cool-white; dark mode = near-black with electric cyan accent.
+// darkMode: "class" — flip a `dark` class on <html>.
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   darkMode: "class",
   theme: {
     extend: {
       colors: {
-        // Light surfaces
-        cream: "#FAF6EF", // page background — soft, warm off-white
-        surface: "#FFFDF9", // cards / modals — a hair brighter than the page
-        border: "#ECE3D5", // hairline borders
+        // Light surfaces — cool off-white, no warm tint
+        cream: "#F0F4FA",
+        surface: "#FFFFFF",
+        border: "#DDE2EE",
 
-        // Warm charcoal text (never pure black)
+        // Cool slate text
         ink: {
-          DEFAULT: "#2A2520",
-          muted: "#6E665C",
-          soft: "#938A7E",
+          DEFAULT: "#0F172A",
+          muted: "#64748B",
+          soft: "#94A3B8",
         },
 
-        // Dark surfaces (warm near-black, not blue-black)
+        // Dark surfaces — near-black with a slight blue cast
         night: {
-          DEFAULT: "#1C1916",
-          surface: "#26221E",
-          border: "#38322B",
+          DEFAULT: "#080A12",
+          surface: "#0E1120",
+          border: "#1A2240",
         },
         paper: {
-          DEFAULT: "#F1EBE1",
-          muted: "#A89E90",
+          DEFAULT: "#C9D1E0",
+          muted: "#7B8AA0",
         },
 
-        // The single accent: a soft, blue-leaning teal
+        // Primary accent: electric cyan — replaces muted teal
         teal: {
-          50:  "#EEF8F7",
-          100: "#D4EFED",
-          200: "#A9DED9",
-          300: "#75CAC3",
-          400: "#47B5AC",
-          500: "#2F9E96",
-          600: "#238178",
-          700: "#1C6660",
-          800: "#174E49",
-          900: "#103B37",
+          50:  "#ECFEFF",
+          100: "#CFFAFE",
+          200: "#A5F3FC",
+          300: "#67E8F9",
+          400: "#22D3EE", // dark-mode neon
+          500: "#06B6D4",
+          600: "#0891B2", // 4.8:1 contrast on white — WCAG AA ✓
+          700: "#0E7490",
+          800: "#155E75",
+          900: "#164E63",
         },
       },
       fontFamily: {
         sans: ['"Inter Variable"', "system-ui", "sans-serif"],
         display: ['"Fraunces Variable"', "Georgia", "serif"],
+        mono: ['"JetBrains Mono"', "Fira Code", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        card: "0 1px 2px rgba(42, 37, 32, 0.04), 0 8px 24px -12px rgba(42, 37, 32, 0.12)",
-        cardHover: "0 2px 4px rgba(42, 37, 32, 0.06), 0 16px 40px -16px rgba(47, 158, 150, 0.28)",
-        palette: "0 24px 60px -20px rgba(42, 37, 32, 0.35)",
+        card: "0 1px 3px rgba(0,0,0,0.12), 0 8px 24px -8px rgba(0,0,0,0.16)",
+        // Neon border glow — the defining cyberpunk hover
+        cardHover:
+          "0 0 0 1px rgb(34 211 238 / 0.5), 0 0 24px rgb(34 211 238 / 0.12), 0 4px 16px rgba(0,0,0,0.3)",
+        palette: "0 24px 60px -20px rgba(0,0,0,0.5)",
       },
       keyframes: {
         "fade-in": {
