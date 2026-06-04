@@ -19,7 +19,7 @@
 }
 
 @layer utilities {
-  /* Thin, warm scrollbars that match the palette. */
+  /* Thin scrollbars that match the palette. */
   .scrollbar-soft {
     scrollbar-width: thin;
     scrollbar-color: theme("colors.teal.200") transparent;
@@ -33,9 +33,19 @@
     border-radius: 9999px;
   }
   .dark .scrollbar-soft {
-    scrollbar-color: theme("colors.night.border") transparent;
+    scrollbar-color: rgb(34 211 238 / 0.4) transparent;
   }
   .dark .scrollbar-soft::-webkit-scrollbar-thumb {
-    background-color: theme("colors.night.border");
+    background-color: rgb(34 211 238 / 0.4);
+  }
+
+  /* Subtle dot-grid for the dark-mode hero area — electric cyan dots, low opacity. */
+  .bg-dot-grid {
+    background-image: radial-gradient(
+      circle,
+      rgb(34 211 238 / 0.12) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
   }
 }

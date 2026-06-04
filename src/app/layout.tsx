@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 // on a static host. Inter for UI/body, Fraunces for the characterful display.
 import "@fontsource-variable/inter";
 import "@fontsource-variable/fraunces";
+import "@fontsource/jetbrains-mono";
 import "./globals.css";
 
 export const metadata: Metadata = {

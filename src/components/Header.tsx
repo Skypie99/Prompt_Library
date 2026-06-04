@@ -1,7 +1,7 @@
 "use client";
 
 import { DensityToggle } from "./DensityToggle";
-import { GearIcon, SearchIcon, SparkleIcon } from "./icons";
+import { GearIcon, SearchIcon } from "./icons";
 import { ThemeToggle } from "./ThemeToggle";
 import type { Density } from "@/lib/density";
 
@@ -21,11 +21,11 @@ export function Header({
   onChangeDensity,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-cream/80 backdrop-blur dark:border-night-border/70 dark:bg-night/80">
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-cream/80 backdrop-blur dark:border-teal-400/30 dark:bg-night/80">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500 text-white shadow-sm">
-            <SparkleIcon className="h-4 w-4" />
+        <div className="flex items-center gap-2">
+          <span aria-hidden className="font-mono text-base font-bold text-teal-600 dark:text-teal-400">
+            &gt;_
           </span>
           <span className="font-display text-lg font-semibold tracking-tight text-ink dark:text-paper">
             Prompt Library

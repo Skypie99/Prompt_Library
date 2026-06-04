@@ -61,7 +61,7 @@ function CategoryChip({
       className={clsx(
         "rounded-full border px-4 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
         isActive
-          ? "border-teal-500 bg-teal-500 text-white shadow-sm"
+          ? "border-teal-600 bg-teal-50 text-teal-700 shadow-sm dark:border-teal-400/60 dark:bg-teal-400/10 dark:text-teal-300 dark:shadow-none"
           : "border-border bg-surface text-ink-muted hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
       )}
     >
@@ -72,7 +72,7 @@ function CategoryChip({
         aria-hidden
         className={clsx(
           "ml-1.5 text-xs font-normal tabular-nums",
-          isActive ? "text-white/80" : "text-ink-soft dark:text-paper-muted"
+          isActive ? "text-teal-600/60 dark:text-teal-300/70" : "text-ink-soft dark:text-paper-muted"
         )}
       >
         {count}
