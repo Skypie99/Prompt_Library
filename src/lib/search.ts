@@ -30,7 +30,7 @@ export function createPromptFuse(prompts: Prompt[]): Fuse<Prompt> {
 export function searchPrompts(
   fuse: Fuse<Prompt>,
   prompts: Prompt[],
-  query: string
+  query: string,
 ): PromptSearchResult[] {
   const trimmed = query.trim();
   if (!trimmed) return prompts.map((prompt) => ({ prompt }));
@@ -51,7 +51,7 @@ export interface HighlightSegment {
 export function getHighlightSegments(
   value: string,
   matches: readonly FuseResultMatch[] | undefined,
-  key: string
+  key: string,
 ): HighlightSegment[] {
   const plain: HighlightSegment[] = [{ text: value, highlight: false }];
   if (!matches) return plain;

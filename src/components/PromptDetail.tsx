@@ -24,6 +24,7 @@ function isTypingTarget(event: KeyboardEvent): boolean {
 }
 import {
   CheckIcon,
+  ChevronIcon,
   CloseIcon,
   CopyIcon,
   DuplicateIcon,
@@ -145,6 +146,11 @@ export function PromptDetail({
   // F-r2 — countdown seconds remaining until "Retry" is enabled after a
   // rate-limit error. null when no countdown is active.
   const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
+  // F3c — true when user clicked Run with unfilled variables; shows inline
+  // warning. Cleared on prompt change, dismiss, or when the user proceeds.
+  const [showUnfilledWarning, setShowUnfilledWarning] = useState(false);
+  // F3d — true when the response panel is expanded past max-h-72.
+  const [responseExpanded, setResponseExpanded] = useState(false);
 
   // History state — hydrated from localStorage when a prompt opens.
   const [runs, setRuns] = useState<StoredRun[]>([]);
@@ -167,6 +173,8 @@ export function PromptDetail({
 
   // Reset everything whenever a different prompt opens; abort any in-flight run;
   // hydrate persisted variable values + run history; then focus the first field.
+  // Resetting state here is intentional: it responds to the user navigating
+  // to a different prompt, not to a reactive side-effect loop.
   useEffect(() => {
     abortRef.current?.abort();
     // F-r2 — clear any active rate-limit countdown.
@@ -174,6 +182,7 @@ export function PromptDetail({
       clearInterval(retryCountdownRef.current);
       retryCountdownRef.current = null;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValues(prompt ? loadValues(prompt.id) : {});
     setCopied(false);
     setConfirmingDelete(false);
@@ -181,6 +190,8 @@ export function PromptDetail({
     setResponse("");
     setError(null);
     setRetryCountdown(null);
+    setShowUnfilledWarning(false);
+    setResponseExpanded(false);
     setRuns(prompt ? loadRuns(prompt.id) : []);
     if (prompt) {
       requestAnimationFrame(() => {
@@ -382,7 +393,13 @@ export function PromptDetail({
   }
 
   // Public wrapper for the button binding — uses current state.
+  // F3c: if any variables are unfilled, gate on a soft warning first.
+  // The ⌘↵ shortcut bypasses this (power-user path via handleModalKeyDown).
   function handleRun() {
+    if (variables.length > 0 && filledCount < variables.length) {
+      setShowUnfilledWarning(true);
+      return;
+    }
     void runWithValues(values);
   }
 
@@ -431,7 +448,9 @@ export function PromptDetail({
   function handleModalKeyDown(event: React.KeyboardEvent) {
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
-      if (!running) handleRun();
+      // F3c — ⌘↵ is the power-user bypass path: skip the unfilled variable
+      // warning and run immediately with whatever values are present.
+      if (!running) void runWithValues(values);
       return;
     }
     // F-night-7 — "s" toggles favorite on the active prompt. Only when
@@ -748,6 +767,62 @@ export function PromptDetail({
               )}
             </div>
 
+            {/* F3c — Unfilled variable soft warning. Shown only when the user
+                clicked Run with at least one variable still empty. Non-blocking:
+                "Fill it" focuses the first empty field; "Run anyway" proceeds.
+                Dismissed automatically when the prompt changes or run starts. */}
+            {showUnfilledWarning && (
+              <div
+                role="alert"
+                className="mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
+              >
+                <span>
+                  {variables.length - filledCount === 1
+                    ? "1 variable is empty — run anyway?"
+                    : `${variables.length - filledCount} variables are empty — run anyway?`}
+                </span>
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    aria-label="Fill empty variables"
+                    onClick={() => {
+                      setShowUnfilledWarning(false);
+                      const firstEmpty = variables.find(
+                        (v) => (values[v.name] ?? "").trim() === ""
+                      );
+                      if (firstEmpty) {
+                        requestAnimationFrame(() => {
+                          try {
+                            panelRef.current
+                              ?.querySelector<HTMLElement>(`#var-${firstEmpty.name}`)
+                              ?.focus();
+                          } catch {
+                            panelRef.current
+                              ?.querySelector<HTMLElement>("input, textarea")
+                              ?.focus();
+                          }
+                        });
+                      }
+                    }}
+                    className="font-medium underline underline-offset-2"
+                  >
+                    Fill it
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowUnfilledWarning(false);
+                      responsePanelRef.current?.focus();
+                      void runWithValues(values);
+                    }}
+                    className="font-medium underline underline-offset-2"
+                  >
+                    Run anyway
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* F-fast-1 — at-a-glance size estimate of what we're about to send.
                 Token count is a rough rule-of-thumb (≈4 chars/token for English)
                 so callers see SHAPE not certainty; labelled "~" so nobody mistakes
@@ -785,7 +860,9 @@ export function PromptDetail({
             {showResponsePanel && (
               <div
                 ref={responsePanelRef}
-                className="mt-5 border-t border-border pt-4 dark:border-night-border"
+                id="response-panel"
+                tabIndex={-1}
+                className="mt-5 border-t border-border pt-4 focus:outline-none dark:border-night-border"
               >
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-xs font-medium uppercase tracking-wider text-ink-soft">
@@ -798,12 +875,32 @@ export function PromptDetail({
                     </span>
                   )}
                   {!running && response.length > 0 && !error && (
-                    <button
-                      onClick={handleCopyResponse}
-                      className="text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
-                    >
-                      {responseCopied ? "Copied" : "Copy response"}
-                    </button>
+                    <div className="flex items-center gap-3">
+                      {/* F3d — expand/collapse toggle for the response panel. */}
+                      <button
+                        type="button"
+                        onClick={() => setResponseExpanded((prev) => !prev)}
+                        aria-label={responseExpanded ? "Collapse response" : "Expand response"}
+                        aria-expanded={responseExpanded}
+                        aria-controls="response-content"
+                        title={responseExpanded ? "Collapse response" : "Expand response"}
+                        className="flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                      >
+                        <ChevronIcon
+                          className={clsx(
+                            "h-3.5 w-3.5 transition-transform duration-150",
+                            responseExpanded ? "rotate-180" : ""
+                          )}
+                        />
+                        {responseExpanded ? "Collapse" : "Expand"}
+                      </button>
+                      <button
+                        onClick={handleCopyResponse}
+                        className="text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                      >
+                        {responseCopied ? "Copied" : "Copy response"}
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -855,9 +952,34 @@ export function PromptDetail({
                         )}
                       </div>
                     )}
+                    {/* F3a — overloaded retry. 503/529 errors are transient;
+                        no retry-after header, so just a plain Retry button.
+                        Same handleRetry path as rate-limit — clears the error
+                        and re-invokes streamClaude with the same values.
+                        disabled={running} prevents stacking concurrent requests
+                        (Steve hardening 1). */}
+                    {error.kind === "overloaded" && (
+                      <div className="mt-2">
+                        <button
+                          onClick={handleRetry}
+                          disabled={running}
+                          aria-label="Retry"
+                          className="font-medium underline underline-offset-2 disabled:opacity-50"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <div className="scrollbar-soft max-h-72 overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
+                  <div
+                    id="response-content"
+                    className={clsx(
+                      "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper",
+                      // F3d — collapse to max-h-72 by default; remove cap when expanded.
+                      responseExpanded ? "" : "max-h-72"
+                    )}
+                  >
                     <Markdown source={response} />
                     {running && (
                       <span className="ml-0.5 inline-block animate-pulse font-semibold text-teal-500">

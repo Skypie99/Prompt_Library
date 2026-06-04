@@ -50,8 +50,11 @@ function persist(mode: Mode): void {
 export function ThemeToggle() {
   const [mode, setMode] = useState<Mode>("system");
 
-  // Sync local state to the stored preference on mount.
+  // Sync local state to the stored preference on mount. This is a one-time
+  // client-side hydration: useState cannot use readStored() directly because
+  // localStorage is unavailable on the server (SSR hydration mismatch).
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMode(readStored());
   }, []);
 

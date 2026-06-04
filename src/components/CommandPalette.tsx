@@ -92,9 +92,12 @@ export function CommandPalette({
     return raw;
   }, [fuse, prompts, query, recentIds]);
 
-  // Fresh start each time the palette opens.
+  // Fresh start each time the palette opens. State resets are intentional
+  // here — they respond to the `open` prop toggling, not to reactive state
+  // changes, so the "cascading render" concern does not apply.
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery("");
       setActiveIndex(0);
       inputRef.current?.focus();
@@ -103,6 +106,7 @@ export function CommandPalette({
 
   // Reset the selection to the top whenever the query changes.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveIndex(0);
   }, [query]);
 

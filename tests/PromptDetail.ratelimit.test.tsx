@@ -154,7 +154,9 @@ describe("PromptDetail — F-r2 rate-limit retry UI", () => {
     expect(screen.getByText("Retry in 30s")).toBeInTheDocument();
 
     // "Retry now" button (not the plain "Retry" button)
-    expect(screen.getByRole("button", { name: /Retry — available in 30 seconds/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Retry — available in 30 seconds/ }),
+    ).toBeInTheDocument();
   });
 
   // ---------------------------------------------------------------------------
@@ -253,8 +255,8 @@ describe("PromptDetail — F-r2 rate-limit retry UI", () => {
     });
 
     // No "Can't perform a React state update on an unmounted component" errors
-    const stateUpdateErrors = consoleSpy.mock.calls.filter(([msg]) =>
-      typeof msg === "string" && msg.includes("unmounted"),
+    const stateUpdateErrors = consoleSpy.mock.calls.filter(
+      ([msg]) => typeof msg === "string" && msg.includes("unmounted"),
     );
     expect(stateUpdateErrors).toHaveLength(0);
 

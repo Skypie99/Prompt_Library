@@ -1,0 +1,63 @@
+{
+  "project": "prompt-library-tool",
+  "last_updated": "2026-06-03",
+  "updated_by": "morgan (status review)",
+  "note": "Supersedes 2026-05-29 graph. Verified by git: main advanced +4 (teal/F6/finder/header) AFTER the old plan, so the old merge queue is stale. acyclic: true. All merges + push are Sky-only.",
+  "acyclic": true,
+  "verified_build": { "date": "2026-06-03", "branch": "shamus/f5-export-import-2026-05-29", "tsc": "exit 0", "vitest": "328/328 pass" },
+  "phases": [
+    {
+      "phase": 0,
+      "title": "Reconcile & verify (before ANY merge)",
+      "tasks": [
+        { "id": "rory-corrected-merge-order", "title": "Rory: rebase each live branch onto current main, produce corrected merge order + re-verify green", "status": "ready", "owner": "Rory" },
+        { "id": "rory-delete-noop-branches", "title": "Rory: delete no-op branches feat/f6-markdown-polish + ci/cleanup-finder-dupes (ahead=0) + superseded a11y/auto-2026-05-25-alex-header-focus-visible", "status": "ready", "owner": "Rory" },
+        { "id": "morgan-commit-governance", "title": "Morgan: commit untracked governance files + ~40 qa-reports (memory lives only in working tree)", "status": "ready", "owner": "Morgan", "notes": "Sky approves any push." }
+      ]
+    },
+    {
+      "phase": 1,
+      "title": "Merge clean, high-value, conflict-free work (Sky merges)",
+      "tasks": [
+        { "id": "merge-f5", "title": "Merge F5 export/import (behind=0, green) — cleanest, do first", "status": "locked", "owner": "Sky", "blocked_by": ["rory-corrected-merge-order"] },
+        { "id": "steve-dedup-10mb", "title": "Steve: drop duplicate 10MB import cap from PR#3 (F5 keeps it)", "status": "locked", "owner": "Steve", "blocked_by": ["merge-f5"] },
+        { "id": "merge-independent", "title": "Merge rebased: eslint -> ratelimit (stacked), f3acd, f-usage, gary-clean-sweep, steve-pr3, docs", "status": "locked", "owner": "Sky", "blocked_by": ["rory-corrected-merge-order", "steve-dedup-10mb"] }
+      ]
+    },
+    {
+      "phase": 2,
+      "title": "Reconcile teal/header a11y delta (not branch merge)",
+      "tasks": [
+        { "id": "alex-teal-delta", "title": "Alex: re-apply only the WCAG-blocker delta from teal-reskin + header-focus-teal onto current main; resolve Header.tsx/Markdown.tsx conflict; re-verify", "status": "locked", "owner": "Alex", "blocked_by": ["merge-f5"] }
+      ]
+    },
+    {
+      "phase": 3,
+      "title": "Unblock & build F3b",
+      "tasks": [
+        { "id": "sky-decide-6", "title": "Sky answers 6 open questions (F3b x3, chip contrast, f-usage cost, f-usage panels)", "status": "blocked", "owner": "Sky", "type": "DECISION_FOR_SKY" },
+        { "id": "build-f3b", "title": "Shamus builds F3b inline model switcher", "status": "blocked", "owner": "Shamus", "blocked_by": ["sky-decide-6"] }
+      ]
+    },
+    {
+      "phase": 4,
+      "title": "Hygiene, deploy, next backlog",
+      "tasks": [
+        { "id": "gary-14-lint", "title": "Gary fixes 14 deferred @ts-expect-error lint warnings", "status": "pending", "owner": "Gary" },
+        { "id": "rory-lint-gate", "title": "Rory wires lint into CI gate (after warnings fixed)", "status": "locked", "owner": "Rory", "blocked_by": ["gary-14-lint"] },
+        { "id": "sky-push-origin", "title": "Sky decides: push local main (+4) -> origin -> GH-Pages (teal not yet live)", "status": "blocked", "owner": "Sky", "type": "DECISION_FOR_SKY" },
+        { "id": "backlog-f8-empty-states", "title": "F8 better empty states (Favorites/Recent tiles) — backlog", "status": "pending", "owner": "Shamus" }
+      ]
+    }
+  ],
+  "decisions_for_sky": [
+    "Greenlight resuming Prompt Library (currently ON HOLD)?",
+    "Push local main +4 to origin (deploy teal + 05-29 work)?",
+    "F3b placement: inline vs own row (Quinn: inline)",
+    "F3b ⌘↵ bypasses variable warning when override active (Quinn: yes)",
+    "F3b per-prompt model override persistence (Quinn: no)",
+    "Teal chip contrast: keep 3.255:1 ARIA-compensated vs strict 4.5:1 (teal-600)",
+    "F-usage: add USD cost estimate? (current: no)",
+    "F-usage: token counts in both panel AND history? (current: yes)"
+  ]
+}

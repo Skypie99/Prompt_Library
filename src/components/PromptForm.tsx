@@ -83,7 +83,7 @@ function PromptBodyPreview({ body, sampleFill }: { body: string; sampleFill: boo
             >
               {segment.raw}
             </span>
-          )
+          ),
         )}
       </pre>
     </div>

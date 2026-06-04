@@ -88,11 +88,17 @@ function installFakeStorage(): FakeStore {
   const store: FakeStore = new Map();
   const stub = {
     getItem: (k: string) => store.get(k) ?? null,
-    setItem: (k: string, v: string) => { store.set(k, String(v)); },
-    removeItem: (k: string) => { store.delete(k); },
+    setItem: (k: string, v: string) => {
+      store.set(k, String(v));
+    },
+    removeItem: (k: string) => {
+      store.delete(k);
+    },
     clear: () => store.clear(),
     key: (i: number) => Array.from(store.keys())[i] ?? null,
-    get length() { return store.size; },
+    get length() {
+      return store.size;
+    },
   };
   // @ts-expect-error — test stub
   globalThis.window = { localStorage: stub };
@@ -102,9 +108,9 @@ function installFakeStorage(): FakeStore {
 }
 
 function uninstallFakeStorage(): void {
-  // @ts-expect-error
+  // @ts-expect-error -- globalThis.window is not typed as optional but delete is safe in jsdom test teardown
   delete globalThis.window;
-  // @ts-expect-error
+  // @ts-expect-error -- globalThis.localStorage is not typed as optional but delete is safe in jsdom test teardown
   delete globalThis.localStorage;
 }
 
@@ -115,8 +121,13 @@ function uninstallFakeStorage(): void {
 describe("variable substitution → run storage pipeline", () => {
   let store: FakeStore;
 
-  beforeEach(() => { store = installFakeStorage(); });
-  afterEach(() => { uninstallFakeStorage(); store.clear(); });
+  beforeEach(() => {
+    store = installFakeStorage();
+  });
+  afterEach(() => {
+    uninstallFakeStorage();
+    store.clear();
+  });
 
   // ── Core round-trip ───────────────────────────────────────────────────────
 
@@ -132,7 +143,9 @@ describe("variable substitution → run storage pipeline", () => {
     appendRun(prompt.id, run);
 
     const [saved] = loadRuns(prompt.id);
-    expect(saved.sentPrompt).toBe("Write a cover letter for Senior Engineer at Anthropic. Tone: direct.");
+    expect(saved.sentPrompt).toBe(
+      "Write a cover letter for Senior Engineer at Anthropic. Tone: direct.",
+    );
     expect(saved.sentPrompt).not.toMatch(/\{\{/); // no unresolved tokens
   });
 
@@ -192,7 +205,7 @@ describe("variable substitution → run storage pipeline", () => {
     const [saved] = loadRuns(prompt.id);
     expect(saved.sentPrompt).toContain("Designer");
     expect(saved.sentPrompt).toContain("{{company}}"); // unresolved
-    expect(saved.sentPrompt).toContain("{{tone}}");    // unresolved
+    expect(saved.sentPrompt).toContain("{{tone}}"); // unresolved
   });
 
   // ── Cross-prompt isolation ─────────────────────────────────────────────────
@@ -203,9 +216,18 @@ describe("variable substitution → run storage pipeline", () => {
     const promptA = makePrompt({ id: "prompt-a" });
     const promptB = makePrompt({ id: "prompt-b", body: "Summarize: {{topic}}" });
 
-    appendRun(promptA.id, makeRun({ values: { role: "x", company: "y", tone: "z" }, sentPrompt: "a" }));
-    appendRun(promptA.id, makeRun({ values: { role: "x", company: "y", tone: "z" }, sentPrompt: "a2" }));
-    appendRun(promptB.id, makeRun({ values: { topic: "climate" }, sentPrompt: "Summarize: climate" }));
+    appendRun(
+      promptA.id,
+      makeRun({ values: { role: "x", company: "y", tone: "z" }, sentPrompt: "a" }),
+    );
+    appendRun(
+      promptA.id,
+      makeRun({ values: { role: "x", company: "y", tone: "z" }, sentPrompt: "a2" }),
+    );
+    appendRun(
+      promptB.id,
+      makeRun({ values: { topic: "climate" }, sentPrompt: "Summarize: climate" }),
+    );
 
     expect(loadRuns(promptA.id)).toHaveLength(2);
     expect(loadRuns(promptB.id)).toHaveLength(1);
@@ -243,18 +265,28 @@ describe("variable substitution → run storage pipeline", () => {
     const values = { role: "r", company: "c", tone: "t" };
 
     // Seed one run that should be evicted (earliest ranAt)
-    appendRun(prompt.id, makeRun({ id: "evicted", ranAt: "2026-01-01T00:00:00.000Z", values, sentPrompt: "old" }));
+    appendRun(
+      prompt.id,
+      makeRun({ id: "evicted", ranAt: "2026-01-01T00:00:00.000Z", values, sentPrompt: "old" }),
+    );
 
     // Fill to cap with later timestamps
     for (let i = 1; i < RUNS_PER_PROMPT_CAP; i++) {
       appendRun(
         prompt.id,
-        makeRun({ ranAt: `2026-05-25T${String(i).padStart(2, "0")}:00:00.000Z`, values, sentPrompt: `run-${i}` }),
+        makeRun({
+          ranAt: `2026-05-25T${String(i).padStart(2, "0")}:00:00.000Z`,
+          values,
+          sentPrompt: `run-${i}`,
+        }),
       );
     }
 
     // One more — should evict "evicted"
-    appendRun(prompt.id, makeRun({ id: "newest", ranAt: "2026-12-31T00:00:00.000Z", values, sentPrompt: "newest" }));
+    appendRun(
+      prompt.id,
+      makeRun({ id: "newest", ranAt: "2026-12-31T00:00:00.000Z", values, sentPrompt: "newest" }),
+    );
 
     const runs = loadRuns(prompt.id);
     expect(runs).toHaveLength(RUNS_PER_PROMPT_CAP);

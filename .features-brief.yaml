@@ -1,0 +1,15 @@
+---
+project: Prompt Library
+updated: 2026-05-27
+active_features: 2
+total_features: 6
+in_progress:
+  - slug: prompt-search-filter
+    status: in-dev
+    owner: shamus
+  - slug: export-markdown
+    status: in-review
+    owner: shamus
+in_review: []
+shipped_last_week: 0
+---

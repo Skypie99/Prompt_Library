@@ -77,9 +77,11 @@ export function SettingsModal({
 
   // Sync the form to the saved settings each time the modal opens, and
   // reset any in-flight import state so a closed-then-reopened modal is
-  // a clean slate.
+  // a clean slate. State resets are intentional — they respond to the modal
+  // opening/closing (prop change), not a reactive side-effect loop.
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setApiKey(settings.apiKey);
       setModel(settings.model);
       setMaxTokens(String(settings.maxTokens));
@@ -99,6 +101,7 @@ export function SettingsModal({
   // Refresh the count + usage after a successful import — both just changed.
   useEffect(() => {
     if (importState.kind === "success") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserPromptCount(loadUserPrompts().length);
       setStorageUsage(getStorageUsage());
     }
@@ -258,7 +261,12 @@ export function SettingsModal({
         className="relative w-full max-w-md animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface"
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-4 dark:border-night-border">
-          <h2 id="settings-modal-title" className="font-display text-xl font-semibold text-ink dark:text-paper">Settings</h2>
+          <h2
+            id="settings-modal-title"
+            className="font-display text-xl font-semibold text-ink dark:text-paper"
+          >
+            Settings
+          </h2>
           <button
             onClick={onClose}
             aria-label="Close"

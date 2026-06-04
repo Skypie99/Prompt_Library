@@ -100,7 +100,10 @@ export function RunHistory({
   );
 
   // If the active prompt or its history changes, drop transient row state.
+  // Resetting state here is intentional — it responds to a prop change (promptId)
+  // that represents a user navigation action, not a reactive side-effect loop.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenRunId(null);
     setConfirmingClear(false);
     setCopiedRunId(null);
@@ -162,8 +165,10 @@ export function RunHistory({
 
   // F-night-4 + F-n2-18 — apply status AND "last 24h" filters before
   // relative-time decoration so the 30s tick doesn't format hidden entries.
+  // Use now.getTime() (from the stable useNowEvery tick) instead of Date.now()
+  // to keep the memo pure (Date.now() is impure — result varies per render).
   const filteredRuns = useMemo(() => {
-    const cutoff = last24Only ? Date.now() - 24 * 60 * 60 * 1000 : null;
+    const cutoff = last24Only ? now.getTime() - 24 * 60 * 60 * 1000 : null;
     return runs.filter((r) => {
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
       if (cutoff !== null) {
@@ -172,7 +177,7 @@ export function RunHistory({
       }
       return true;
     });
-  }, [runs, statusFilter, last24Only]);
+  }, [runs, statusFilter, last24Only, now]);
 
   // Memoize one parsed Date per entry so we're not parsing on every tick.
   const entries = useMemo(

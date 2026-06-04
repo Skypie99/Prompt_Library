@@ -67,7 +67,7 @@ describe("extractVariables", () => {
       makePrompt({
         body: "Hi {{user}}",
         variables: [{ name: "user", label: "Your name" }],
-      })
+      }),
     );
     expect(result[0].label).toBe("Your name");
   });
@@ -88,7 +88,7 @@ describe("extractVariables", () => {
     const result = extractVariables(
       makePrompt({
         body: "{{title}} {{body}} {{code}} {{notes}} {{transcript}}",
-      })
+      }),
     );
     const map = Object.fromEntries(result.map((v) => [v.name, v.multiline]));
     expect(map.title).toBe(false);
@@ -103,7 +103,7 @@ describe("extractVariables", () => {
       makePrompt({
         body: "{{x}}",
         variables: [{ name: "x", label: "X", placeholder: "Paste here" }],
-      })
+      }),
     );
     expect(result[0].multiline).toBe(true);
   });
@@ -113,7 +113,7 @@ describe("extractVariables", () => {
       makePrompt({
         body: "{{x}}",
         variables: [{ name: "x", label: "X", placeholder: "e.g. foo" }],
-      })
+      }),
     );
     expect(result[0].placeholder).toBe("e.g. foo");
   });

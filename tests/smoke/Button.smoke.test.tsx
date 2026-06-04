@@ -40,8 +40,6 @@ describe("Button smoke test — jsdom environment", () => {
 
   it("toHaveTextContent matcher works (jest-dom is wired)", () => {
     render(<p>Hello from jsdom</p>);
-    expect(screen.getByText("Hello from jsdom")).toHaveTextContent(
-      "Hello from jsdom",
-    );
+    expect(screen.getByText("Hello from jsdom")).toHaveTextContent("Hello from jsdom");
   });
 });
