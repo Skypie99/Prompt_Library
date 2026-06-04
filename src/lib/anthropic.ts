@@ -101,9 +101,12 @@ function mapHttpError(
         "Claude is overloaded right now. Give it a few seconds and try again.",
       );
     case status >= 400 && status < 500:
-      return new ClaudeError("bad-request", `Claude rejected the request${suffix}.`);
+      // Don't surface the raw Anthropic error detail to the UI — it may
+      // contain internal context (model ids, token counts, policy labels)
+      // that isn't useful to the end user and could confuse or mislead.
+      return new ClaudeError("bad-request", "Claude rejected the request — check your prompt and try again.");
     default:
-      return new ClaudeError("unknown", `Something went wrong on Claude's side${suffix}.`);
+      return new ClaudeError("unknown", "Something went wrong on Claude's side. Please try again.");
   }
 }
 
@@ -153,7 +156,11 @@ function handleEvent(
   } else if (payload.type === "content_block_delta" && payload.delta?.type === "text_delta") {
     onText(payload.delta.text ?? "");
   } else if (payload.type === "error") {
-    throw new ClaudeError("unknown", payload.error?.message ?? "Claude returned an error.");
+    // Don't surface the raw Anthropic error message from the SSE stream — it
+    // may contain internal context (policy labels, token counts, model ids)
+    // that isn't useful to the end user. Use the same generic message as the
+    // HTTP-level fallback so the surface is consistent.
+    throw new ClaudeError("unknown", "Something went wrong on Claude's side. Please try again.");
   }
 }
 
