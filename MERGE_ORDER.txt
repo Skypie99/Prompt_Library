@@ -1,0 +1,59 @@
+# PROMPT LIBRARY — PHASE 1 MERGE ORDER
+# Rebased: 2026-06-03, main = 961cbd0 (cyberpunk rebrand + ship report)
+
+## MERGE SEQUENCE (Sky executes in order)
+
+### 1. F5 EXPORT/IMPORT (shamus/f5-export-import-2026-05-29)
+   - Status: rebased ✓ tsc ✓ tests ✓
+   - Dependencies: none (independent)
+   - Contents: backup/restore JSON, excludes apiKey/model/maxTokens
+   - Reason: highest priority, cleanest, behind=0 on main
+
+### 2. ESLINT V9 + RATELIMIT (ci/eslint-setup → fix/ratelimit)
+   - ci/eslint-setup-2026-05-29
+     Status: rebased ✓ tsc ✓ tests ✓
+     Contents: ESLint v9, flat config, 10 react-hooks errors fixed
+   - fix/ratelimit-retry-disabled-2026-05-29 (STACKED on eslint)
+     Status: rebased ✓
+     Contents: rate-limit retry button, disabled state during run
+   - Reason: ESLint must merge first (ratelimit depends on it)
+
+### 3. INDEPENDENT FEATURES (parallel or sequence — no blockers)
+   - feat/f-usage-token-display-2026-05-29
+     Status: rebased ✓
+     Contents: token count display, shadow DOM safety
+   - feat/f3acd-run-ux-2026-05-29
+     Status: rebased ✓
+     Contents: F3a/c/d run UX improvements
+   - steve/auto-2026-05-29-security-hardening (PR#3)
+     Status: rebased ✓
+     Contents: input validation, localStorage safety, error hardening
+     Note: dedup 10MB import cap (F5 already has it)
+   - docs/features-update-2026-05-29
+     Status: rebased ✓
+     Contents: feature documentation
+
+### 4. GARY CLEAN SWEEP (qa/auto-2026-05-29-gary-clean-sweep) 
+   - Status: worktree locked at /private/tmp/pl-gary-sweep (needs manual rebase)
+   - Contents: magic numbers → constants, dedup code
+   - Can merge anytime after Phase 1a
+
+## VERIFICATION CHECKLIST
+- [x] F5: tsc green, 319/319 tests
+- [x] ESLint: tsc green, tests green
+- [x] Ratelimit: rebased on ESLint
+- [x] F-usage: rebased clean
+- [x] F3a/c/d: rebased clean
+- [x] Steve PR#3: rebased (resolved conflicts)
+- [x] Docs: rebased clean
+- [ ] Gary sweep: manual rebase needed (worktree conflict)
+
+## BLOCKERS
+None for Phase 1a (F5 → ESLint/ratelimit → independent features).
+Gary sweep can follow.
+
+## NOTES
+- F5 conflict resolution: merged semantic colors (success/danger) onto electric cyan palette ✓
+- ESLint/ratelimit conflicts: took rebrand component versions (canonical) ✓
+- Steve PR#3 conflicts: took rebrand versions for RunHistory/SettingsModal ✓
+- All rebases clean except Gary (locked worktree)

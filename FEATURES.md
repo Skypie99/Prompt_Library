@@ -130,6 +130,32 @@ Friendly empty states for: search-with-no-results (already exists, polish it), F
 
 ## Done (most recent first)
 
+### F3-run — Prompt-running UX improvements (S × 3)  ✅ on `feat/f3acd-run-ux-2026-05-29`, pending merge
+Three sub-features shipped in one Shamus cycle; 335 tests pass, typecheck clean, Steve CLEAR:
+- **F3a — Overloaded-error Retry button:** When `error.kind === "overloaded"` (503/529), the error block now renders a Retry button (no countdown — no retry-after header for overload errors), matching the rate-limit retry UX.
+- **F3c — Unfilled-variable soft warning:** Clicking Run with at least one `{{variable}}` still empty shows an inline `role="alert"` warning ("N variable(s) empty — run anyway?") with Fill-it and Run-anyway actions. `⌘↵` bypasses the warning (power-user path).
+- **F3d — Response expand/collapse toggle:** An Expand/Collapse button in the Response header bar lets users remove the `max-h-72` cap on long responses. Resets on prompt change.
+
+**F3b — Inline model switcher: PENDING — awaiting Sky's answers to 3 open questions (see Quinn's spec `qa-reports/2026-05-29_Quinn_F3_PromptRunSpec.md`):**
+  1. Model-selector placement: inline in the `⌘↵` info line vs. its own row?
+  2. Should `⌘↵` bypass the F3c variable warning or always show it?
+  3. Should the inline model override persist across modal opens for the same prompt?
+
+### Teal re-skin — Design palette swap (coral → teal)  ✅ on `feat/teal-reskin-2026-05-29`, pending merge
+20 files updated: `tailwind.config.ts`, `globals.css`, `categoryColor.ts`, and 16 components. Alex re-verified: PASS_WITH_NOTES — active chip label at 3.255:1 (documented ARIA tradeoff; `font-semibold` fix applied, `aria-pressed`+`aria-label` correct). Focus ring at 3.021:1 (1px above floor; optional polish: bump to `ring-teal-600`).
+
+### F6 polish — Markdown link focus ring  ✅ landed on main (commit `e32cc89`)
+Added `focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1` to the `<a>` element in `Markdown.tsx`. Also corrected `rel` attribute order to canonical `noopener noreferrer`. Steve CLEAR — `noopener noreferrer` on all external links confirmed; `isSafeUrl` allowlist verified.
+
+### Security hardening (4 fixes)  ✅ on `steve/auto-2026-05-29-security-hardening`, PR #3, pending merge
+Steve + Rory verified: SSE error-message leak patched (generic string replaces raw payload), `mapHttpError` suffix interpolation removed, `maxLength` guards added to all form inputs (title/desc/body/category/tag/API-key/run-label), 10 MB file-size cap on library import. No behavior change on happy path.
+
+### Code hygiene clean-sweep  ✅ on `qa/auto-2026-05-29-gary-clean-sweep`, pending merge
+Gary: extracted `isTypingTarget` into shared `src/lib/dom.ts` (was duplicated in two components), added `COPY_TOAST_MS` constant to settings.ts (was a hard-coded `1500` in 4 files), added `STEP_MAX_TOKENS` constant (was a magic `256` in SettingsModal). 324/324 tests pass.
+
+### ESLint setup  ✅ on `ci/eslint-setup-2026-05-29`, pending merge
+ESLint v9 installed; 0 `ban-ts-comment` errors (14 deferred in test files); react-hooks violations fixed (10 `set-state-in-effect` — all documented deliberate exceptions); `Date.now()` in useMemo replaced with stable hook value. 2 `no-unused-vars` remain (deferred, `transfer-extra.test.ts` only).
+
 ### F9 — Respect `prefers-color-scheme` on first visit  (XS)  ✅ landed on main
 On first load (no stored theme preference), pick dark or light from the user's system preference. The toggle remains the source of truth from that moment forward. Pre-paint script in `layout.tsx` prevents flash; `ThemeToggle` component wired in Header.
 
