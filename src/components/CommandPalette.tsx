@@ -149,7 +149,7 @@ export function CommandPalette({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-[12vh]">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-[8vh] sm:pt-[12vh]">
       <div
         className="absolute inset-0 animate-fade-in bg-ink/30 backdrop-blur-sm"
         onClick={onClose}
@@ -254,7 +254,7 @@ export function CommandPalette({
           <span>
             {results.length} {results.length === 1 ? "result" : "results"}
           </span>
-          <span className="flex items-center gap-3">
+          <span className="hidden items-center gap-3 sm:flex">
             <span className="flex items-center gap-1">
               <Kbd>↑</Kbd>
               <Kbd>↓</Kbd>

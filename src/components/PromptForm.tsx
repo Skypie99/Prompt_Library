@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import type { Prompt } from "@/lib/types";
 import { parseBody } from "@/lib/variables";
+import { Sheet } from "./ui/Sheet";
 import { CloseIcon } from "./icons";
 
 export interface PromptFormValues {
@@ -164,13 +165,12 @@ export function PromptForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 animate-fade-in bg-ink/40 backdrop-blur-sm"
-        onClick={onCancel}
-      />
-
-      <div className="relative flex max-h-[88vh] w-full max-w-2xl animate-scale-in flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface">
+    <Sheet
+      open
+      onClose={onCancel}
+      size="lg"
+      ariaLabel={mode === "edit" ? "Edit prompt" : "New prompt"}
+    >
         <div className="flex items-center justify-between border-b border-border px-6 py-4 dark:border-night-border">
           <h2 className="font-display text-xl font-semibold text-ink dark:text-paper">
             {mode === "edit" ? "Edit prompt" : "New prompt"}
@@ -184,7 +184,7 @@ export function PromptForm({
           </button>
         </div>
 
-        <div className="scrollbar-soft space-y-4 overflow-y-auto px-6 py-5">
+        <div className="scrollbar-soft min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-5">
           <div>
             <label
               htmlFor="pf-title"
@@ -403,7 +403,6 @@ export function PromptForm({
             {mode === "edit" ? "Save changes" : "Create prompt"}
           </button>
         </div>
-      </div>
-    </div>
+    </Sheet>
   );
 }

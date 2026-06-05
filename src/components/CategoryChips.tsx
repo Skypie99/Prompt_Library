@@ -20,7 +20,7 @@ export function CategoryChips({ categories, active, onSelect }: CategoryChipsPro
   const totalCount = categories.reduce((sum, c) => sum + c.count, 0);
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
+    <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-center">
       {/* "All" chip — count is the sum of all categories. */}
       <CategoryChip
         label="All"

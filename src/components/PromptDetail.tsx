@@ -8,6 +8,7 @@ import { modelLabel, type Settings } from "@/lib/settings";
 import { appendRun, generateRunId, loadRuns, type StoredRun } from "@/lib/runs";
 import { clearValues, loadValues, saveValues } from "@/lib/library";
 import { countFilled, extractVariables, parseBody, substituteBody } from "@/lib/variables";
+import { Sheet } from "./ui/Sheet";
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
 import { Markdown } from "./Markdown";
 import { RunHistory } from "./RunHistory";
@@ -497,15 +498,10 @@ export function PromptDetail({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 animate-fade-in bg-ink/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
+    <Sheet open onClose={onClose} size="xl" ariaLabel={prompt.title || "Prompt details"}>
       <div
         onKeyDown={handleModalKeyDown}
-        className="relative flex max-h-[85vh] w-full max-w-4xl animate-scale-in flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4 dark:border-night-border">
@@ -1048,6 +1044,6 @@ export function PromptDetail({
           </div>
         </div>
       </div>
-    </div>
+    </Sheet>
   );
 }

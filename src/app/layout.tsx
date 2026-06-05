@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 // Self-hosted variable fonts (no runtime request to Google) — works offline and
 // on a static host. Inter for UI/body, Fraunces for the characterful display.
@@ -10,6 +10,16 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Prompt Library",
   description: "Search, customize, and run your prompts with Claude in seconds.",
+};
+
+// Mobile viewport. Without this, phones lay the page out at desktop width and
+// clip the right edge (header buttons, headline, chips). `viewport-fit: cover`
+// lets the bottom-sheet pad against `env(safe-area-inset-bottom)` on notched
+// iPhones. App Router turns this export into the <meta name="viewport"> tag.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 // Runs before first paint to apply the right theme, avoiding a flash of the
