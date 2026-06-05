@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Sheet } from "./ui/Sheet";
 import { CloseIcon } from "./icons";
 
 interface ShortcutsModalProps {
@@ -47,32 +47,9 @@ const SHORTCUTS: ReadonlyArray<{
 ];
 
 export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-
-  // On open, move focus to the close button so keyboard users can dismiss
-  // immediately and screen readers announce the modal is interactive.
-  useEffect(() => {
-    if (open) {
-      requestAnimationFrame(() => closeBtnRef.current?.focus());
-    }
-  }, [open]);
-
-  if (!open) return null;
-
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="shortcuts-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-    >
-      <div
-        className="absolute inset-0 animate-fade-in bg-ink/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-md animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface">
-        <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 dark:border-night-border">
+    <Sheet open={open} onClose={onClose} size="md" labelledById="shortcuts-modal-title">
+      <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 dark:border-night-border">
           <h2
             id="shortcuts-modal-title"
             className="font-display text-lg font-semibold text-ink dark:text-paper"
@@ -80,7 +57,6 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
             Keyboard shortcuts
           </h2>
           <button
-            ref={closeBtnRef}
             type="button"
             onClick={onClose}
             aria-label="Close keyboard shortcuts"
@@ -90,7 +66,7 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
           </button>
         </div>
 
-        <ul className="divide-y divide-border dark:divide-night-border">
+        <ul className="scrollbar-soft min-h-0 flex-1 divide-y divide-border overflow-y-auto dark:divide-night-border">
           {SHORTCUTS.map((row, rowIndex) => {
             // Build the aria-label so a screen reader reads, e.g.
             // "Command K or Control K: Open the search palette".
@@ -127,8 +103,7 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
             );
           })}
         </ul>
-      </div>
-    </div>
+    </Sheet>
   );
 }
 

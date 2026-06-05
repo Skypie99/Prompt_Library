@@ -70,19 +70,22 @@ export function Sheet({
     };
   }, [open]);
 
-  // Move focus into the panel on open; return it to the trigger on close.
+  // Move focus into the panel on open; return it to the trigger when the sheet
+  // goes away. The restore lives in the cleanup so it fires for BOTH mounting
+  // styles: modals that toggle an `open` prop (Settings, Shortcuts) and modals
+  // that the parent mounts/unmounts (PromptForm, PromptDetail).
   useEffect(() => {
-    if (open) {
-      triggerRef.current = document.activeElement;
-      const target =
-        initialFocusRef?.current ??
-        panelRef.current?.querySelector<HTMLElement>(FOCUSABLE) ??
-        null;
-      // rAF so the panel is painted before we focus (avoids a missed focus).
-      requestAnimationFrame(() => target?.focus());
-    } else {
+    if (!open) return;
+    triggerRef.current = document.activeElement;
+    const target =
+      initialFocusRef?.current ??
+      panelRef.current?.querySelector<HTMLElement>(FOCUSABLE) ??
+      null;
+    // rAF so the panel is painted before we focus (avoids a missed focus).
+    requestAnimationFrame(() => target?.focus());
+    return () => {
       (triggerRef.current as HTMLElement | null)?.focus();
-    }
+    };
   }, [open, initialFocusRef]);
 
   // Escape closes; Tab/Shift+Tab cycle within the panel.
