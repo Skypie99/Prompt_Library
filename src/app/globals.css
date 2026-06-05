@@ -62,3 +62,42 @@
       radial-gradient(ellipse 60% 40% at 105% 85%, rgba(232, 185, 106, 0.06) 0%, transparent 40%);
   }
 }
+
+/* ============================================================
+   Mobile / touch refinements (mobile-native pass, 2026-06-05)
+   Plain rules at file end so cascade order is predictable.
+   ============================================================ */
+
+/* Touch devices have no hover, so affordances that only appear on group-hover
+   would be invisible. Reveal them. Blast radius = the three `opacity-0`
+   hover-reveal sites: PromptCard star, Markdown copy-code button, RunHistory
+   "+ label" button (grep-verified — no other opacity-0 usage in src). */
+@media (hover: none) {
+  .opacity-0 {
+    opacity: 1;
+  }
+}
+
+/* iOS Safari auto-zooms when a focused field's text is < 16px. Every input in
+   the app is text-sm (14px), so force 16px on phones only (>= sm keeps the
+   denser 14px design). !important beats the .text-sm utility on textarea/select. */
+@media (max-width: 639px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Honour the OS "reduce motion" setting for the fade/scale/pop animations and
+   the new bottom-sheet slide. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
