@@ -442,7 +442,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
       <main className="mx-auto max-w-5xl px-6">
         {/* Hero */}
-        <section className="relative pb-12 pt-16 sm:pt-24">
+        <section className="relative pb-8 pt-10 sm:pb-12 sm:pt-24">
           <div aria-hidden className="pointer-events-none absolute inset-0 bg-desert-hero dark:hidden" />
           <div aria-hidden className="pointer-events-none absolute inset-0 hidden dark:block bg-dot-grid" />
           <div className="relative">
@@ -450,11 +450,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               <span aria-hidden>&gt;_</span>prompt.library<span className="opacity-60">/v2</span>
             </span>
 
-            <h1 className="mt-6 max-w-2xl font-display text-5xl font-semibold leading-[1.05] tracking-tight text-ink dark:text-paper sm:text-6xl">
+            <h1 className="mt-6 max-w-2xl font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink dark:text-paper sm:text-5xl md:text-6xl">
               Your prompts, one keystroke away.
             </h1>
 
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-muted dark:text-paper-muted">
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-muted dark:text-paper-muted sm:text-lg">
               Search, customize, and run your best prompts with Claude — in seconds.
             </p>
 
@@ -592,11 +592,11 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
         {/* All prompts */}
         <section className="pb-24 pt-10">
-          <div className="mb-5 flex items-center justify-between gap-4">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
               {filteredHeading}
             </h2>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="hidden text-sm text-ink-muted sm:inline dark:text-paper-muted">
                 {visiblePrompts.length} {visiblePrompts.length === 1 ? "prompt" : "prompts"}
               </span>
