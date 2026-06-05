@@ -36,8 +36,15 @@ export const viewport: Viewport = {
 const noFlashTheme = `(function(){try{var s=localStorage.getItem('promptlib:theme');if(s==='dark'){document.documentElement.classList.add('dark');return;}if(s==='light'){return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark');}}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // `suppressHydrationWarning` is load-bearing here, not cosmetic. The no-flash
+  // script above sets `class="dark"` on <html> before hydration. The JSX has no
+  // className on <html>, so React 19 treats that as a mismatch and resets the
+  // class to "" during hydration — wiping the script's work and dropping a
+  // stored Dark preference back to Light on every reload. Suppressing the
+  // warning tells React to leave the server/script-managed class attribute
+  // alone, so the pre-paint theme survives hydration. F-n2-9.
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
         {children}
