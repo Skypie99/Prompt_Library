@@ -462,7 +462,6 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onClick={() => setPaletteOpen(true)}
               className="group mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out hover:border-desert-400/50 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
             >
-              <span aria-hidden className="font-mono text-sm font-medium text-desert-600 dark:text-teal-400">$</span>
               <span className="flex-1 font-mono text-sm text-ink-soft dark:text-paper-muted">
                 search prompts...
               </span>
