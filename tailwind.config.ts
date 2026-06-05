@@ -110,11 +110,17 @@ const config: Config = {
           "50%": { transform: "scale(1.3)" },
           "100%": { transform: "scale(1)" },
         },
+        // Bottom-sheet entrance on mobile (Sheet primitive). Desktop uses scale-in.
+        "slide-up": {
+          from: { transform: "translateY(100%)" },
+          to: { transform: "translateY(0)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 180ms ease-out",
         "scale-in": "scale-in 200ms ease-out",
         pop: "pop 250ms ease-out",
+        "slide-up": "slide-up 240ms cubic-bezier(0.32, 0.72, 0, 1)",
       },
     },
   },
