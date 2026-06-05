@@ -84,7 +84,9 @@ export function Sheet({
     // rAF so the panel is painted before we focus (avoids a missed focus).
     requestAnimationFrame(() => target?.focus());
     return () => {
-      (triggerRef.current as HTMLElement | null)?.focus();
+      // Only restore if the opener is still in the DOM (it may have unmounted).
+      const t = triggerRef.current;
+      if (t instanceof HTMLElement && document.body.contains(t)) t.focus();
     };
   }, [open, initialFocusRef]);
 
@@ -101,7 +103,12 @@ export function Sheet({
       if (!panel) return;
       const focusable = Array.from(
         panel.querySelectorAll<HTMLElement>(FOCUSABLE),
-      ).filter((el) => !el.hasAttribute("disabled"));
+      ).filter(
+        (el) =>
+          !el.hasAttribute("disabled") &&
+          el.getClientRects().length > 0 &&
+          !el.closest('[aria-hidden="true"]'),
+      );
       if (focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];

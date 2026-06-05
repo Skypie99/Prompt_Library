@@ -40,7 +40,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
             aria-pressed={isActive}
             aria-label={`Filter by #${tag}, ${count} ${count === 1 ? "prompt" : "prompts"}`}
             className={clsx(
-              "rounded-full border px-3 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night",
+              "rounded-full border px-3 py-1.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream sm:py-1 dark:focus-visible:ring-offset-night",
               isActive
                 ? "border-desert-500 bg-desert-50 text-desert-700 shadow-sm dark:border-teal-400/60 dark:bg-teal-400/10 dark:text-teal-300 dark:shadow-none"
                 : "border-border bg-cream text-ink-muted hover:border-desert-300 hover:text-desert-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"

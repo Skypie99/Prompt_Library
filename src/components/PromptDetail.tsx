@@ -498,7 +498,7 @@ export function PromptDetail({
   }
 
   return (
-    <Sheet open onClose={onClose} size="xl" ariaLabel={prompt.title}>
+    <Sheet open onClose={onClose} size="xl" ariaLabel={prompt.title || "Prompt details"}>
       <div
         onKeyDown={handleModalKeyDown}
         className="flex min-h-0 flex-1 flex-col overflow-hidden"
