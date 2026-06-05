@@ -14,7 +14,12 @@
   }
 
   ::selection {
-    @apply bg-teal-200/60 text-ink;
+    background-color: rgba(245, 216, 152, 0.55);
+    color: #1A1410;
+  }
+  .dark ::selection {
+    background-color: rgba(34, 211, 238, 0.22);
+    color: #C9D1E0;
   }
 }
 
@@ -22,14 +27,14 @@
   /* Thin scrollbars that match the palette. */
   .scrollbar-soft {
     scrollbar-width: thin;
-    scrollbar-color: theme("colors.teal.200") transparent;
+    scrollbar-color: theme("colors.desert.300") transparent;
   }
   .scrollbar-soft::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   .scrollbar-soft::-webkit-scrollbar-thumb {
-    background-color: theme("colors.teal.200");
+    background-color: theme("colors.desert.300");
     border-radius: 9999px;
   }
   .dark .scrollbar-soft {
@@ -47,5 +52,13 @@
       transparent 1px
     );
     background-size: 24px 24px;
+  }
+
+  /* Warm desert atmosphere for the light-mode hero — low desert sun glow. */
+  .bg-desert-hero {
+    background-image:
+      radial-gradient(ellipse 160% 90% at 50% 115%, rgba(212, 137, 74, 0.11) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 55% at -5% 0%, rgba(250, 236, 200, 0.45) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 40% at 105% 85%, rgba(232, 185, 106, 0.06) 0%, transparent 40%);
   }
 }

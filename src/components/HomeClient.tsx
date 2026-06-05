@@ -422,13 +422,13 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       {storageWarning && (
         <div
           role="alert"
-          className="border-b border-teal-300 bg-teal-50 px-6 py-3 text-sm text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200"
+          className="border-b border-desert-300 bg-desert-50 px-6 py-3 text-sm text-desert-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200"
         >
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
             <span>{storageWarning}</span>
             <button
               onClick={() => setStorageWarning(null)}
-              className="rounded-md border border-teal-300 px-2 py-1 text-xs font-medium hover:bg-teal-100 dark:border-teal-500/40 dark:hover:bg-teal-500/20"
+              className="rounded-md border border-desert-300 px-2 py-1 text-xs font-medium hover:bg-desert-100 dark:border-teal-500/40 dark:hover:bg-teal-500/20"
             >
               Dismiss
             </button>
@@ -443,9 +443,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
       <main className="mx-auto max-w-5xl px-6">
         {/* Hero */}
         <section className="relative pb-12 pt-16 sm:pt-24">
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-desert-hero dark:hidden" />
           <div aria-hidden className="pointer-events-none absolute inset-0 hidden dark:block bg-dot-grid" />
           <div className="relative">
-            <span className="inline-flex items-center gap-2 rounded border border-teal-400/30 bg-teal-400/5 px-3 py-1 font-mono text-xs font-medium uppercase tracking-widest text-teal-600 dark:border-teal-400/40 dark:bg-teal-400/10 dark:text-teal-400">
+            <span className="inline-flex items-center gap-2 rounded border border-desert-400/30 bg-desert-400/5 px-3 py-1 font-mono text-xs font-medium uppercase tracking-widest text-desert-600 dark:border-teal-400/40 dark:bg-teal-400/10 dark:text-teal-400">
               <span aria-hidden>&gt;_</span>prompt.library<span className="opacity-60">/v2</span>
             </span>
 
@@ -459,9 +460,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
             <button
               onClick={() => setPaletteOpen(true)}
-              className="group mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out hover:border-teal-400/50 hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
+              className="group mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out hover:border-desert-400/50 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
             >
-              <span aria-hidden className="font-mono text-sm font-medium text-teal-600 dark:text-teal-400">$</span>
+              <span aria-hidden className="font-mono text-sm font-medium text-desert-600 dark:text-teal-400">$</span>
               <span className="flex-1 font-mono text-sm text-ink-soft dark:text-paper-muted">
                 search prompts...
               </span>
@@ -479,9 +480,9 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                   type="button"
                   onClick={() => openPrompt(recentPrompts[0])}
                   aria-label={`Resume the last prompt you opened: ${recentPrompts[0].title}`}
-                  className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                  className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                 >
-                  <ClockIcon className="h-3.5 w-3.5 shrink-0 text-teal-500" aria-hidden />
+                  <ClockIcon className="h-3.5 w-3.5 shrink-0 text-desert-500" aria-hidden />
                   <span aria-hidden className="shrink-0">
                     Resume
                   </span>
@@ -517,7 +518,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         {showCuratedSections && favoritePrompts.length > 0 ? (
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
-              <StarIcon filled className="h-5 w-5 text-teal-500" />
+              <StarIcon filled className="h-5 w-5 text-desert-500" />
               <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
                 Favorites
               </h2>
@@ -538,7 +539,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           (recent.length > 0 || userPrompts.length > 0) ? (
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
-              <StarIcon filled className="h-5 w-5 text-teal-500" />
+              <StarIcon filled className="h-5 w-5 text-desert-500" />
               <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
                 Favorites
               </h2>
@@ -558,7 +559,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         {showCuratedSections && recentPrompts.length > 0 ? (
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
-              <ClockIcon className="h-5 w-5 text-teal-500" />
+              <ClockIcon className="h-5 w-5 text-desert-500" />
               <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
                 Recent
               </h2>
@@ -577,7 +578,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         ) : showCuratedSections && recentPrompts.length === 0 && favorites.length > 0 ? (
           <section className="pt-10">
             <div className="mb-4 flex items-center gap-2">
-              <ClockIcon className="h-5 w-5 text-teal-500" />
+              <ClockIcon className="h-5 w-5 text-desert-500" />
               <h2 className="font-display text-2xl font-semibold text-ink dark:text-paper">
                 Recent
               </h2>
@@ -614,7 +615,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                     setActiveTag(null);
                   }}
                   aria-label="Clear active category and tag filters"
-                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                 >
                   Clear filters
                 </button>
@@ -629,7 +630,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                   value={sortMode}
                   onChange={(event) => handleChangeSort(event.target.value as SortMode)}
                   aria-label="Sort prompts"
-                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper dark:focus-visible:ring-offset-night"
+                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs text-ink transition hover:border-desert-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper dark:focus-visible:ring-offset-night"
                 >
                   {(Object.keys(SORT_LABELS) as SortMode[]).map((mode) => (
                     <option key={mode} value={mode}>
@@ -640,7 +641,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               </div>
               <button
                 onClick={() => setForm({ mode: "create", initial: null })}
-                className="flex items-center gap-1.5 rounded-md border border-teal-300 bg-teal-50 px-3 py-1.5 text-sm font-medium text-teal-700 transition hover:bg-teal-100 active:scale-95 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
+                className="flex items-center gap-1.5 rounded-md border border-desert-300 bg-desert-50 px-3 py-1.5 text-sm font-medium text-desert-700 transition hover:bg-desert-100 active:scale-95 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
               >
                 <PlusIcon className="h-4 w-4" />
                 New prompt
@@ -658,7 +659,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                     setActiveCategory(null);
                     setActiveTag(null);
                   }}
-                  className="mt-3 inline-flex items-center gap-1 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
+                  className="mt-3 inline-flex items-center gap-1 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
                 >
                   Clear filters
                 </button>
@@ -680,7 +681,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                 <button
                   type="button"
                   onClick={() => setForm({ mode: "create", initial: null })}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-teal-300 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-desert-300 bg-desert-50 px-3 py-1.5 text-xs font-medium text-desert-700 transition hover:bg-desert-100 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
                 >
                   <PlusIcon className="h-3.5 w-3.5" />
                   Create your first prompt

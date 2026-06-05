@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
 
-// Developer Terminal aesthetic — cool, dark, technical.
-// Light mode = clean cool-white; dark mode = near-black with electric cyan accent.
+// Desert Parchment (light) / Neon Terminal (dark):
+//   Light mode = warm sandy parchment, amber/sienna accent
+//   Dark mode  = near-black with electric cyan accent
 // darkMode: "class" — flip a `dark` class on <html>.
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
@@ -9,16 +10,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Light surfaces — cool off-white, no warm tint
-        cream: "#F0F4FA",
-        surface: "#FFFFFF",
-        border: "#DDE2EE",
+        // Light surfaces — warm parchment, sandy tone
+        cream: "#FDF6E3",
+        surface: "#FFFCF5",
+        border: "#E5CFA4",
 
-        // Cool slate text
+        // Warm ink
         ink: {
-          DEFAULT: "#0F172A",
-          muted: "#64748B",
-          soft: "#94A3B8",
+          DEFAULT: "#1A1410",
+          muted: "#6E5C4A",
+          soft: "#9E8A74",
         },
 
         // Dark surfaces — near-black with a slight blue cast
@@ -52,7 +53,21 @@ const config: Config = {
           900: "#7F1D1D",
         },
 
-        // Primary accent: electric cyan (cyberpunk rebrand)
+        // Light-mode accent: warm desert amber/sienna
+        desert: {
+          50:  "#FDF7EE",
+          100: "#FAECCC",
+          200: "#F5D898",
+          300: "#E8B96A",
+          400: "#D4894A",
+          500: "#B86B30",
+          600: "#9A5020",  // 4.9:1 contrast on cream — WCAG AA ✓
+          700: "#7C3A14",
+          800: "#5C2A0C",
+          900: "#3D1A07",
+        },
+
+        // Dark-mode accent: electric cyan (neon terminal)
         teal: {
           50:  "#ECFEFF",
           100: "#CFFAFE",
@@ -60,7 +75,7 @@ const config: Config = {
           300: "#67E8F9",
           400: "#22D3EE", // dark-mode neon
           500: "#06B6D4",
-          600: "#0891B2", // 4.8:1 contrast on white — WCAG AA ✓
+          600: "#0891B2",
           700: "#0E7490",
           800: "#155E75",
           900: "#164E63",
@@ -73,7 +88,10 @@ const config: Config = {
       },
       boxShadow: {
         card: "0 1px 3px rgba(0,0,0,0.12), 0 8px 24px -8px rgba(0,0,0,0.16)",
-        // Neon border glow — the defining cyberpunk hover
+        // Light-mode: warm amber hover glow
+        cardHoverWarm:
+          "0 0 0 1px rgba(184, 107, 48, 0.28), 0 0 20px rgba(184, 107, 48, 0.08), 0 4px 14px rgba(100, 55, 12, 0.12)",
+        // Dark-mode: neon cyan hover glow
         cardHover:
           "0 0 0 1px rgb(34 211 238 / 0.5), 0 0 24px rgb(34 211 238 / 0.12), 0 4px 16px rgba(0,0,0,0.3)",
         palette: "0 24px 60px -20px rgba(0,0,0,0.5)",
