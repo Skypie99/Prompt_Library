@@ -50,7 +50,8 @@ const STATUS_LABEL: Record<StoredRun["status"], string> = {
 const STATUS_DOT_CLASS: Record<StoredRun["status"], string> = {
   completed: "bg-emerald-500",
   aborted: "bg-ink-soft dark:bg-paper-muted",
-  errored: "bg-teal-600",
+  // danger-600 (#DC2626) meets ≥4.5:1 on cream (light) and night (dark).
+  errored: "bg-danger-600",
 };
 
 // F-night-4 — status filter values used by the history-panel dropdown.
@@ -303,22 +304,22 @@ export function RunHistory({
       )}
 
       {expanded && confirmingClear && (
-        <div className="mb-3 flex items-center justify-between gap-3 rounded-md border border-teal-200 bg-teal-50 px-3 py-2 dark:border-teal-500/30 dark:bg-teal-500/10">
-          <span className="text-xs text-teal-900 dark:text-teal-100">
+        <div className="mb-3 flex items-center justify-between gap-3 rounded-md border border-danger-200 bg-danger-50 px-3 py-2 dark:border-danger-300/30 dark:bg-danger-300/5">
+          <span className="text-xs text-danger-900 dark:text-danger-300">
             Delete all {runs.length} {runs.length === 1 ? "entry" : "entries"} for this prompt?
           </span>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setConfirmingClear(false)}
-              className="rounded-md border border-teal-300 px-2 py-1 text-xs font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
+              className="rounded-md border border-danger-200 px-2 py-1 text-xs font-medium text-danger-700 transition hover:bg-danger-50 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/20"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleClearAll}
-              className="rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95"
+              className="rounded-md bg-danger-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-danger-700 active:scale-95"
             >
               Clear
             </button>
@@ -505,7 +506,7 @@ export function RunHistory({
                       </p>
                     )}
                     {!isOpen && run.status === "errored" && run.errorMessage && (
-                      <p className="mt-1 truncate text-xs text-teal-700 dark:text-teal-300">
+                      <p className="mt-1 truncate text-xs text-danger-700 dark:text-danger-300">
                         {run.errorMessage}
                       </p>
                     )}
@@ -537,7 +538,7 @@ export function RunHistory({
                             Response
                           </div>
                           {run.status === "errored" ? (
-                            <div className="rounded-md border border-teal-300 bg-teal-50 px-2.5 py-2 text-xs text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200">
+                            <div className="rounded-md border border-danger-300 bg-danger-50 px-2.5 py-2 text-xs text-danger-800 dark:border-danger-300/40 dark:bg-danger-300/10 dark:text-danger-300">
                               {run.errorMessage ?? "Run failed."}
                             </div>
                           ) : run.response ? (

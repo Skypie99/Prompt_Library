@@ -586,20 +586,20 @@ export function PromptDetail({
 
         {/* Inline delete confirmation */}
         {confirmingDelete && (
-          <div className="flex items-center justify-between gap-3 border-b border-teal-200 bg-teal-50 px-6 py-3 dark:border-teal-500/30 dark:bg-teal-500/10">
-            <span className="text-sm text-teal-900 dark:text-teal-100">
+          <div className="flex items-center justify-between gap-3 border-b border-danger-200 bg-danger-50 px-6 py-3 dark:border-danger-300/30 dark:bg-danger-300/5">
+            <span className="text-sm text-danger-900 dark:text-danger-300">
               Delete this prompt? This can&apos;t be undone.
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => setConfirmingDelete(false)}
-                className="rounded-md border border-teal-300 px-3 py-1.5 text-sm font-medium text-teal-800 transition hover:bg-teal-100 dark:border-teal-500/40 dark:text-teal-100 dark:hover:bg-teal-500/20"
+                className="rounded-md border border-danger-200 px-3 py-1.5 text-sm font-medium text-danger-700 transition hover:bg-danger-50 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/20"
               >
                 Cancel
               </button>
               <button
                 onClick={onDelete}
-                className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95"
+                className="rounded-md bg-danger-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-danger-700 active:scale-95"
               >
                 Delete
               </button>
