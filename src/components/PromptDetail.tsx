@@ -593,7 +593,7 @@ export function PromptDetail({
             <div className="flex gap-2">
               <button
                 onClick={() => setConfirmingDelete(false)}
-                className="rounded-md border border-danger-200 px-3 py-1.5 text-sm font-medium text-danger-700 transition hover:bg-danger-50 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/20"
+                className="rounded-md border border-danger-700 px-3 py-1.5 text-sm font-medium text-danger-700 transition hover:bg-danger-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-600 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/20"
               >
                 Cancel
               </button>
@@ -946,7 +946,7 @@ export function PromptDetail({
                 )}
 
                 {error ? (
-                  <div className="rounded-md border border-teal-300 bg-teal-50 px-3 py-2.5 text-sm text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200">
+                  <div className="rounded-md border border-danger-300 bg-danger-50 px-3 py-2.5 text-sm text-danger-800 dark:border-danger-300/40 dark:bg-danger-300/10 dark:text-danger-300">
                     <p>{error.message}</p>
                     {error.kind === "auth" && (
                       <button
@@ -970,7 +970,7 @@ export function PromptDetail({
                             <span
                               aria-live="polite"
                               aria-atomic="true"
-                              className="text-xs tabular-nums text-teal-700 dark:text-teal-300"
+                              className="text-xs tabular-nums text-danger-700 dark:text-danger-300"
                             >
                               Retry in {retryCountdown}s
                             </span>

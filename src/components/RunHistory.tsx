@@ -312,7 +312,7 @@ export function RunHistory({
             <button
               type="button"
               onClick={() => setConfirmingClear(false)}
-              className="rounded-md border border-danger-200 px-2 py-1 text-xs font-medium text-danger-700 transition hover:bg-danger-50 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/20"
+              className="rounded-md border border-danger-700 px-2 py-1 text-xs font-medium text-danger-700 transition hover:bg-danger-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-600 dark:border-danger-300/40 dark:text-danger-300 dark:hover:bg-danger-300/20"
             >
               Cancel
             </button>
