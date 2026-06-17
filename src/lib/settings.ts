@@ -14,13 +14,14 @@ export interface ModelOption {
 }
 
 // The only models offered — latest generation, per project spec.
+// NOTE: claude-fable-5 is available if Sky wants it added later.
 export const MODELS: ModelOption[] = [
-  { id: "claude-opus-4-7", label: "Claude Opus 4.7", hint: "Most capable" },
+  { id: "claude-opus-4-8", label: "Claude Opus 4.8", hint: "Most capable" },
   { id: "claude-sonnet-4-6", label: "Claude Sonnet 4.6", hint: "Balanced" },
   { id: "claude-haiku-4-5-20251001", label: "Claude Haiku 4.5", hint: "Fastest" },
 ];
 
-export const DEFAULT_MODEL = "claude-opus-4-7";
+export const DEFAULT_MODEL = "claude-opus-4-8";
 export const DEFAULT_MAX_TOKENS = 2048;
 
 // Inclusive bounds on maxTokens. Must match the clamp inside
