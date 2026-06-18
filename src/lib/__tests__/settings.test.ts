@@ -28,6 +28,7 @@ import {
   modelLabel,
   saveSettings,
 } from "../settings";
+import { setStorageWriteFailureHandler } from "../library";
 
 // In-memory localStorage stub. The real DOM `Storage` interface is wide but
 // settings.ts only uses get/set; that's all we need to emulate.
@@ -144,6 +145,62 @@ describe("loadSettings + saveSettings (client)", () => {
     const store = installLocalStorage();
     store["promptlib:apiKey"] = "sk-keep-me";
     expect(loadSettings().apiKey).toBe("sk-keep-me");
+  });
+});
+
+describe("saveSettings — write failure surfacing (B2)", () => {
+  // Verifies that saveSettings routes write failures through the
+  // onStorageWriteFailure handler (same path as library writes) so the
+  // HomeClient storage-warning banner fires in private mode / quota situations.
+  it("calls the onStorageWriteFailure handler when localStorage.setItem throws (private-mode simulation)", () => {
+    // Install a throwing localStorage stub (simulates Safari private mode
+    // where quota = 0 and every setItem throws QuotaExceededError).
+    const err = Object.assign(new Error("QuotaExceededError"), {
+      name: "QuotaExceededError",
+    });
+    const throwingStorage = {
+      getItem: (_k: string) => null,
+      setItem: (_k: string, _v: string) => {
+        throw err;
+      },
+      removeItem: (_k: string) => {},
+      clear: () => {},
+      key: (_i: number) => null,
+      length: 0,
+    };
+    // @ts-expect-error -- test stub
+    globalThis.window = { localStorage: throwingStorage };
+    // @ts-expect-error -- test stub
+    globalThis.localStorage = throwingStorage;
+
+    const failures: unknown[] = [];
+    setStorageWriteFailureHandler((result) => failures.push(result));
+
+    saveSettings({ apiKey: "sk-test", model: DEFAULT_MODEL, maxTokens: DEFAULT_MAX_TOKENS });
+
+    // At least one failure should have been surfaced.
+    expect(failures.length).toBeGreaterThan(0);
+    const first = failures[0] as { ok: boolean; reason: string };
+    expect(first.ok).toBe(false);
+    expect(first.reason).toBe("quota");
+
+    // Clean up.
+    setStorageWriteFailureHandler(null);
+    // @ts-expect-error -- test stub
+    delete globalThis.window;
+    // @ts-expect-error -- test stub
+    delete globalThis.localStorage;
+  });
+
+  it("does NOT call the handler on a successful write", () => {
+    installLocalStorage();
+    const failures: unknown[] = [];
+    setStorageWriteFailureHandler((result) => failures.push(result));
+
+    saveSettings({ apiKey: "sk-ok", model: DEFAULT_MODEL, maxTokens: DEFAULT_MAX_TOKENS });
+    expect(failures).toHaveLength(0);
+
+    setStorageWriteFailureHandler(null);
   });
 });
 
