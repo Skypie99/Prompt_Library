@@ -47,10 +47,13 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
             )}
           >
             <span>#{tag}</span>
-            {/* Count is visible to sighted users; aria-hidden because the
-                aria-label above already spells it out for screen readers. */}
+            {/* Count is visible to sighted users; aria-hidden="true" because the
+                aria-label above already spells it out for screen readers.
+                Must be the string "true" — bare `aria-hidden` renders as ""
+                which is falsy, exposing the number to AT and causing a
+                WCAG 2.5.3 mismatch between visible text and accessible name. */}
             <span
-              aria-hidden
+              aria-hidden="true"
               className={clsx(
                 // Inactive count uses ink-muted (not ink-soft) so 10px text
                 // clears AA contrast on bg-cream / dark on bg-night.

@@ -66,10 +66,12 @@ function CategoryChip({
       )}
     >
       <span>{label}</span>
-      {/* aria-hidden because the aria-label above already spells out the
-          count for screen readers; this is the sighted visual. */}
+      {/* aria-hidden="true" because the aria-label above already spells out the
+          count for screen readers; this is the sighted visual only.
+          Must be the string "true" — bare `aria-hidden` renders as "" which
+          is falsy, exposing the number to AT and causing 2.5.3 mismatch. */}
       <span
-        aria-hidden
+        aria-hidden="true"
         className={clsx(
           "ml-1.5 text-xs font-normal tabular-nums",
           isActive
