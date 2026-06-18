@@ -19,7 +19,7 @@ export interface StoredRun {
   id: string;
   /** ISO timestamp the run was finalized (success, abort, or error). */
   ranAt: string;
-  /** Model id used for the run (e.g. "claude-opus-4-7"). */
+  /** Model id used for the run (e.g. "claude-opus-4-8"). */
   model: string;
   /** Variable values as the user had them at run time. */
   values: Record<string, string>;
