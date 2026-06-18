@@ -350,7 +350,7 @@ export function SettingsModal({
             {importState.kind === "error" && (
               <div
                 role="alert"
-                className="mt-3 rounded-md border border-teal-300 bg-teal-50 px-3 py-2 text-sm text-teal-800 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-200"
+                className="mt-3 rounded-md border border-danger-300 bg-danger-50 px-3 py-2 text-sm text-danger-800 dark:border-danger-300/40 dark:bg-danger-300/10 dark:text-danger-300"
               >
                 {importState.message}
               </div>
