@@ -1,36 +1,44 @@
 # PROJECT_STATE — prompt-library-tool
-_Last compiled: 2026-06-03 by /morgan (rebrand ship). Supersedes earlier 2026-06-03 status review._
+_Last compiled: 2026-06-18 by /morgan (Phase 4 closeout). Supersedes 2026-06-03 rebrand-ship state._
 
 ## Current Status
-**REBRAND SHIPPED + LIVE** on Vercel CDN (2026-06-03 15:45). Main now includes cyberpunk palette, terminal UI, JetBrains Mono typography. Portfolio link updated. DNS propagating (~5–15 min to resolve green).
+**Phase 2 SHIPPED + LIVE** on GitHub Pages (2026-06-17, merge `b48ec47`). Brand = **desert-parchment (light) + neon-terminal (dark)**. Host = **GitHub Pages**. URL = **`prompts.skypistudio.com`**.
 
-## What Shipped (2026-06-03)
+Phase 3 (WCAG 2.2 AA) + Phase 4 (lint CI, CNAME-in-artifact, P3 fixes B1/B2/B3) on `release/phase3-phase4`, pending Sky device-check + gated ship.
 
-- **Cyberpunk rebrand** (commit `b8ea257`): electric cyan palette, JetBrains Mono, terminal `>_` header, dot-grid hero, neon glow card-hover, left-aligned typography, `$ search` terminal input
-- **Vercel deploy config** (commit `85ba8fb`): basePath/assetPrefix removed; static export serves from domain root
-- **Pushed to origin:** both commits live on `github.com/Skypie99/Prompt_Library`
-- **Deployed to Vercel CDN:** live at `vercel.com/Skypie99/prompt-library`
-- **Portfolio updated** (commit `2b5c152` on Portfolio main): demo link → promptlibrary.skypistudio.com, user-value copy, Vercel in tech stack
-- **Verify:** tsc: exit 0 · vitest: 315/315 tests (2 pre-existing failures unrelated)
+## What Shipped (Phase 2 — 2026-06-17, merge `b48ec47`)
 
-## Pending: DNS Resolution
+- **Danger/error color system:** `danger-100/600/700` tokens wired into all error states
+- **F3b inline model switcher:** per-prompt model select (inline in run bar), ⌘↵ runs selected model, per-prompt persistence via `promptlib:model:<id>`
+- **Default model:** `claude-opus-4-8`
+- **Model refresh:** updated model list to current Anthropic lineup
+- **Storage-failure banner (B2):** surfaces `saveSettings` write failures as top-of-page banner
+- **Verify:** tsc: exit 0 · vitest: 376/376 tests
 
-- **CNAME record added** at Namecheap: `promptlibrary → 5c0661f09445e60e.vercel-dns-017.com.`
-- **ETA:** 5–15 minutes for DNS propagation; domain will turn green in Vercel dashboard once resolved
-- **No blockers:** work is live, domain resolution is just time-dependent
-- **Next:** take screenshot of `https://promptlibrary.skypistudio.com` once domain is live; verify Portfolio link
+## Phase 3 — WCAG 2.2 AA (on `release/phase3-phase4`)
 
-## Pending Feature Branches (from earlier 2026-06-03 review)
+Alex audit — 14 fixes, 19 pass, 7 device checks pending Sky:
+- Focus rings upgraded (teal-500, 24px min-height on F3b select)
+- Skip-to-content link, aria-live regions, contrast fixes
+- 7 behavior checks (VoiceOver, iOS Safari native select, Dynamic Type) require Sky's device
 
-These remain unmerged pending rebase + Sky decisions. Status unchanged from earlier review; separate from the rebrand cycle:
+## Phase 4 — Hardening (on `release/phase3-phase4`)
 
-- **F5 export/import** (`shamus/f5-export-import`, +4, behind 0) — backup/restore JSON; excludes apiKey/model/maxTokens. Cleanest merge candidate.
-- **F-usage token display** (+6) · **ESLint v9** (+11) → **ratelimit fix** (+10, stacked) · **F3a/c/d run UX** (+3) · **Steve PR#3 security** (+1, dedup 10MB cap vs F5) · **Gary clean-sweep** (+1) · **docs** (+4).
+- **CNAME-in-artifact:** `public/CNAME` → `out/CNAME` emitted at build (`prompts.skypistudio.com`)
+- **Lint toolchain:** ESLint + Prettier installed; 0 errors / 6 warnings; `lint` wired into CI as blocking job
+- **B1 fix:** empty-library command palette copy corrected
+- **B2 fix:** `saveSettings` write failures surfaced via banner
+- **B3 fix:** storage-failure banner copy covers private-browsing mode (commit `69c980a`)
 
-See `cycle-2026-06-03-morgan-promptlib-status.md` for the full dependency graph and rebase order.
+## Ship Gate (Art. 17 — pending)
 
-## Next (after DNS resolves)
+1. **Sky device checks** — 7-item iOS/VoiceOver checklist + E1/E2 visual sign-off
+2. **Record rollback:** `b48ec47` (Phase 2 tip = last known-good main)
+3. **Rory merges** `release/phase3-phase4` → main + pushes → GitHub Pages deploys
 
-1. **Verify live URL:** `https://promptlibrary.skypistudio.com` shows cyberpunk UI in dark mode
-2. **Verify Portfolio:** link in portfolio.skypistudio.com points to new URL
-3. **Merge pending feature work:** F5 + independent branches per the earlier phased plan (when Sky approves rebasing)
+## CNAME / Hosting
+
+- **Host:** GitHub Pages (static export via `next export`)
+- **Domain:** `prompts.skypistudio.com`
+- **CNAME file:** `public/CNAME` committed; `out/CNAME` emitted at build
+- **Old Vercel config:** removed (basePath/assetPrefix gone; `vercel.json` not present)

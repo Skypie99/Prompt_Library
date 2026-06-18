@@ -37,9 +37,9 @@ function installFakeStorage(): Map<string, string> {
 }
 
 function uninstallFakeStorage(): void {
-  // @ts-expect-error
+  // @ts-expect-error — test cleanup: remove fake window stub
   delete globalThis.window;
-  // @ts-expect-error
+  // @ts-expect-error — test cleanup: remove fake localStorage stub
   delete globalThis.localStorage;
 }
 

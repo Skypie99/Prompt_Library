@@ -268,7 +268,8 @@ describe("parseImport — prototype pollution guard", () => {
     // We can't JSON.stringify an object with __proto__ as own key reliably;
     // instead verify our hasPollutionKey guard by constructing a JSON string
     // manually — the string representation is what an attacker would send.
-    const raw = '{"version":1,"exportedAt":"2026-05-23T12:00:00.000Z","__proto__":{"isAdmin":true},"userPrompts":[],"favorites":[],"recent":[],"runs":{},"values":{}}';
+    const raw =
+      '{"version":1,"exportedAt":"2026-05-23T12:00:00.000Z","__proto__":{"isAdmin":true},"userPrompts":[],"favorites":[],"recent":[],"runs":{},"values":{}}';
     const r = parseImport(raw);
     // Modern engines may silently drop __proto__ from JSON.parse output,
     // so the result may be ok (key gone) OR malformed (key present + guard fires).

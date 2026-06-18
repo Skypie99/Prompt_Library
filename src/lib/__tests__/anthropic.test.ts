@@ -103,8 +103,7 @@ const SSE_MESSAGE_START = (inputTokens: number) =>
 
 `;
 
-const SSE_CONTENT_BLOCK_START =
-  `data: ${JSON.stringify({ type: "content_block_start", index: 0, content_block: { type: "text", text: "" } })}
+const SSE_CONTENT_BLOCK_START = `data: ${JSON.stringify({ type: "content_block_start", index: 0, content_block: { type: "text", text: "" } })}
 
 `;
 
@@ -113,8 +112,7 @@ const SSE_TEXT_DELTA = (text: string) =>
 
 `;
 
-const SSE_CONTENT_BLOCK_STOP =
-  `data: ${JSON.stringify({ type: "content_block_stop", index: 0 })}
+const SSE_CONTENT_BLOCK_STOP = `data: ${JSON.stringify({ type: "content_block_stop", index: 0 })}
 
 `;
 
@@ -127,8 +125,7 @@ const SSE_MESSAGE_DELTA = (outputTokens: number) =>
 
 `;
 
-const SSE_MESSAGE_STOP =
-  `data: ${JSON.stringify({ type: "message_stop" })}
+const SSE_MESSAGE_STOP = `data: ${JSON.stringify({ type: "message_stop" })}
 
 `;
 
@@ -222,7 +219,7 @@ describe("streamClaude onUsage callback (F-usage-a)", () => {
           prompt: "Hello",
           onText: () => {},
           // onUsage deliberately omitted
-        })
+        }),
       ).resolves.toBeUndefined();
     } finally {
       restore();
@@ -235,7 +232,9 @@ describe("streamClaude onUsage callback (F-usage-a)", () => {
     const abortError = new DOMException("The user aborted a request.", "AbortError");
     const original = globalThis.fetch;
     // @ts-expect-error — test mock
-    globalThis.fetch = async () => { throw abortError; };
+    globalThis.fetch = async () => {
+      throw abortError;
+    };
     try {
       const received: unknown[] = [];
       await expect(
@@ -246,7 +245,7 @@ describe("streamClaude onUsage callback (F-usage-a)", () => {
           prompt: "Hello",
           onText: () => {},
           onUsage: (u) => received.push(u),
-        })
+        }),
       ).rejects.toThrow();
       expect(received).toHaveLength(0);
     } finally {
@@ -257,8 +256,7 @@ describe("streamClaude onUsage callback (F-usage-a)", () => {
   it("does NOT call onUsage when an error SSE event arrives in the stream", async () => {
     // An 'error' type SSE event causes streamClaude to throw a ClaudeError,
     // aborting the stream before the normal message_delta/message_stop.
-    const SSE_ERROR_EVENT =
-      `data: ${JSON.stringify({ type: "error", error: { message: "internal error" } })}\n\n`;
+    const SSE_ERROR_EVENT = `data: ${JSON.stringify({ type: "error", error: { message: "internal error" } })}\n\n`;
     const events = [
       SSE_MESSAGE_START(50),
       SSE_CONTENT_BLOCK_START,
@@ -276,7 +274,7 @@ describe("streamClaude onUsage callback (F-usage-a)", () => {
           prompt: "Hello",
           onText: () => {},
           onUsage: (u) => received.push(u),
-        })
+        }),
       ).rejects.toThrow();
       expect(received).toHaveLength(0);
     } finally {

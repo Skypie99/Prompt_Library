@@ -1,6 +1,14 @@
 // User settings, persisted to localStorage. Nothing here ever leaves the
 // browser except the API key, and only when the user runs a prompt.
 
+// writeRaw is imported so settings write failures are surfaced through the
+// same onStorageWriteFailure mechanism that library writes use — meaning the
+// HomeClient storage-warning banner fires on private-mode / quota failures
+// for settings, not just for prompt library writes. writeRaw (not writeJSON)
+// is used because loadSettings reads with localStorage.getItem() directly,
+// not JSON.parse — writeRaw preserves raw-string round-trip fidelity.
+import { writeRaw } from "./library";
+
 export interface Settings {
   apiKey: string;
   model: string;
@@ -72,11 +80,13 @@ export function loadSettings(): Settings {
 }
 
 export function saveSettings(settings: Settings): void {
-  try {
-    localStorage.setItem(STORAGE_KEYS.apiKey, settings.apiKey);
-    localStorage.setItem(STORAGE_KEYS.model, settings.model);
-    localStorage.setItem(STORAGE_KEYS.maxTokens, String(settings.maxTokens));
-  } catch {
-    /* localStorage unavailable (private mode / disabled) — settings just won't persist. */
-  }
+  // Route through writeRaw so write failures (private mode / quota) fire the
+  // onStorageWriteFailure handler set by HomeClient — same storage-warning
+  // banner path as library writes. Stop on first failure (no point writing
+  // model/maxTokens if the api-key slot already failed).
+  const r1 = writeRaw(STORAGE_KEYS.apiKey, settings.apiKey);
+  if (!r1.ok) return;
+  const r2 = writeRaw(STORAGE_KEYS.model, settings.model);
+  if (!r2.ok) return;
+  writeRaw(STORAGE_KEYS.maxTokens, String(settings.maxTokens));
 }

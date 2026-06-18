@@ -130,16 +130,22 @@ Friendly empty states for: search-with-no-results (already exists, polish it), F
 
 ## Done (most recent first)
 
+### Phase 2 polish  ✅ shipped to main (merge `b48ec47`, 2026-06-17)
+- **Danger/error color system:** `danger-100/600/700` tokens for all error states (light + dark mode coherent)
+- **F3b inline model switcher:** per-prompt model select in run bar; `cmd+Enter` runs selected model; persists via `promptlib:model:<id>`; default model `claude-opus-4-8`
+- **Model list refresh:** current Anthropic lineup; removed stale `claude-opus-4-7`
+- **Storage-failure banner:** `saveSettings` write failures now surfaced as top-of-page banner (private-mode and quota failures)
+
+### Phase 3 — WCAG 2.2 AA  ✅ code-complete on `release/phase3-phase4` (pending Sky device checks)
+Alex audit: 14 fixes, 19 pass, 7 device checks. Focus rings, skip-to-content, aria-live, contrast fixes, 24px min-height on model select.
+
 ### F3-run — Prompt-running UX improvements (S × 3)  ✅ on `feat/f3acd-run-ux-2026-05-29`, pending merge
 Three sub-features shipped in one Shamus cycle; 335 tests pass, typecheck clean, Steve CLEAR:
 - **F3a — Overloaded-error Retry button:** When `error.kind === "overloaded"` (503/529), the error block now renders a Retry button (no countdown — no retry-after header for overload errors), matching the rate-limit retry UX.
 - **F3c — Unfilled-variable soft warning:** Clicking Run with at least one `{{variable}}` still empty shows an inline `role="alert"` warning ("N variable(s) empty — run anyway?") with Fill-it and Run-anyway actions. `⌘↵` bypasses the warning (power-user path).
 - **F3d — Response expand/collapse toggle:** An Expand/Collapse button in the Response header bar lets users remove the `max-h-72` cap on long responses. Resets on prompt change.
 
-**F3b — Inline model switcher: PENDING — awaiting Sky's answers to 3 open questions (see Quinn's spec `qa-reports/2026-05-29_Quinn_F3_PromptRunSpec.md`):**
-  1. Model-selector placement: inline in the `⌘↵` info line vs. its own row?
-  2. Should `⌘↵` bypass the F3c variable warning or always show it?
-  3. Should the inline model override persist across modal opens for the same prompt?
+**F3b — Inline model switcher: DONE** (shipped in Phase 2, merge `b48ec47`, 2026-06-17). Inline select in run bar; `cmd+Enter` runs selected model; per-prompt persistence via `promptlib:model:<id>`. Sky's 3 open questions resolved: inline placement, `cmd+Enter` runs selected, persists per-prompt.
 
 ### Teal re-skin — Design palette swap (coral → teal)  ✅ on `feat/teal-reskin-2026-05-29`, pending merge
 20 files updated: `tailwind.config.ts`, `globals.css`, `categoryColor.ts`, and 16 components. Alex re-verified: PASS_WITH_NOTES — active chip label at 3.255:1 (documented ARIA tradeoff; `font-semibold` fix applied, `aria-pressed`+`aria-label` correct). Focus ring at 3.021:1 (1px above floor; optional polish: bump to `ring-teal-600`).

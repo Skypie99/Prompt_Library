@@ -35,7 +35,7 @@ const config: Config = {
 
         // Semantic feedback scales (F5 export/import confirmation flows)
         success: {
-          50:  "#F0FDF4",
+          50: "#F0FDF4",
           100: "#DCFCE7",
           300: "#86EFAC",
           400: "#4ADE80",
@@ -44,7 +44,7 @@ const config: Config = {
         },
 
         danger: {
-          50:  "#FEF2F2",
+          50: "#FEF2F2",
           100: "#FEE2E2",
           200: "#FECACA",
           300: "#FCA5A5",
@@ -56,13 +56,13 @@ const config: Config = {
 
         // Light-mode accent: warm desert amber/sienna
         desert: {
-          50:  "#FDF7EE",
+          50: "#FDF7EE",
           100: "#FAECCC",
           200: "#F5D898",
           300: "#E8B96A",
           400: "#D4894A",
           500: "#B86B30",
-          600: "#9A5020",  // 4.9:1 contrast on cream — WCAG AA ✓
+          600: "#9A5020", // 4.9:1 contrast on cream — WCAG AA ✓
           700: "#7C3A14",
           800: "#5C2A0C",
           900: "#3D1A07",
@@ -70,7 +70,7 @@ const config: Config = {
 
         // Dark-mode accent: electric cyan (neon terminal)
         teal: {
-          50:  "#ECFEFF",
+          50: "#ECFEFF",
           100: "#CFFAFE",
           200: "#A5F3FC",
           300: "#67E8F9",

@@ -22,3 +22,8 @@
 [MAIN-UNPUSHED] local main is +4 ahead of origin/main; teal + all 05-29 work is local-only, not pushed, not deployed to GH-Pages — 2026-06-03 (Morgan); Sky decision: push or not
 [BUILD-GREEN-0603] Verified on current F5 branch 2026-06-03: tsc --noEmit exit 0; vitest 328/328 pass — 2026-06-03 (Morgan)
 [JORDAN-NOT-REQUIRED] Const. 7.6 six-trigger check across all pending features = no trigger fires (no location/disability/PII-beyond-local-key/backend/new-external-send). F5 export excludes apiKey. Jordan gate not required; privacy stays 🟡 MED — 2026-06-03 (Morgan)
+[MODEL-DEFAULT-OPUS-4-8] Default model set to `claude-opus-4-8`; all prior `claude-opus-4-7` references removed from storage helpers and seed data — 2026-06-17
+[F3B-DESIGN-RESOLVED] F3b inline model switcher shipped: inline select in run bar (not own row); `cmd+Enter` runs the currently selected model; per-prompt model override persists via `promptlib:model:<id>` localStorage key — 2026-06-17
+[LINT-CI-INSTALLED] ESLint v9 flat config installed (`eslint.config.mjs`); `eslint-config-next` bypassed (incompatible with ESLint 9 flat-config — uses `@rushstack/eslint-patch`); lint wired into CI as a blocking job; 0 errors / 6 warnings (unused vars in test files, documented) — 2026-06-17/18 (Gary)
+[PHASE2-SKY-OVERRIDE] Phase 2 shipped to main 2026-06-17 (merge `b48ec47`) as a Sky-directed override of the Art.17 gate (rollback not yet formally recorded at ship time); gate now holds for Phase 3/4 ship — 2026-06-17 (Morgan)
+[PHASE3-4-GATE] Phase 3 (WCAG 2.2 AA) + Phase 4 (lint CI, CNAME-in-artifact, B1/B2/B3 fixes) on `release/phase3-phase4`; Art.17 gate holds once rollback (`b48ec47`) is recorded; Rory to merge + push when Sky completes device checks — 2026-06-18 (Morgan)

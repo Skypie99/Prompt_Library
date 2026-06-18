@@ -67,7 +67,9 @@ const NOOP = {
 function expandHistory() {
   // The toggle button contains "History ·" in its text.
   const toggle = screen.getByRole("button", { name: /History/i });
-  act(() => { fireEvent.click(toggle); });
+  act(() => {
+    fireEvent.click(toggle);
+  });
 }
 
 // ---- Tests -------------------------------------------------------------------
@@ -78,9 +80,7 @@ describe("RunHistory — F-usage-c token count display", () => {
   // -------------------------------------------------------------------------
   it("shows the token count line for a run with tokensUsed", () => {
     const run = makeRun({ tokensUsed: { input: 128, output: 64 } });
-    render(
-      <RunHistory promptId="p-1" runs={[run]} {...NOOP} />,
-    );
+    render(<RunHistory promptId="p-1" runs={[run]} {...NOOP} />);
 
     expandHistory();
 
@@ -94,9 +94,7 @@ describe("RunHistory — F-usage-c token count display", () => {
   // -------------------------------------------------------------------------
   it("does NOT show a token count line when tokensUsed is absent", () => {
     const run = makeRun(); // no tokensUsed
-    render(
-      <RunHistory promptId="p-1" runs={[run]} {...NOOP} />,
-    );
+    render(<RunHistory promptId="p-1" runs={[run]} {...NOOP} />);
 
     expandHistory();
 
@@ -112,9 +110,7 @@ describe("RunHistory — F-usage-c token count display", () => {
       id: "r-large",
       tokensUsed: { input: 1_234, output: 9_876 },
     });
-    render(
-      <RunHistory promptId="p-1" runs={[run]} {...NOOP} />,
-    );
+    render(<RunHistory promptId="p-1" runs={[run]} {...NOOP} />);
 
     expandHistory();
 
@@ -127,9 +123,7 @@ describe("RunHistory — F-usage-c token count display", () => {
   // -------------------------------------------------------------------------
   it("sets aria-label with 'input tokens' and 'output tokens' wording", () => {
     const run = makeRun({ id: "r-aria", tokensUsed: { input: 50, output: 200 } });
-    render(
-      <RunHistory promptId="p-1" runs={[run]} {...NOOP} />,
-    );
+    render(<RunHistory promptId="p-1" runs={[run]} {...NOOP} />);
 
     expandHistory();
 
@@ -144,9 +138,7 @@ describe("RunHistory — F-usage-c token count display", () => {
   it("shows token counts only for runs that have tokensUsed", () => {
     const withTokens = makeRun({ id: "r-with", tokensUsed: { input: 10, output: 20 } });
     const withoutTokens = makeRun({ id: "r-without" });
-    render(
-      <RunHistory promptId="p-1" runs={[withTokens, withoutTokens]} {...NOOP} />,
-    );
+    render(<RunHistory promptId="p-1" runs={[withTokens, withoutTokens]} {...NOOP} />);
 
     expandHistory();
 

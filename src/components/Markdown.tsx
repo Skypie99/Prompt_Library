@@ -119,15 +119,18 @@ function CodeBlock({ value }: { value: string }) {
   }
 
   return (
-    <div className="group/code relative my-3">
-      <pre className="overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 pr-14 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
+    <div className="group/code relative my-3" role="region" aria-label="Code block">
+      <pre
+        aria-label="Code block"
+        className="overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 pr-14 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper"
+      >
         <code>{value}</code>
       </pre>
       <button
         type="button"
         onClick={handleCopy}
         aria-label={copied ? "Code copied" : "Copy code"}
-        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-1.5 text-xs font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
+        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-1.5 text-xs font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
       >
         {copied ? "Copied" : "Copy"}
       </button>

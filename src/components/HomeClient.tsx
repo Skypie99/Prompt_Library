@@ -113,7 +113,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setStorageWriteFailureHandler((result) => {
       const msg =
         result.reason === "quota"
-          ? "Your browser ran out of room to save changes. Delete some prompts or favorites to make space."
+          ? "Your browser blocked saving changes — it may be full or in private browsing mode."
           : "Couldn't save changes to this browser. Your edits may not survive a reload.";
       setStorageWarning(msg);
     });
@@ -121,7 +121,6 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     // All setters below are one-time client-side hydration from localStorage.
     // useState initializers cannot be used here: SSR renders defaults first to
     // avoid hydration mismatch (localStorage unavailable on server). Intentional.
-    /* eslint-disable react-hooks/set-state-in-effect */
     const loadedSettings = loadSettings();
     setSettings(loadedSettings);
     setUserPrompts(loadUserPrompts());
@@ -147,7 +146,6 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setDensity(loadDensity());
     setSortMode(loadSort());
     setShowOnboarding(!loadOnboarded());
-    /* eslint-enable react-hooks/set-state-in-effect */
 
     return () => {
       setStorageWriteFailureHandler(null);
@@ -195,9 +193,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // silently clear the filter so the user doesn't end up stuck on an empty
   // grid forever. This responds to derived data (tagsWithCounts), not a loop.
   useEffect(() => {
-    if (activeTag && !tagsWithCounts.some((t) => t.tag === activeTag))
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveTag(null);
+    if (activeTag && !tagsWithCounts.some((t) => t.tag === activeTag)) setActiveTag(null);
   }, [activeTag, tagsWithCounts]);
 
   const favoritePrompts = useMemo(
@@ -411,6 +407,15 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
   return (
     <div className="min-h-screen">
+      {/* Skip-to-content: visually hidden until focused, then reveals above the header.
+          Targets the main landmark so keyboard users can bypass the nav bar.
+          SC 2.4.1 — bypass blocks. */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-teal-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:outline-none"
+      >
+        Skip to content
+      </a>
       <Header
         onOpenSearch={() => setPaletteOpen(true)}
         onOpenSettings={() => openSettings()}
@@ -440,11 +445,17 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         <ApiKeyNudge onOpenSettings={() => openSettings()} onDismiss={dismissApiKeyNudge} />
       )}
 
-      <main className="mx-auto max-w-5xl px-6">
+      <main id="main-content" className="mx-auto max-w-5xl px-6">
         {/* Hero */}
         <section className="relative pb-8 pt-10 sm:pb-12 sm:pt-24">
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-desert-hero dark:hidden" />
-          <div aria-hidden className="pointer-events-none absolute inset-0 hidden dark:block bg-dot-grid" />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-desert-hero dark:hidden"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 hidden dark:block bg-dot-grid"
+          />
           <div className="relative">
             <span className="inline-flex items-center gap-2 rounded border border-desert-400/30 bg-desert-400/5 px-3 py-1 font-mono text-xs font-medium uppercase tracking-widest text-desert-600 dark:border-teal-400/40 dark:bg-teal-400/10 dark:text-teal-400">
               <span aria-hidden>&gt;_</span>prompt.library<span className="opacity-60">/v2</span>

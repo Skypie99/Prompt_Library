@@ -92,6 +92,27 @@ export function writeJSON(key: string, value: unknown): StorageWriteResult {
   }
 }
 
+// Like writeJSON but stores a raw string instead of JSON.stringify'd value.
+// Use for settings keys whose readers call localStorage.getItem() directly
+// rather than JSON.parse — ensures round-trip fidelity while still routing
+// failures through the same onStorageWriteFailure banner path.
+export function writeRaw(key: string, value: string): StorageWriteResult {
+  if (typeof window === "undefined") {
+    return { ok: false, reason: "unavailable", error: null };
+  }
+  try {
+    localStorage.setItem(key, value);
+    return { ok: true };
+  } catch (error) {
+    const name = (error as { name?: string } | null)?.name ?? "";
+    const reason: "quota" | "unknown" =
+      name === "QuotaExceededError" || name === "NS_ERROR_DOM_QUOTA_REACHED" ? "quota" : "unknown";
+    const result: Exclude<StorageWriteResult, { ok: true }> = { ok: false, reason, error };
+    onStorageWriteFailure?.(result);
+    return result;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Validators
 // ---------------------------------------------------------------------------
