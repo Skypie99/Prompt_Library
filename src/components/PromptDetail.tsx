@@ -730,7 +730,7 @@ export function PromptDetail({
                         placeholder={variable.placeholder}
                         minRows={5}
                         maxHeightPx={480}
-                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30"
+                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60"
                       />
                     ) : (
                       // F-n2-4 — single-line input with an inline × clear
@@ -744,7 +744,7 @@ export function PromptDetail({
                           onChange={(event) => setValue(variable.name, event.target.value)}
                           placeholder={variable.placeholder}
                           className={clsx(
-                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30",
+                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60",
                             (values[variable.name] ?? "") !== "" && "pr-8"
                           )}
                         />
@@ -890,7 +890,7 @@ export function PromptDetail({
                   setSelectedModel(next);
                   if (prompt) savePromptModel(prompt.id, next);
                 }}
-                className="rounded border border-transparent bg-transparent px-0.5 py-0 font-sans text-xs text-ink-soft transition hover:border-border focus-visible:border-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-200 dark:text-paper-muted dark:hover:border-night-border dark:focus-visible:ring-teal-500/30"
+                className="rounded border border-transparent bg-transparent px-0.5 py-0 font-sans text-xs text-ink-soft transition hover:border-border focus-visible:border-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:text-paper-muted dark:hover:border-night-border dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-1 dark:focus-visible:ring-offset-night"
               >
                 {MODELS.map((m) => (
                   <option key={m.id} value={m.id}>
