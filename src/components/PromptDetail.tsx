@@ -1051,6 +1051,9 @@ export function PromptDetail({
                 ) : (
                   <div
                     id="response-content"
+                    aria-live="polite"
+                    aria-atomic="false"
+                    aria-label="Claude response"
                     className={clsx(
                       "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper",
                       // F3d — collapse to max-h-72 by default; remove cap when expanded.
