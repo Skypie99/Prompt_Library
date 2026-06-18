@@ -119,8 +119,11 @@ function CodeBlock({ value }: { value: string }) {
   }
 
   return (
-    <div className="group/code relative my-3">
-      <pre className="overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 pr-14 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper">
+    <div className="group/code relative my-3" role="region" aria-label="Code block">
+      <pre
+        aria-label="Code block"
+        className="overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 pr-14 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper"
+      >
         <code>{value}</code>
       </pre>
       <button
