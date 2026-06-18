@@ -96,6 +96,24 @@ export function RunHistory({
   const [labelDraft, setLabelDraft] = useState("");
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
+  // A11y: live-region announcement for new run entries (SC 4.1.3).
+  // Tracks previous run count so we only announce when a new entry arrives,
+  // not on initial hydration or on filter/sort changes.
+  const [runAnnouncement, setRunAnnouncement] = useState("");
+  const prevRunCountRef = useRef(runs.length);
+
+  // Announce a newly-completed run to screen readers (SC 4.1.3).
+  // Fires only when run count grows (new entry prepended), not on deletion,
+  // filter toggle, or initial render. The first run has status at index 0.
+  useEffect(() => {
+    const prev = prevRunCountRef.current;
+    prevRunCountRef.current = runs.length;
+    if (runs.length > prev && runs[0]) {
+      const newest = runs[0];
+      const label = STATUS_LABEL[newest.status];
+      setRunAnnouncement(`Run ${label.toLowerCase()}.`);
+    }
+  }, [runs]);
 
   // Tick relative times only while the panel is open — saves render churn
   // when the history exists but the user hasn't expanded it.
@@ -199,14 +217,30 @@ export function RunHistory({
     [filteredRuns, now]
   );
 
-  // Empty history → render nothing. The cue to run is the existing Run button.
-  if (runs.length === 0) return null;
-
   // Header label reflects total, not filtered, count — the filter is a
   // local triage tool, not a fact about how much history exists.
   const headerLabel = `History · ${runs.length}`;
 
+  // Empty history → render only the live-region sentinel (invisible), so SR
+  // can still announce the first completed run. The visible UI stays absent.
+  if (runs.length === 0) {
+    return (
+      <span
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {runAnnouncement}
+      </span>
+    );
+  }
+
   return (
+    <>
+      {/* Screen-reader live region: announces newly-completed runs (SC 4.1.3). */}
+      <span aria-live="polite" aria-atomic="true" className="sr-only">
+        {runAnnouncement}
+      </span>
     <section
       aria-label="Run history"
       className="mt-5 border-t border-border pt-4 dark:border-night-border"
@@ -574,5 +608,6 @@ export function RunHistory({
         </ul>
       )}
     </section>
+    </>
   );
 }
