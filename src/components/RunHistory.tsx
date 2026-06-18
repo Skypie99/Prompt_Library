@@ -316,14 +316,14 @@ export function RunHistory({
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
               }}
-              className="text-xs font-medium text-teal-600 transition hover:text-teal-700 dark:text-teal-400"
+              className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
             >
               Export
             </button>
             <button
               type="button"
               onClick={() => setConfirmingClear(true)}
-              className="text-xs font-medium text-teal-600 transition hover:text-teal-700 dark:text-teal-400"
+              className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
             >
               Clear all
             </button>
@@ -371,7 +371,7 @@ export function RunHistory({
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
-            className="ml-2 font-medium text-teal-600 underline-offset-2 hover:underline dark:text-teal-400"
+            className="ml-2 rounded font-medium text-teal-600 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
           >
             Show all
           </button>

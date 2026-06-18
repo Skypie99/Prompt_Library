@@ -671,7 +671,7 @@ export function PromptDetail({
                         setValues({});
                         if (prompt) clearValues(prompt.id);
                       }}
-                      className="font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                      className="rounded font-medium text-teal-600 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
                     >
                       Clear
                     </button>
@@ -890,7 +890,7 @@ export function PromptDetail({
                   setSelectedModel(next);
                   if (prompt) savePromptModel(prompt.id, next);
                 }}
-                className="rounded border border-transparent bg-transparent px-0.5 py-0 font-sans text-xs text-ink-soft transition hover:border-border focus-visible:border-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:text-paper-muted dark:hover:border-night-border dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-1 dark:focus-visible:ring-offset-night"
+                className="min-h-[1.5rem] rounded border border-transparent bg-transparent px-0.5 py-px font-sans text-xs text-ink-soft transition hover:border-border focus-visible:border-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:text-paper-muted dark:hover:border-night-border dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-1 dark:focus-visible:ring-offset-night"
               >
                 {MODELS.map((m) => (
                   <option key={m.id} value={m.id}>
