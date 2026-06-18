@@ -171,12 +171,25 @@ export function CommandPalette({
 
         {/* Results */}
         {results.length === 0 ? (
-          <div className="px-4 py-12 text-center">
-            <p className="text-sm text-ink-muted dark:text-paper-muted">
-              No prompts match{" "}
-              <span className="font-medium text-ink dark:text-paper">“{query}”</span>
-            </p>
-            <p className="mt-1 text-xs text-ink-soft">Try a different word or a tag.</p>
+          <div className=”px-4 py-12 text-center”>
+            {prompts.length === 0 && query.trim() === “” ? (
+              <>
+                <p className=”text-sm text-ink-muted dark:text-paper-muted”>
+                  No prompts in your library yet.
+                </p>
+                <p className=”mt-1 text-xs text-ink-soft”>
+                  Create a custom prompt to get started.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className=”text-sm text-ink-muted dark:text-paper-muted”>
+                  No prompts match{“ “}
+                  <span className=”font-medium text-ink dark:text-paper”>”{query}”</span>
+                </p>
+                <p className=”mt-1 text-xs text-ink-soft”>Try a different word or a tag.</p>
+              </>
+            )}
           </div>
         ) : (
           <ul ref={listRef} className="scrollbar-soft max-h-[50vh] overflow-y-auto p-2">
