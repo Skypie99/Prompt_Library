@@ -113,7 +113,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setStorageWriteFailureHandler((result) => {
       const msg =
         result.reason === "quota"
-          ? "Your browser ran out of room to save changes. Delete some prompts or favorites to make space."
+          ? "Your browser blocked saving changes — it may be full or in private browsing mode."
           : "Couldn't save changes to this browser. Your edits may not survive a reload.";
       setStorageWarning(msg);
     });
