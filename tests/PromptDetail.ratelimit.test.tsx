@@ -48,6 +48,9 @@ vi.mock("@/lib/library", () => ({
   saveValues: vi.fn(),
   clearValues: vi.fn(),
   writeJSON: vi.fn(),
+  // F3b — per-prompt model switcher
+  loadPromptModel: vi.fn().mockReturnValue(null),
+  savePromptModel: vi.fn(),
 }));
 
 // Markdown renders nothing fancy — just the source text.

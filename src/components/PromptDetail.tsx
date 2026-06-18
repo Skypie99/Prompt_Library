@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import type { Prompt } from "@/lib/types";
 import { ClaudeError, streamClaude, type TokenUsage } from "@/lib/anthropic";
-import { modelLabel, type Settings } from "@/lib/settings";
+import { modelLabel, MODELS, type Settings } from "@/lib/settings";
 import { appendRun, generateRunId, loadRuns, type StoredRun } from "@/lib/runs";
-import { clearValues, loadValues, saveValues } from "@/lib/library";
+import { clearValues, loadValues, saveValues, loadPromptModel, savePromptModel } from "@/lib/library";
 import { countFilled, extractVariables, parseBody, substituteBody } from "@/lib/variables";
 import { Sheet } from "./ui/Sheet";
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
@@ -148,6 +148,9 @@ export function PromptDetail({
   // two copy actions don't share a single toast.
   const [templateCopied, setTemplateCopied] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  // F3b — per-prompt model selection. Initialised from localStorage on prompt
+  // open; falls back to the global settings model if nothing is stored.
+  const [selectedModel, setSelectedModel] = useState<string>(settings.model);
 
   // Run state
   const [running, setRunning] = useState(false);
@@ -212,6 +215,14 @@ export function PromptDetail({
     setRuns(prompt ? loadRuns(prompt.id) : []);
     setCurrentTokensUsed(null);
     pendingUsageRef.current = null;
+    // F3b — restore the per-prompt model, falling back to the global default.
+    if (prompt) {
+      const saved = loadPromptModel(prompt.id);
+      const validSaved = saved && MODELS.some((m) => m.id === saved) ? saved : null;
+      setSelectedModel(validSaved ?? settings.model);
+    } else {
+      setSelectedModel(settings.model);
+    }
     if (prompt) {
       requestAnimationFrame(() => {
         panelRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
@@ -335,7 +346,10 @@ export function PromptDetail({
     // so callers can pass a different set (e.g. from history) and have the
     // sent prompt match.
     const sentPrompt = substituteBody(prompt.body, valuesToUse);
-    const sentModel = settings.model;
+    // F3b — use the per-prompt model switcher value (selectedModel), not the
+    // global settings model. selectedModel is always in sync with the <select>
+    // so ⌘↵ runs with whatever is currently chosen.
+    const sentModel = selectedModel;
     const sentValues = { ...valuesToUse };
 
     // Buffer chunks here so we can persist the partial even if the component
@@ -857,15 +871,35 @@ export function PromptDetail({
                 Token count is a rough rule-of-thumb (≈4 chars/token for English)
                 so callers see SHAPE not certainty; labelled "~" so nobody mistakes
                 it for the exact billable count from the API. */}
-            <p className="mt-2 text-center text-xs text-ink-soft dark:text-paper-muted">
+            <p className="mt-2 flex flex-wrap items-center justify-center gap-x-1 text-center text-xs text-ink-soft dark:text-paper-muted">
               <span
                 aria-label={`Estimated length: ${finalText.length.toLocaleString()} characters, about ${tokenEstimate.toLocaleString()} tokens`}
               >
                 ~{finalText.length.toLocaleString()} chars · ~{tokenEstimate.toLocaleString()}{" "}
                 tokens
               </span>
-              <span className="mx-2 text-ink-soft/60">·</span>
-              {modelLabel(settings.model)} · <kbd className="font-sans">⌘↵</kbd> to run
+              <span className="text-ink-soft/60">·</span>
+              {/* F3b — inline per-prompt model switcher. Native <select> so
+                  it doesn't intercept ⌘+Enter — the panel-level keydown handler
+                  fires first and runs with whatever selectedModel is set to. */}
+              <select
+                aria-label="Model for this run"
+                value={selectedModel}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  setSelectedModel(next);
+                  if (prompt) savePromptModel(prompt.id, next);
+                }}
+                className="rounded border border-transparent bg-transparent px-0.5 py-0 font-sans text-xs text-ink-soft transition hover:border-border focus-visible:border-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-200 dark:text-paper-muted dark:hover:border-night-border dark:focus-visible:ring-teal-500/30"
+              >
+                {MODELS.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+              <span className="text-ink-soft/60">·</span>
+              <kbd className="font-sans">⌘↵</kbd> to run
             </p>
 
             {/* F-fast-4 — secondary "copy the unfilled template" affordance.

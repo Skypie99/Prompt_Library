@@ -31,6 +31,7 @@ const STORAGE_KEYS = {
 const PER_PROMPT_PREFIXES = [
   "promptlib:runs:", // F1 (run history) — added in a later commit
   "promptlib:values:", // F2 (saved variable values) — added in a later commit
+  "promptlib:model:", // F3b (per-prompt model switcher) — added in a later commit
 ] as const;
 
 export const RECENT_CAP = 10;
@@ -279,6 +280,48 @@ export function clearValues(promptId: string): void {
 }
 
 // ---------------------------------------------------------------------------
+// Per-prompt model selection (F3b — inline model switcher)
+// ---------------------------------------------------------------------------
+//
+// Remembers the last model the user selected in the per-prompt run info-bar.
+// Keyed per prompt id so each prompt can default to a different model.
+// Falls back to null (caller uses the global settings model) when nothing is
+// stored. Cleared by `purgePromptStorage(id)` when the prompt is deleted.
+
+const MODEL_PREFIX = "promptlib:model:";
+
+function modelKey(id: string): string {
+  return `${MODEL_PREFIX}${id}`;
+}
+
+export function loadPromptModel(promptId: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(modelKey(promptId));
+  } catch {
+    return null;
+  }
+}
+
+export function savePromptModel(promptId: string, modelId: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(modelKey(promptId), modelId);
+  } catch {
+    /* unavailable — no-op */
+  }
+}
+
+export function clearPromptModel(promptId: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(modelKey(promptId));
+  } catch {
+    /* unavailable — no-op */
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Per-prompt storage cleanup
 // ---------------------------------------------------------------------------
 
@@ -395,6 +438,12 @@ export function getStorageUsage(): StorageUsage {
       } else if (key.startsWith("promptlib:values:")) {
         buckets["Saved variable values"] += cost;
         promptIdSet.add(key.slice("promptlib:values:".length));
+      } else if (key.startsWith("promptlib:model:")) {
+        // Per-prompt model selection (F3b) — tiny; bucket into "Saved variable values"
+        // since it's the same per-prompt draft pattern (not a separate category worth
+        // its own row in the readout).
+        buckets["Saved variable values"] += cost;
+        promptIdSet.add(key.slice("promptlib:model:".length));
       } else if (key === STORAGE_KEYS.favorites || key === STORAGE_KEYS.recent) {
         buckets["Favorites + Recent"] += cost;
       } else if (
