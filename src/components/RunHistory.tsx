@@ -356,13 +356,26 @@ export function RunHistory({
             return (
               <li key={run.id} className="group/row px-3 py-2.5">
                 <div className="flex items-start gap-2">
-                  <span
-                    aria-hidden
-                    className={clsx(
-                      "mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full",
-                      STATUS_DOT_CLASS[run.status]
-                    )}
-                  />
+                  {/* Status indicator: dot for completed/aborted, × for errored.
+                      Shape + color so colorblind sighted users are not relying
+                      on color alone (SC 1.4.1). aria-hidden because the sr-only
+                      span below carries the text label. */}
+                  {run.status === "errored" ? (
+                    <span
+                      aria-hidden
+                      className="mt-0.5 inline-block shrink-0 text-[11px] font-bold leading-none text-danger-600"
+                    >
+                      ✕
+                    </span>
+                  ) : (
+                    <span
+                      aria-hidden
+                      className={clsx(
+                        "mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full",
+                        STATUS_DOT_CLASS[run.status]
+                      )}
+                    />
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
