@@ -66,21 +66,21 @@ function CategoryChip({
       )}
     >
       <span>{label}</span>
-      {/* aria-hidden="true" because the aria-label above already spells out the
-          count for screen readers; this is the sighted visual only.
-          Must be the string "true" — bare `aria-hidden` renders as "" which
-          is falsy, exposing the number to AT and causing 2.5.3 mismatch. */}
+      {/* The count is displayed via CSS content:attr(data-count) so the DOM
+          text node is empty. This keeps `innerText` as just the label name,
+          satisfying WCAG 2.5.3 (accessible name "Filter by All, 3 prompts"
+          contains visible label "All"). aria-hidden="true" additionally
+          suppresses the pseudo-content from screen readers. */}
       <span
         aria-hidden="true"
+        data-count={count}
         className={clsx(
-          "ml-1.5 text-xs font-normal tabular-nums",
+          "ml-1.5 text-xs font-normal tabular-nums before:content-[attr(data-count)]",
           isActive
             ? "text-desert-600/60 dark:text-teal-300/70"
             : "text-ink-soft dark:text-paper-muted",
         )}
-      >
-        {count}
-      </span>
+      />
     </button>
   );
 }
