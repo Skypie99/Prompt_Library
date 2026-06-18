@@ -104,7 +104,10 @@ function mapHttpError(
       // Don't surface the raw Anthropic error detail to the UI — it may
       // contain internal context (model ids, token counts, policy labels)
       // that isn't useful to the end user and could confuse or mislead.
-      return new ClaudeError("bad-request", "Claude rejected the request — check your prompt and try again.");
+      return new ClaudeError(
+        "bad-request",
+        "Claude rejected the request — check your prompt and try again.",
+      );
     default:
       return new ClaudeError("unknown", "Something went wrong on Claude's side. Please try again.");
   }
@@ -245,11 +248,7 @@ export async function streamClaude({
   // completed normally through message_delta). Aborted or early-errored
   // streams will have null values and onUsage will NOT be called —
   // callers should treat absence as "usage unknown."
-  if (
-    onUsage &&
-    usage.inputTokens !== null &&
-    usage.outputTokens !== null
-  ) {
+  if (onUsage && usage.inputTokens !== null && usage.outputTokens !== null) {
     onUsage({ inputTokens: usage.inputTokens, outputTokens: usage.outputTokens });
   }
 }

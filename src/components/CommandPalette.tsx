@@ -45,7 +45,7 @@ function Highlighted({
           </mark>
         ) : (
           <span key={index}>{segment.text}</span>
-        )
+        ),
       )}
     </>
   );
@@ -97,7 +97,6 @@ export function CommandPalette({
   // changes, so the "cascading render" concern does not apply.
   useEffect(() => {
     if (open) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery("");
       setActiveIndex(0);
       inputRef.current?.focus();
@@ -106,7 +105,6 @@ export function CommandPalette({
 
   // Reset the selection to the top whenever the query changes.
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveIndex(0);
   }, [query]);
 
@@ -194,7 +192,7 @@ export function CommandPalette({
                       "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors",
                       isActive
                         ? "bg-teal-100 dark:bg-teal-500/20"
-                        : "hover:bg-teal-50/70 dark:hover:bg-night-border/40"
+                        : "hover:bg-teal-50/70 dark:hover:bg-night-border/40",
                     )}
                   >
                     <div className="min-w-0 flex-1">
@@ -203,7 +201,7 @@ export function CommandPalette({
                           "truncate text-sm font-medium",
                           isActive
                             ? "text-teal-800 dark:text-teal-200"
-                            : "text-ink dark:text-paper"
+                            : "text-ink dark:text-paper",
                         )}
                       >
                         <Highlighted

@@ -24,7 +24,10 @@ export function Header({
     <header className="sticky top-0 z-40 border-b border-border/70 bg-cream/80 backdrop-blur dark:border-teal-400/30 dark:bg-night/80">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
         <div className="flex items-center gap-2">
-          <span aria-hidden className="font-mono text-base font-bold text-desert-600 dark:text-teal-400">
+          <span
+            aria-hidden
+            className="font-mono text-base font-bold text-desert-600 dark:text-teal-400"
+          >
             &gt;_
           </span>
           <span className="font-display text-lg font-semibold tracking-tight text-ink dark:text-paper">

@@ -471,7 +471,8 @@ function isValidStoredRunShape(value: unknown): value is StoredRun {
       r.tokensUsed === null ||
       typeof r.tokensUsed.input !== "number" ||
       typeof r.tokensUsed.output !== "number"
-    ) return false;
+    )
+      return false;
   }
   return true;
 }

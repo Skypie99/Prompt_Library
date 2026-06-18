@@ -6,7 +6,13 @@ import type { Prompt } from "@/lib/types";
 import { ClaudeError, streamClaude, type TokenUsage } from "@/lib/anthropic";
 import { modelLabel, MODELS, type Settings } from "@/lib/settings";
 import { appendRun, generateRunId, loadRuns, type StoredRun } from "@/lib/runs";
-import { clearValues, loadValues, saveValues, loadPromptModel, savePromptModel } from "@/lib/library";
+import {
+  clearValues,
+  loadValues,
+  saveValues,
+  loadPromptModel,
+  savePromptModel,
+} from "@/lib/library";
 import { countFilled, extractVariables, parseBody, substituteBody } from "@/lib/variables";
 import { Sheet } from "./ui/Sheet";
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
@@ -183,7 +189,10 @@ export function PromptDetail({
   const responsePanelRef = useRef<HTMLDivElement>(null);
   // F-usage — captured token counts from the API for the current/last run.
   // null until a completed run reports usage via onUsage callback.
-  const [currentTokensUsed, setCurrentTokensUsed] = useState<{ input: number; output: number } | null>(null);
+  const [currentTokensUsed, setCurrentTokensUsed] = useState<{
+    input: number;
+    output: number;
+  } | null>(null);
   // Ref so onUsage callback can write the value without triggering a re-render
   // mid-stream; the state is set once at run completion alongside appendRun.
   const pendingUsageRef = useRef<TokenUsage | null>(null);
@@ -202,7 +211,6 @@ export function PromptDetail({
       clearInterval(retryCountdownRef.current);
       retryCountdownRef.current = null;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValues(prompt ? loadValues(prompt.id) : {});
     setCopied(false);
     setConfirmingDelete(false);
@@ -402,7 +410,7 @@ export function PromptDetail({
       } else {
         const fallback = new ClaudeError(
           "unknown",
-          "Something unexpected happened. Please try again."
+          "Something unexpected happened. Please try again.",
         );
         setError(fallback);
         status = "errored";
@@ -513,10 +521,7 @@ export function PromptDetail({
 
   return (
     <Sheet open onClose={onClose} size="xl" ariaLabel={prompt.title || "Prompt details"}>
-      <div
-        onKeyDown={handleModalKeyDown}
-        className="flex min-h-0 flex-1 flex-col overflow-hidden"
-      >
+      <div onKeyDown={handleModalKeyDown} className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4 dark:border-night-border">
           <div className="min-w-0">
@@ -542,7 +547,7 @@ export function PromptDetail({
                   >
                     #{tag}
                   </span>
-                )
+                ),
               )}
             </div>
             <h2 className="mt-2 font-display text-2xl font-semibold text-ink dark:text-paper">
@@ -745,7 +750,7 @@ export function PromptDetail({
                           placeholder={variable.placeholder}
                           className={clsx(
                             "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60",
-                            (values[variable.name] ?? "") !== "" && "pr-8"
+                            (values[variable.name] ?? "") !== "" && "pr-8",
                           )}
                         />
                         {(values[variable.name] ?? "") !== "" && (
@@ -777,7 +782,7 @@ export function PromptDetail({
                   "flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95",
                   copied
                     ? "border-teal-500 bg-teal-500 text-white"
-                    : "border-border text-ink hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:text-paper dark:hover:text-teal-300"
+                    : "border-border text-ink hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:text-paper dark:hover:text-teal-300",
                 )}
               >
                 {copied ? (
@@ -832,7 +837,7 @@ export function PromptDetail({
                     onClick={() => {
                       setShowUnfilledWarning(false);
                       const firstEmpty = variables.find(
-                        (v) => (values[v.name] ?? "").trim() === ""
+                        (v) => (values[v.name] ?? "").trim() === "",
                       );
                       if (firstEmpty) {
                         requestAnimationFrame(() => {
@@ -953,7 +958,7 @@ export function PromptDetail({
                         <ChevronIcon
                           className={clsx(
                             "h-3.5 w-3.5 transition-transform duration-150",
-                            responseExpanded ? "rotate-180" : ""
+                            responseExpanded ? "rotate-180" : "",
                           )}
                         />
                         {responseExpanded ? "Collapse" : "Expand"}
@@ -975,7 +980,8 @@ export function PromptDetail({
                     className="mb-1 text-xs text-ink-muted dark:text-paper-muted"
                     aria-label={`Token usage: ${formatTokens(currentTokensUsed.input)} input tokens, ${formatTokens(currentTokensUsed.output)} output tokens`}
                   >
-                    Tokens: {formatTokens(currentTokensUsed.input)} in · {formatTokens(currentTokensUsed.output)} out
+                    Tokens: {formatTokens(currentTokensUsed.input)} in ·{" "}
+                    {formatTokens(currentTokensUsed.output)} out
                   </p>
                 )}
 
@@ -1057,7 +1063,7 @@ export function PromptDetail({
                     className={clsx(
                       "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper",
                       // F3d — collapse to max-h-72 by default; remove cap when expanded.
-                      responseExpanded ? "" : "max-h-72"
+                      responseExpanded ? "" : "max-h-72",
                     )}
                   >
                     <Markdown source={response} />

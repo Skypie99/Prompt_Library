@@ -44,8 +44,7 @@ const SIZE_CLASS: Record<NonNullable<SheetProps["size"]>, string> = {
 };
 
 // Same focusable set SettingsModal used for its trap.
-const FOCUSABLE =
-  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 export function Sheet({
   open,
@@ -78,9 +77,7 @@ export function Sheet({
     if (!open) return;
     triggerRef.current = document.activeElement;
     const target =
-      initialFocusRef?.current ??
-      panelRef.current?.querySelector<HTMLElement>(FOCUSABLE) ??
-      null;
+      initialFocusRef?.current ?? panelRef.current?.querySelector<HTMLElement>(FOCUSABLE) ?? null;
     // rAF so the panel is painted before we focus (avoids a missed focus).
     requestAnimationFrame(() => target?.focus());
     return () => {
@@ -101,9 +98,7 @@ export function Sheet({
       if (e.key !== "Tab") return;
       const panel = panelRef.current;
       if (!panel) return;
-      const focusable = Array.from(
-        panel.querySelectorAll<HTMLElement>(FOCUSABLE),
-      ).filter(
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
         (el) =>
           !el.hasAttribute("disabled") &&
           el.getClientRects().length > 0 &&

@@ -1,46 +1,43 @@
 // eslint.config.mjs — ESLint v9 flat config
-// eslint-config-next v16 exports native flat config arrays — no FlatCompat needed.
 //
-// CIRCULAR-REF WORKAROUND (eslint-plugin-react v7 / @typescript-eslint v8):
-// Both plugins attach their own flat config presets as plugin.configs.flat, and
-// those preset objects contain plugin.configs.flat.*.plugins.X → back to the
-// same plugin object — a circular reference. @eslint/eslintrc's config-validator
-// calls JSON.stringify on the whole config for error formatting, which crashes.
-// Fix: strip the `configs` property from each plugin object with a cache-aware
-// sanitizer (cache ensures equal original refs → equal sanitized refs, which
-// ESLint requires to avoid "Cannot redefine plugin" errors).
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import nextTypescript from "eslint-config-next/typescript";
+// eslint-config-next v15 relies on @rushstack/eslint-patch which is incompatible
+// with ESLint v9 flat config. Instead we wire up the same rule sets directly:
+//   - @typescript-eslint/eslint-plugin flat/recommended (covers TS-aware rules)
+//   - eslint-plugin-react-hooks recommended-latest (flat config)
+//   - eslint-config-prettier (disables conflicting style rules)
+//   - eslint-plugin-prettier (surface formatting as warnings)
+//
+// When eslint-config-next ships a stable flat-config release (v16+), this file
+// should be simplified back to the nextCoreWebVitals/nextTypescript import style.
+import tsPlugin from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
 import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 
-// Cache: original plugin object → sanitized plugin object (stable identity).
-const _pluginCache = new Map();
-
-function _sanitizePlugin(plugin) {
-  if (_pluginCache.has(plugin)) return _pluginCache.get(plugin);
-  // Destructure out `configs` — only used in legacy eslintrc mode, contains circular refs.
-  // eslint-disable-next-line no-unused-vars
-  const { configs: _unused, ...rest } = plugin;
-  _pluginCache.set(plugin, rest);
-  return rest;
-}
-
-function _sanitizeConfig(config) {
-  if (!config || typeof config !== "object" || Array.isArray(config))
-    return config;
-  if (!config.plugins) return config;
-  const sanitizedPlugins = Object.fromEntries(
-    Object.entries(config.plugins).map(([k, p]) => [k, _sanitizePlugin(p)])
-  );
-  return { ...config, plugins: sanitizedPlugins };
-}
-
 export default [
-  // Bring in Next.js recommended rules (core-web-vitals + TypeScript).
-  // Sanitize to strip circular plugin.configs refs (see comment above).
-  ...nextCoreWebVitals.map(_sanitizeConfig),
-  ...nextTypescript.map(_sanitizeConfig),
+  // TypeScript-aware rules (flat/recommended).
+  // Uses type-unaware variant to avoid needing tsconfig project in CI.
+  ...tsPlugin.configs["flat/recommended"],
+
+  // Override parser + language options for all TS/TSX files
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: { jsx: true },
+      },
+    },
+  },
+
+  // React Hooks rules
+  {
+    plugins: { "react-hooks": reactHooksPlugin },
+    rules: reactHooksPlugin.configs["recommended-latest"].rules,
+  },
 
   // Disable any Prettier-conflicting ESLint style rules
   prettierConfig,
@@ -63,6 +60,16 @@ export default [
 
       // console.log left in source code
       "no-console": "warn",
+
+      // @ts-expect-error must include a description (3+ chars).
+      // Downgrade to warn — existing comments are deliberate stubs in tests.
+      "@typescript-eslint/ban-ts-comment": [
+        "warn",
+        {
+          "ts-expect-error": "allow-with-description",
+          minimumDescriptionLength: 3,
+        },
+      ],
     },
   },
 

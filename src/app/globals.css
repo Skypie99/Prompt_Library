@@ -15,11 +15,11 @@
 
   ::selection {
     background-color: rgba(245, 216, 152, 0.55);
-    color: #1A1410;
+    color: #1a1410;
   }
   .dark ::selection {
     background-color: rgba(34, 211, 238, 0.22);
-    color: #C9D1E0;
+    color: #c9d1e0;
   }
 }
 
@@ -46,11 +46,7 @@
 
   /* Subtle dot-grid for the dark-mode hero area — electric cyan dots, low opacity. */
   .bg-dot-grid {
-    background-image: radial-gradient(
-      circle,
-      rgb(34 211 238 / 0.12) 1px,
-      transparent 1px
-    );
+    background-image: radial-gradient(circle, rgb(34 211 238 / 0.12) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
@@ -98,21 +94,21 @@
     --tw-ring-opacity: 1;
   }
   .border-border {
-    border-color: #6B6B6B;
+    border-color: #6b6b6b;
   }
   .dark .border-night-border,
   .dark .border-border {
-    border-color: #9CA3AF;
+    border-color: #9ca3af;
   }
 
   /* Text: lift muted text to full-contrast values. */
   .text-ink-muted,
   .text-ink-soft {
-    color: #1A1410;
+    color: #1a1410;
   }
   .dark .text-paper-muted,
   .dark .text-paper-soft {
-    color: #E8ECF4;
+    color: #e8ecf4;
   }
 
   /* Interactive elements: thicker focus rings. */

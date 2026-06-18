@@ -54,7 +54,6 @@ export function ThemeToggle() {
   // client-side hydration: useState cannot use readStored() directly because
   // localStorage is unavailable on the server (SSR hydration mismatch).
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMode(readStored());
   }, []);
 

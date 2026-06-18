@@ -63,7 +63,7 @@ export const PromptCard = memo(function PromptCard({
       onKeyDown={handleKeyDown}
       className={clsx(
         "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:border-desert-200 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:hover:border-teal-400/40 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
-        isCompact ? "p-3.5" : "p-5"
+        isCompact ? "p-3.5" : "p-5",
       )}
     >
       {/* F-night-11 — 3px left stripe in the category's deterministic
@@ -121,7 +121,7 @@ export const PromptCard = memo(function PromptCard({
             "-mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
             isFavorite
               ? "text-desert-500"
-              : "text-ink-soft opacity-0 hover:text-desert-500 focus-visible:opacity-100 group-hover:opacity-100"
+              : "text-ink-soft opacity-0 hover:text-desert-500 focus-visible:opacity-100 group-hover:opacity-100",
           )}
         >
           <StarIcon
@@ -134,7 +134,7 @@ export const PromptCard = memo(function PromptCard({
       <h3
         className={clsx(
           "mt-3 font-display font-semibold leading-snug text-ink transition-colors group-hover:text-desert-600 dark:text-paper dark:group-hover:text-teal-300",
-          isCompact ? "text-base" : "text-lg"
+          isCompact ? "text-base" : "text-lg",
         )}
       >
         {prompt.title}
@@ -143,7 +143,7 @@ export const PromptCard = memo(function PromptCard({
       <p
         className={clsx(
           "mt-1.5 text-sm leading-relaxed text-ink-muted dark:text-paper-muted",
-          isCompact ? "line-clamp-1" : "line-clamp-2"
+          isCompact ? "line-clamp-1" : "line-clamp-2",
         )}
         // F-n2-1 — title attribute gives a native hover preview of the
         // first ~240 chars of the body (browser-native tooltip; respects
@@ -185,7 +185,7 @@ export const PromptCard = memo(function PromptCard({
             >
               #{tag}
             </span>
-          )
+          ),
         )}
       </div>
     </div>

@@ -107,14 +107,12 @@ type StreamClaudeParams = Parameters<typeof streamClaude>[0];
  *  - then resolves
  */
 function mockStreamWithUsage(input: number, output: number) {
-  mockedStreamClaude.mockImplementationOnce(
-    async (params: StreamClaudeParams) => {
-      params.onText("Hello!");
-      if (params.onUsage) {
-        params.onUsage({ inputTokens: input, outputTokens: output });
-      }
-    },
-  );
+  mockedStreamClaude.mockImplementationOnce(async (params: StreamClaudeParams) => {
+    params.onText("Hello!");
+    if (params.onUsage) {
+      params.onUsage({ inputTokens: input, outputTokens: output });
+    }
+  });
 }
 
 /** Click "Run with Claude" and let the mocked streamClaude settle. */
@@ -156,13 +154,13 @@ describe("PromptDetail — F-usage-c token count display", () => {
   it("does NOT show the token count line while streaming is in progress", async () => {
     // streamClaude never resolves during this test — stream stays open.
     let resolveStream!: () => void;
-    mockedStreamClaude.mockImplementationOnce(
-      async (params: StreamClaudeParams) => {
-        // Send text so showResponsePanel becomes true, but DON'T call onUsage.
-        params.onText("partial...");
-        return new Promise<void>((resolve) => { resolveStream = resolve; });
-      },
-    );
+    mockedStreamClaude.mockImplementationOnce(async (params: StreamClaudeParams) => {
+      // Send text so showResponsePanel becomes true, but DON'T call onUsage.
+      params.onText("partial...");
+      return new Promise<void>((resolve) => {
+        resolveStream = resolve;
+      });
+    });
 
     render(<PromptDetail prompt={PROMPT} settings={SETTINGS} {...DEFAULT_CALLBACKS} />);
     // Start the run (don't await — stream is open).
@@ -176,16 +174,16 @@ describe("PromptDetail — F-usage-c token count display", () => {
     expect(screen.queryByLabelText(/input tokens/i)).not.toBeInTheDocument();
 
     // Clean up: resolve the stream so the component can unmount cleanly.
-    await act(async () => { resolveStream(); });
+    await act(async () => {
+      resolveStream();
+    });
   });
 
   // -------------------------------------------------------------------------
   // 3. Token count line is NOT visible when the run errors
   // -------------------------------------------------------------------------
   it("does NOT show the token count line when the run errors (no usage)", async () => {
-    mockedStreamClaude.mockRejectedValueOnce(
-      new ClaudeError("network", "Connection dropped."),
-    );
+    mockedStreamClaude.mockRejectedValueOnce(new ClaudeError("network", "Connection dropped."));
 
     render(<PromptDetail prompt={PROMPT} settings={SETTINGS} {...DEFAULT_CALLBACKS} />);
     await clickRun();
