@@ -114,4 +114,47 @@ Items that cannot be verified from code/built output alone. Perform on real iOS 
 
 ---
 
-*Alex — Accessibility Engineer | Phase 3 WCAG 2.2 AA | 2026-06-17 | Branch: `alex/p3-wcag-aa`*
+---
+
+## 6. FOCUS-RING SWEEP COMPLETED (closes N1 systemic item)
+
+**Date:** 2026-06-17 · **Commit:** (added after this section)
+
+### What was done
+
+N1 flagged that `ring-teal-400` (#22D3EE) in light mode against `cream` (#FDF6E3) yields ~1.57:1 contrast — below the WCAG 1.4.11 / SC 2.4.11 non-text 3:1 floor. Phase 3 fixed the worst offenders; this sweep closes the rest.
+
+**Files changed — unprefixed `ring-teal-400` → `ring-teal-500`:**
+
+| File | Instances changed | Description |
+|---|---|---|
+| `Markdown.tsx` | 1 | Copy button in code block |
+| `ShortcutsModal.tsx` | 1 | Close modal button |
+| `PromptDetail.tsx` | 3 | Tag filter buttons (×2) + "Copy template" button |
+| `PromptForm.tsx` | 2 | Insert variable `{{}}` button + suggested-tag buttons |
+| `RunHistory.tsx` | 8 | Expand/collapse header, status filter `<select>`, last-24h toggle, copy/retry/expand/collapse icon buttons (×5 matching classes) |
+| `SettingsModal.tsx` | 2 | Export library button + Import library label (`focus-within`) |
+
+**Total: 17 instances upgraded across 6 files.**
+
+### Remaining `ring-teal-400` instances (all legitimately dark-mode-only)
+
+| File | Lines | Class form | Why acceptable |
+|---|---|---|---|
+| `PromptCard.tsx` | 65, 121 | `dark:focus-visible:ring-teal-400` | Dark mode only; teal-400 on `night` (#080A12) exceeds 3:1 |
+| `PromptDetail.tsx` | 674, 893 | `dark:focus-visible:ring-teal-400` | Dark mode only; same reasoning |
+| `PromptDetail.tsx` | 733, 747 | `dark:focus:ring-teal-400/60` | Dark mode only; ring used as input border-glow, not sole indicator |
+| `RunHistory.tsx` | 319, 326, 374 | `dark:focus-visible:ring-teal-400` | Dark mode only; light variant already uses `ring-teal-500` |
+
+All remaining occurrences are gated behind a `dark:` prefix. Zero light-mode focus rings remain below 3:1.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `npm run typecheck` | **0 errors** |
+| `npm test` | **376 passed, 0 failed** |
+| `npm run build` | **exit 0** |
+| `grep -rn "ring-teal-400" src/components` (unprefixed) | **0 results** |
+
+*Alex — Accessibility Engineer | Phase 3 focus-ring sweep | 2026-06-17 | Branch: `alex/p3-wcag-aa`*

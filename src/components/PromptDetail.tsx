@@ -531,7 +531,7 @@ export function PromptDetail({
                     type="button"
                     onClick={() => onSelectTag(tag)}
                     aria-label={`Filter by #${tag}`}
-                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                   >
                     #{tag}
                   </button>
@@ -712,7 +712,7 @@ export function PromptDetail({
                             onClick={() => setValue(variable.name, lastValue)}
                             aria-label={`Use last value for ${variable.label}: ${lastValue}`}
                             title={lastValue}
-                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                           >
                             Use last: <span className="font-mono">{display}</span>
                           </button>
@@ -914,7 +914,7 @@ export function PromptDetail({
                     ? "Template copied"
                     : "Copy the prompt template with unfilled variables"
                 }
-                className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
+                className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
               >
                 {templateCopied ? "Template copied" : "Copy template (with {{variables}})"}
               </button>

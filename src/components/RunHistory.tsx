@@ -251,7 +251,7 @@ export function RunHistory({
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
           aria-controls={listId}
-          className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
+          className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
         >
           <ClockIcon className="h-3.5 w-3.5" />
           <span>{headerLabel}</span>
@@ -272,7 +272,7 @@ export function RunHistory({
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
                 aria-label="Filter history by status"
-                className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
+                className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
               >
                 {(Object.keys(STATUS_FILTER_LABELS) as StatusFilter[]).map((s) => (
                   <option key={s} value={s}>
@@ -287,7 +287,7 @@ export function RunHistory({
               onClick={() => setLast24Only((v) => !v)}
               aria-pressed={last24Only}
               className={clsx(
-                "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400",
+                "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500",
                 last24Only
                   ? "border-teal-500 bg-teal-500 text-white"
                   : "border-border bg-surface text-ink-muted hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
@@ -483,7 +483,7 @@ export function RunHistory({
                           onClick={() => onRestoreInputs(run.values)}
                           aria-label="Restore inputs from this run"
                           title="Restore inputs"
-                          className="flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                          className="flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <RotateCcwIcon className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">Restore</span>
@@ -497,7 +497,7 @@ export function RunHistory({
                             onClick={() => onRunAgain(run.values)}
                             aria-label="Restore these inputs and run again"
                             title="Run again with these inputs"
-                            className="flex items-center gap-1 rounded-md border border-teal-300 bg-teal-50 px-2 py-1 text-xs font-medium text-teal-700 transition hover:bg-teal-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20 dark:focus-visible:ring-offset-night"
+                            className="flex items-center gap-1 rounded-md border border-teal-300 bg-teal-50 px-2 py-1 text-xs font-medium text-teal-700 transition hover:bg-teal-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20 dark:focus-visible:ring-offset-night"
                           >
                             <PlayIcon className="h-3 w-3" aria-hidden />
                             <span className="hidden sm:inline">Run again</span>
@@ -509,7 +509,7 @@ export function RunHistory({
                           aria-label={isCopied ? "Response copied" : "Copy this response"}
                           title={isCopied ? "Copied" : "Copy response"}
                           className={clsx(
-                            "flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night",
+                            "flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night",
                             isCopied && "border-teal-500 text-teal-600"
                           )}
                         >
@@ -524,7 +524,7 @@ export function RunHistory({
                           onClick={() => handleDeleteOne(run.id)}
                           aria-label="Delete this run"
                           title="Delete this run"
-                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <TrashIcon className="h-3.5 w-3.5" />
                         </button>
@@ -534,7 +534,7 @@ export function RunHistory({
                           aria-expanded={isOpen}
                           aria-label={isOpen ? "Hide full response" : "Show full response"}
                           title={isOpen ? "Collapse" : "Show details"}
-                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <ChevronIcon
                             className={clsx(

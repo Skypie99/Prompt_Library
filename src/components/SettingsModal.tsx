@@ -318,12 +318,12 @@ export function SettingsModal({
               <button
                 type="button"
                 onClick={handleExport}
-                className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
+                className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
               >
                 Export library
               </button>
 
-              <label className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-within:ring-2 focus-within:ring-teal-400 dark:border-night-border dark:bg-night dark:text-paper-muted">
+              <label className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-within:ring-2 focus-within:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted">
                 Import library
                 <input
                   ref={fileInputRef}
