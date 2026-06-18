@@ -96,6 +96,24 @@ export function RunHistory({
   const [labelDraft, setLabelDraft] = useState("");
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
+  // A11y: live-region announcement for new run entries (SC 4.1.3).
+  // Tracks previous run count so we only announce when a new entry arrives,
+  // not on initial hydration or on filter/sort changes.
+  const [runAnnouncement, setRunAnnouncement] = useState("");
+  const prevRunCountRef = useRef(runs.length);
+
+  // Announce a newly-completed run to screen readers (SC 4.1.3).
+  // Fires only when run count grows (new entry prepended), not on deletion,
+  // filter toggle, or initial render. The first run has status at index 0.
+  useEffect(() => {
+    const prev = prevRunCountRef.current;
+    prevRunCountRef.current = runs.length;
+    if (runs.length > prev && runs[0]) {
+      const newest = runs[0];
+      const label = STATUS_LABEL[newest.status];
+      setRunAnnouncement(`Run ${label.toLowerCase()}.`);
+    }
+  }, [runs]);
 
   // Tick relative times only while the panel is open — saves render churn
   // when the history exists but the user hasn't expanded it.
@@ -199,14 +217,30 @@ export function RunHistory({
     [filteredRuns, now]
   );
 
-  // Empty history → render nothing. The cue to run is the existing Run button.
-  if (runs.length === 0) return null;
-
   // Header label reflects total, not filtered, count — the filter is a
   // local triage tool, not a fact about how much history exists.
   const headerLabel = `History · ${runs.length}`;
 
+  // Empty history → render only the live-region sentinel (invisible), so SR
+  // can still announce the first completed run. The visible UI stays absent.
+  if (runs.length === 0) {
+    return (
+      <span
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {runAnnouncement}
+      </span>
+    );
+  }
+
   return (
+    <>
+      {/* Screen-reader live region: announces newly-completed runs (SC 4.1.3). */}
+      <span aria-live="polite" aria-atomic="true" className="sr-only">
+        {runAnnouncement}
+      </span>
     <section
       aria-label="Run history"
       className="mt-5 border-t border-border pt-4 dark:border-night-border"
@@ -217,7 +251,7 @@ export function RunHistory({
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
           aria-controls={listId}
-          className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
+          className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
         >
           <ClockIcon className="h-3.5 w-3.5" />
           <span>{headerLabel}</span>
@@ -238,7 +272,7 @@ export function RunHistory({
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
                 aria-label="Filter history by status"
-                className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
+                className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
               >
                 {(Object.keys(STATUS_FILTER_LABELS) as StatusFilter[]).map((s) => (
                   <option key={s} value={s}>
@@ -253,7 +287,7 @@ export function RunHistory({
               onClick={() => setLast24Only((v) => !v)}
               aria-pressed={last24Only}
               className={clsx(
-                "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400",
+                "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500",
                 last24Only
                   ? "border-teal-500 bg-teal-500 text-white"
                   : "border-border bg-surface text-ink-muted hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
@@ -282,14 +316,14 @@ export function RunHistory({
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
               }}
-              className="text-xs font-medium text-teal-600 transition hover:text-teal-700 dark:text-teal-400"
+              className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
             >
               Export
             </button>
             <button
               type="button"
               onClick={() => setConfirmingClear(true)}
-              className="text-xs font-medium text-teal-600 transition hover:text-teal-700 dark:text-teal-400"
+              className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
             >
               Clear all
             </button>
@@ -337,7 +371,7 @@ export function RunHistory({
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
-            className="ml-2 font-medium text-teal-600 underline-offset-2 hover:underline dark:text-teal-400"
+            className="ml-2 rounded font-medium text-teal-600 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
           >
             Show all
           </button>
@@ -356,13 +390,26 @@ export function RunHistory({
             return (
               <li key={run.id} className="group/row px-3 py-2.5">
                 <div className="flex items-start gap-2">
-                  <span
-                    aria-hidden
-                    className={clsx(
-                      "mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full",
-                      STATUS_DOT_CLASS[run.status]
-                    )}
-                  />
+                  {/* Status indicator: dot for completed/aborted, × for errored.
+                      Shape + color so colorblind sighted users are not relying
+                      on color alone (SC 1.4.1). aria-hidden because the sr-only
+                      span below carries the text label. */}
+                  {run.status === "errored" ? (
+                    <span
+                      aria-hidden
+                      className="mt-0.5 inline-block shrink-0 text-[11px] font-bold leading-none text-danger-600"
+                    >
+                      ✕
+                    </span>
+                  ) : (
+                    <span
+                      aria-hidden
+                      className={clsx(
+                        "mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full",
+                        STATUS_DOT_CLASS[run.status]
+                      )}
+                    />
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
@@ -436,7 +483,7 @@ export function RunHistory({
                           onClick={() => onRestoreInputs(run.values)}
                           aria-label="Restore inputs from this run"
                           title="Restore inputs"
-                          className="flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                          className="flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <RotateCcwIcon className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">Restore</span>
@@ -450,7 +497,7 @@ export function RunHistory({
                             onClick={() => onRunAgain(run.values)}
                             aria-label="Restore these inputs and run again"
                             title="Run again with these inputs"
-                            className="flex items-center gap-1 rounded-md border border-teal-300 bg-teal-50 px-2 py-1 text-xs font-medium text-teal-700 transition hover:bg-teal-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20 dark:focus-visible:ring-offset-night"
+                            className="flex items-center gap-1 rounded-md border border-teal-300 bg-teal-50 px-2 py-1 text-xs font-medium text-teal-700 transition hover:bg-teal-100 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20 dark:focus-visible:ring-offset-night"
                           >
                             <PlayIcon className="h-3 w-3" aria-hidden />
                             <span className="hidden sm:inline">Run again</span>
@@ -462,7 +509,7 @@ export function RunHistory({
                           aria-label={isCopied ? "Response copied" : "Copy this response"}
                           title={isCopied ? "Copied" : "Copy response"}
                           className={clsx(
-                            "flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night",
+                            "flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night",
                             isCopied && "border-teal-500 text-teal-600"
                           )}
                         >
@@ -477,7 +524,7 @@ export function RunHistory({
                           onClick={() => handleDeleteOne(run.id)}
                           aria-label="Delete this run"
                           title="Delete this run"
-                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <TrashIcon className="h-3.5 w-3.5" />
                         </button>
@@ -487,7 +534,7 @@ export function RunHistory({
                           aria-expanded={isOpen}
                           aria-label={isOpen ? "Hide full response" : "Show full response"}
                           title={isOpen ? "Collapse" : "Show details"}
-                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                         >
                           <ChevronIcon
                             className={clsx(
@@ -561,5 +608,6 @@ export function RunHistory({
         </ul>
       )}
     </section>
+    </>
   );
 }

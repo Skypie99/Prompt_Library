@@ -62,7 +62,7 @@ export const PromptCard = memo(function PromptCard({
       onClick={onOpen}
       onKeyDown={handleKeyDown}
       className={clsx(
-        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:border-desert-200 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-desert-300 dark:border-night-border dark:bg-night-surface dark:hover:border-teal-400/40",
+        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out hover:border-desert-200 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:hover:border-teal-400/40 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
         isCompact ? "p-3.5" : "p-5"
       )}
     >
@@ -118,7 +118,7 @@ export const PromptCard = memo(function PromptCard({
             onToggleFavorite();
           }}
           className={clsx(
-            "-mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90",
+            "-mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
             isFavorite
               ? "text-desert-500"
               : "text-ink-soft opacity-0 hover:text-desert-500 focus-visible:opacity-100 group-hover:opacity-100"

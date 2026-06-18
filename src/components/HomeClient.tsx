@@ -411,6 +411,15 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
   return (
     <div className="min-h-screen">
+      {/* Skip-to-content: visually hidden until focused, then reveals above the header.
+          Targets the main landmark so keyboard users can bypass the nav bar.
+          SC 2.4.1 — bypass blocks. */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-teal-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:outline-none"
+      >
+        Skip to content
+      </a>
       <Header
         onOpenSearch={() => setPaletteOpen(true)}
         onOpenSettings={() => openSettings()}
@@ -440,7 +449,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         <ApiKeyNudge onOpenSettings={() => openSettings()} onDismiss={dismissApiKeyNudge} />
       )}
 
-      <main className="mx-auto max-w-5xl px-6">
+      <main id="main-content" className="mx-auto max-w-5xl px-6">
         {/* Hero */}
         <section className="relative pb-8 pt-10 sm:pb-12 sm:pt-24">
           <div aria-hidden className="pointer-events-none absolute inset-0 bg-desert-hero dark:hidden" />

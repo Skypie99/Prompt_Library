@@ -89,6 +89,39 @@
   }
 }
 
+/* High-contrast mode: strengthen borders and dim text for users who have
+   "Increase Contrast" / "More contrast" enabled in their OS. Applies on top of
+   both light and dark themes without changing color semantics. SC 1.4.6 / 1.4.11. */
+@media (prefers-contrast: more) {
+  /* Borders: swap semi-transparent/light variants for fully-opaque strokes. */
+  body {
+    --tw-ring-opacity: 1;
+  }
+  .border-border {
+    border-color: #6B6B6B;
+  }
+  .dark .border-night-border,
+  .dark .border-border {
+    border-color: #9CA3AF;
+  }
+
+  /* Text: lift muted text to full-contrast values. */
+  .text-ink-muted,
+  .text-ink-soft {
+    color: #1A1410;
+  }
+  .dark .text-paper-muted,
+  .dark .text-paper-soft {
+    color: #E8ECF4;
+  }
+
+  /* Interactive elements: thicker focus rings. */
+  *:focus-visible {
+    outline: 3px solid currentColor !important;
+    outline-offset: 2px !important;
+  }
+}
+
 /* Honour the OS "reduce motion" setting for the fade/scale/pop animations and
    the new bottom-sheet slide. */
 @media (prefers-reduced-motion: reduce) {

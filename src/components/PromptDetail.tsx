@@ -531,7 +531,7 @@ export function PromptDetail({
                     type="button"
                     onClick={() => onSelectTag(tag)}
                     aria-label={`Filter by #${tag}`}
-                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                   >
                     #{tag}
                   </button>
@@ -671,7 +671,7 @@ export function PromptDetail({
                         setValues({});
                         if (prompt) clearValues(prompt.id);
                       }}
-                      className="font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                      className="rounded font-medium text-teal-600 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
                     >
                       Clear
                     </button>
@@ -712,7 +712,7 @@ export function PromptDetail({
                             onClick={() => setValue(variable.name, lastValue)}
                             aria-label={`Use last value for ${variable.label}: ${lastValue}`}
                             title={lastValue}
-                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                           >
                             Use last: <span className="font-mono">{display}</span>
                           </button>
@@ -730,7 +730,7 @@ export function PromptDetail({
                         placeholder={variable.placeholder}
                         minRows={5}
                         maxHeightPx={480}
-                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30"
+                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60"
                       />
                     ) : (
                       // F-n2-4 — single-line input with an inline × clear
@@ -744,7 +744,7 @@ export function PromptDetail({
                           onChange={(event) => setValue(variable.name, event.target.value)}
                           placeholder={variable.placeholder}
                           className={clsx(
-                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-200 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-500/30",
+                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60",
                             (values[variable.name] ?? "") !== "" && "pr-8"
                           )}
                         />
@@ -890,7 +890,7 @@ export function PromptDetail({
                   setSelectedModel(next);
                   if (prompt) savePromptModel(prompt.id, next);
                 }}
-                className="rounded border border-transparent bg-transparent px-0.5 py-0 font-sans text-xs text-ink-soft transition hover:border-border focus-visible:border-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-200 dark:text-paper-muted dark:hover:border-night-border dark:focus-visible:ring-teal-500/30"
+                className="min-h-[1.5rem] rounded border border-transparent bg-transparent px-0.5 py-px font-sans text-xs text-ink-soft transition hover:border-border focus-visible:border-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:text-paper-muted dark:hover:border-night-border dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-1 dark:focus-visible:ring-offset-night"
               >
                 {MODELS.map((m) => (
                   <option key={m.id} value={m.id}>
@@ -914,7 +914,7 @@ export function PromptDetail({
                     ? "Template copied"
                     : "Copy the prompt template with unfilled variables"
                 }
-                className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
+                className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
               >
                 {templateCopied ? "Template copied" : "Copy template (with {{variables}})"}
               </button>
@@ -1051,6 +1051,9 @@ export function PromptDetail({
                 ) : (
                   <div
                     id="response-content"
+                    aria-live="polite"
+                    aria-atomic="false"
+                    aria-label="Claude response"
                     className={clsx(
                       "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper",
                       // F3d — collapse to max-h-72 by default; remove cap when expanded.

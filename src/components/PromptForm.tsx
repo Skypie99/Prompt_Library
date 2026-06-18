@@ -234,7 +234,7 @@ export function PromptForm({
                 type="button"
                 onClick={insertVariableAtCaret}
                 aria-label="Insert a variable placeholder at the cursor"
-                className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
+                className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
               >
                 {"{{}}"}
               </button>
@@ -375,7 +375,7 @@ export function PromptForm({
                           type="button"
                           onClick={() => addTag(tag)}
                           aria-label={`Add tag #${tag}`}
-                          className="rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                          className="rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                         >
                           #{tag}
                         </button>
