@@ -13,6 +13,16 @@
     @apply dark:bg-night dark:text-paper;
   }
 
+  /* Fraunces (the `font-display` face) carries an optical-size axis (opsz
+     9–144). The opsz font build is wired in layout.tsx; this makes the
+     intent explicit and guards it: font-optical-sizing:auto matches opsz to
+     font-size, so the hero + large headings render Fraunces' DISPLAY cut
+     (higher stroke contrast, sharper serifs) while small text keeps the
+     TEXT cut. Stated here so a future reset can't silently flatten it. */
+  .font-display {
+    font-optical-sizing: auto;
+  }
+
   ::selection {
     background-color: rgba(245, 216, 152, 0.55);
     color: #1a1410;

@@ -2,8 +2,14 @@ import type { Metadata, Viewport } from "next";
 
 // Self-hosted variable fonts (no runtime request to Google) — works offline and
 // on a static host. Inter for UI/body, Fraunces for the characterful display.
+// Fraunces is imported via its `opsz` build (carries wght + the optical-size
+// axis, 9–144) rather than the default wght-only build: with
+// font-optical-sizing:auto (the CSS default) the browser then matches opsz to
+// font-size, so big display headings get Fraunces' high-contrast DISPLAY cut
+// and small text its TEXT cut. Costs ~+30KB on the latin woff2 — a deliberate
+// trade for the hero reading as type drawn for its size, not scaled up.
 import "@fontsource-variable/inter";
-import "@fontsource-variable/fraunces";
+import "@fontsource-variable/fraunces/opsz.css";
 import "@fontsource/jetbrains-mono";
 import "./globals.css";
 
