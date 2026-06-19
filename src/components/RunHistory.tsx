@@ -267,7 +267,7 @@ export function RunHistory({
                   value={statusFilter}
                   onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
                   aria-label="Filter history by status"
-                  className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
+                  className="min-h-[24px] rounded-md border border-border bg-surface px-1.5 py-0.5 text-xs text-ink transition hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-offset-night"
                 >
                   {(Object.keys(STATUS_FILTER_LABELS) as StatusFilter[]).map((s) => (
                     <option key={s} value={s}>
@@ -282,7 +282,7 @@ export function RunHistory({
                 onClick={() => setLast24Only((v) => !v)}
                 aria-pressed={last24Only}
                 className={clsx(
-                  "rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500",
+                  "inline-flex min-h-[24px] items-center rounded-md border px-1.5 py-0.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500",
                   last24Only
                     ? "border-teal-500 bg-teal-500 text-white"
                     : "border-border bg-surface text-ink-muted hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300",
@@ -447,7 +447,7 @@ export function RunHistory({
                               type="button"
                               onClick={() => startEditingLabel(run)}
                               aria-label={`Edit label "${run.label}"`}
-                              className="ml-2 rounded bg-teal-50 px-1.5 py-0.5 text-[11px] text-teal-700 hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
+                              className="ml-2 inline-flex min-h-[24px] items-center rounded bg-teal-50 px-1.5 py-0.5 text-[11px] text-teal-700 hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
                             >
                               {run.label}
                             </button>
