@@ -15,6 +15,15 @@ import type { Config } from "tailwindcss";
 //   AA on solid teal: a filled teal button (teal-500/600) carries DARK text
 //   (text-night, ~5–8:1) — never white (white-on-teal-500 is only 2.4:1).
 //   This keeps the neon fill bright AND passes WCAG 1.4.3.
+//
+// RADIUS LADDER (Tailwind defaults, used intentionally — no arbitrary px):
+//   rounded-sm  (2px)  inline text marks / highlights
+//   rounded     (4px)  micro tokens — keycaps, tiny count badges, the
+//                      terminal-style hero eyebrow
+//   rounded-md  (6px)  standard controls — buttons, inputs
+//   rounded-lg  (8px)  list rows (e.g. command-palette results)
+//   rounded-xl  (12px) cards, modals, large containers
+//   rounded-full       pills — category/status chips, the resume pill
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   darkMode: "class",

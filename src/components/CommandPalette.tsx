@@ -39,7 +39,7 @@ function Highlighted({
         segment.highlight ? (
           <mark
             key={index}
-            className="rounded-[2px] bg-teal-200/70 text-ink dark:bg-teal-500/30 dark:text-paper"
+            className="rounded-sm bg-teal-200/70 text-ink dark:bg-teal-500/30 dark:text-paper"
           >
             {segment.text}
           </mark>
