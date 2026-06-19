@@ -4,9 +4,9 @@ A fast, private prompt library for the browser. Save your best AI prompts, fill 
 
 **Live:** [prompts.skypistudio.com](https://prompts.skypistudio.com)
 
+<!-- {{SKY: add screenshot}} — drop a real screenshot at docs/screenshot.png (the app on a desktop, light or dark theme), then uncomment the image line below.
 ![screenshot](docs/screenshot.png)
-
-<!-- {{SKY: add screenshot}} — drop a real screenshot at docs/screenshot.png (the app on a desktop, light or dark theme). The image above 404s until then. -->
+-->
 
 ## Privacy model
 
