@@ -282,3 +282,47 @@ describe("streamClaude onUsage callback (F-usage-a)", () => {
     }
   });
 });
+
+// ---- Trailing-buffer flush: final event not terminated by a blank line ------
+
+// Same JSON payload as SSE_MESSAGE_DELTA but WITHOUT the trailing "\n\n", to
+// simulate a stream that closes mid-frame (no blank-line terminator on the
+// last event). Before the flush fix, this event was stranded in `buffer` and
+// its output_tokens were never processed, so onUsage never fired.
+const SSE_MESSAGE_DELTA_NO_TERMINATOR = (outputTokens: number) =>
+  `data: ${JSON.stringify({
+    type: "message_delta",
+    delta: { stop_reason: "end_turn" },
+    usage: { output_tokens: outputTokens },
+  })}`;
+
+describe("streamClaude trailing-buffer flush", () => {
+  it("processes a final event that is NOT terminated by a blank line", async () => {
+    const events = [
+      SSE_MESSAGE_START(312),
+      SSE_CONTENT_BLOCK_START,
+      SSE_TEXT_DELTA("Hello"),
+      SSE_CONTENT_BLOCK_STOP,
+      // Final event arrives with no closing "\n\n" — stream just ends here.
+      SSE_MESSAGE_DELTA_NO_TERMINATOR(1204),
+    ];
+    const restore = mockFetchOk(makeStream(events));
+    try {
+      const received: { inputTokens: number; outputTokens: number }[] = [];
+      await streamClaude({
+        apiKey: "test-key",
+        model: "claude-3-5-haiku-20241022",
+        maxTokens: 1024,
+        prompt: "Hello",
+        onText: () => {},
+        onUsage: (u) => received.push(u),
+      });
+      // The trailing message_delta must still be parsed: onUsage fires with the
+      // output_tokens from the un-terminated final frame.
+      expect(received).toHaveLength(1);
+      expect(received[0]).toEqual({ inputTokens: 312, outputTokens: 1204 });
+    } finally {
+      restore();
+    }
+  });
+});

@@ -14,21 +14,11 @@ import {
   savePromptModel,
 } from "@/lib/library";
 import { countFilled, extractVariables, parseBody, substituteBody } from "@/lib/variables";
+import { isTypingTarget } from "@/lib/dom";
 import { Sheet } from "./ui/Sheet";
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
 import { Markdown } from "./Markdown";
 import { RunHistory } from "./RunHistory";
-
-// F-night-7 — local copy of the "is the user typing right now?" check
-// used by HomeClient's global shortcuts. Inlined here so PromptDetail
-// stays self-contained; lives in two places intentionally because the
-// alternative (a shared util import) crosses domains for two lines.
-function isTypingTarget(event: KeyboardEvent): boolean {
-  const el = event.target as HTMLElement | null;
-  if (!el) return false;
-  const tag = el.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
-}
 import {
   CheckIcon,
   ChevronIcon,

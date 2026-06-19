@@ -238,6 +238,11 @@ export async function streamClaude({
         handleEvent(rawEvent, onText, usage);
       }
     }
+
+    // Flush any trailing event that wasn't terminated by a blank line — e.g. a
+    // final message_delta whose stream closed without the closing "\n\n".
+    // handleEvent no-ops on empty/whitespace input, so this guard is safe.
+    if (buffer.trim().length) handleEvent(buffer, onText, usage);
   } catch (error) {
     if (error instanceof ClaudeError) throw error;
     if ((error as Error)?.name === "AbortError") throw error;

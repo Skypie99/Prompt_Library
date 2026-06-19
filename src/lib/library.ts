@@ -69,27 +69,10 @@ function readJSON<T>(key: string, fallback: T): T {
 // write-failure surface instead of swallowing quota errors silently and
 // leaving the user wondering where their data went.
 export function writeJSON(key: string, value: unknown): StorageWriteResult {
-  if (typeof window === "undefined") {
-    return { ok: false, reason: "unavailable", error: null };
-  }
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-    return { ok: true };
-  } catch (error) {
-    // QuotaExceededError is the one users actually hit. The constructor name
-    // varies by engine ("QuotaExceededError" in modern browsers,
-    // "NS_ERROR_DOM_QUOTA_REACHED" historically in Firefox).
-    const name = (error as { name?: string } | null)?.name ?? "";
-    const reason: "quota" | "unknown" =
-      name === "QuotaExceededError" || name === "NS_ERROR_DOM_QUOTA_REACHED" ? "quota" : "unknown";
-    const result: Exclude<StorageWriteResult, { ok: true }> = {
-      ok: false,
-      reason,
-      error,
-    };
-    onStorageWriteFailure?.(result);
-    return result;
-  }
+  // Delegate to writeRaw so the unavailable/quota/unknown branches and the
+  // onStorageWriteFailure routing live in exactly one place. The only
+  // difference between the two is JSON.stringify on the value.
+  return writeRaw(key, JSON.stringify(value));
 }
 
 // Like writeJSON but stores a raw string instead of JSON.stringify'd value.

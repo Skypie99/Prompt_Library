@@ -27,6 +27,7 @@ import {
   setStorageWriteFailureHandler,
 } from "@/lib/library";
 import { loadAllLastRunIsos, loadAllRunCounts } from "@/lib/runs";
+import { isTypingTarget } from "@/lib/dom";
 import { DEFAULT_DENSITY, loadDensity, saveDensity, type Density } from "@/lib/density";
 import {
   DEFAULT_SORT,
@@ -49,15 +50,6 @@ import { ApiKeyNudge } from "./ApiKeyNudge";
 import { PromptForm, type PromptFormValues } from "./PromptForm";
 import { ShortcutsModal } from "./ShortcutsModal";
 import { ClockIcon, PlusIcon, SearchIcon, SparkleIcon, StarIcon } from "./icons";
-
-// Returns true if the keystroke happened inside a text field, so global
-// single-key shortcuts (like "/") don't hijack normal typing.
-function isTypingTarget(event: KeyboardEvent): boolean {
-  const el = event.target as HTMLElement | null;
-  if (!el) return false;
-  const tag = el.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
-}
 
 interface FormState {
   mode: "create" | "edit";
