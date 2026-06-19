@@ -10,7 +10,7 @@ import {
   type PromptSearchResult,
 } from "@/lib/search";
 import { categoryColor } from "@/lib/categoryColor";
-import { SearchIcon } from "./icons";
+import { SearchIcon, SparkleIcon } from "./icons";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -174,7 +174,11 @@ export function CommandPalette({
           <div className="px-4 py-12 text-center">
             {prompts.length === 0 && query.trim() === "" ? (
               <>
-                <p className="text-sm text-ink-muted dark:text-paper-muted">
+                <SparkleIcon
+                  aria-hidden
+                  className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted"
+                />
+                <p className="mt-2 text-sm text-ink-muted dark:text-paper-muted">
                   No prompts in your library yet.
                 </p>
                 <p className="mt-1 text-xs text-ink-soft">
@@ -183,7 +187,11 @@ export function CommandPalette({
               </>
             ) : (
               <>
-                <p className="text-sm text-ink-muted dark:text-paper-muted">
+                <SearchIcon
+                  aria-hidden
+                  className="mx-auto h-6 w-6 text-ink-soft dark:text-paper-muted"
+                />
+                <p className="mt-2 text-sm text-ink-muted dark:text-paper-muted">
                   No prompts match{" "}
                   <span className="font-medium text-ink dark:text-paper">&ldquo;{query}&rdquo;</span>
                 </p>
