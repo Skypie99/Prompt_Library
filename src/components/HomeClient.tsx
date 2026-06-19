@@ -731,7 +731,15 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                 >
                   Sky Halisky
                 </a>{" "}
-                · Prompt Library v0.1 · All data stays in this browser
+                · Prompt Library v0.1 · All data stays in this browser ·{" "}
+                <a
+                  href="https://skypistudio.com/contact/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-700 underline underline-offset-2 hover:text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 dark:text-teal-300 dark:hover:text-teal-200"
+                >
+                  open to thoughtful product collaborations
+                </a>
               </span>
             </footer>
           );
