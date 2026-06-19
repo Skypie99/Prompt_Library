@@ -45,5 +45,239 @@
     "tags": ["code", "review", "debugging"],
     "createdAt": "2026-05-22",
     "isSeed": true
+  },
+  {
+    "id": "debug-the-error",
+    "title": "Debug This Error",
+    "description": "Get a likely root cause and a targeted fix for a stack trace or error message.",
+    "body": "I'm hitting this error in a {{language}} project:\n\n{{error}}\n\nHere's the relevant code or context:\n\n{{context}}\n\nWalk me through the most likely root cause first, then give me the smallest change that fixes it. If you need more information to be sure, tell me exactly what to check and why.",
+    "variables": [
+      { "name": "language", "label": "Language / runtime", "placeholder": "e.g. Node.js" },
+      {
+        "name": "error",
+        "label": "Error message or stack trace",
+        "placeholder": "Paste the full error"
+      },
+      {
+        "name": "context",
+        "label": "Relevant code or context",
+        "placeholder": "Paste the function or config that's involved"
+      }
+    ],
+    "category": "Engineering",
+    "tags": ["debugging", "code", "troubleshooting"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "explain-this-codebase",
+    "title": "Explain This Codebase",
+    "description": "Get oriented in unfamiliar code: what it does, how it's wired, and where to start.",
+    "body": "Here is a file (or module) from a codebase I'm new to:\n\n{{code}}\n\nExplain it to me as if I'll be maintaining it. Cover: (1) what this code is responsible for in one sentence, (2) the main flow or data path through it, (3) anything non-obvious, surprising, or risky, and (4) the one place I should look first if I needed to change its behavior.",
+    "variables": [
+      {
+        "name": "code",
+        "label": "Code to explain",
+        "placeholder": "Paste a file, class, or module"
+      }
+    ],
+    "category": "Engineering",
+    "tags": ["code", "onboarding", "explainer"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "write-unit-tests",
+    "title": "Write Unit Tests",
+    "description": "Generate focused tests for a function, including the edge cases you'd forget.",
+    "body": "Write {{framework}} unit tests for this {{language}} function:\n\n{{code}}\n\nCover the happy path, the boundary cases, and at least one failure mode. Use clear test names that describe the behavior, not the implementation. After the tests, list any edge case you couldn't test without more context.",
+    "variables": [
+      { "name": "language", "label": "Language", "placeholder": "e.g. TypeScript" },
+      { "name": "framework", "label": "Test framework", "placeholder": "e.g. Vitest" },
+      { "name": "code", "label": "Function to test", "placeholder": "Paste the function" }
+    ],
+    "category": "Engineering",
+    "tags": ["testing", "code", "quality"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "study-plan-from-scratch",
+    "title": "Build Me a Study Plan",
+    "description": "Turn a learning goal and a time budget into a realistic week-by-week plan.",
+    "body": "I want to learn {{subject}} and I can spend about {{hoursPerWeek}} hours a week. My current level is: {{currentLevel}}.\n\nBuild me a realistic week-by-week plan that gets me to a working competence. For each week, give the focus, one concrete thing to build or practice, and how I'll know I've got it. Keep it honest about what won't fit, and front-load the highest-leverage fundamentals.",
+    "variables": [
+      { "name": "subject", "label": "What to learn", "placeholder": "e.g. SQL for data analysis" },
+      { "name": "hoursPerWeek", "label": "Hours per week", "placeholder": "e.g. 5" },
+      {
+        "name": "currentLevel",
+        "label": "Current level",
+        "placeholder": "e.g. total beginner, comfortable with spreadsheets"
+      }
+    ],
+    "category": "Learning",
+    "tags": ["learning", "planning", "self-study"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "socratic-tutor",
+    "title": "Socratic Tutor",
+    "description": "Learn a concept by being questioned through it instead of just being told.",
+    "body": "Be my Socratic tutor for {{concept}}. My level is {{level}}.\n\nDon't lecture. Ask me one focused question at a time that moves me toward understanding, wait for my answer, then build on it. Gently correct my misconceptions when they show up. Start now with your first question.",
+    "variables": [
+      { "name": "concept", "label": "Concept to learn", "placeholder": "e.g. how recursion works" },
+      { "name": "level", "label": "My level", "placeholder": "e.g. beginner programmer" }
+    ],
+    "category": "Learning",
+    "tags": ["teaching", "tutoring", "active-recall"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "follow-up-after-no-reply",
+    "title": "Follow-Up After No Reply",
+    "description": "Send a polite, non-needy nudge that gives the prospect an easy reason to respond.",
+    "body": "I emailed {{recipientName}} about {{topic}} {{timeAgo}} ago and haven't heard back.\n\nWrite a short follow-up that doesn't guilt-trip them. Add one new, genuinely useful angle or piece of value rather than just \"bumping this.\" Keep it under 80 words and make replying feel easy. Then suggest the single best day/time to send it.",
+    "variables": [
+      { "name": "recipientName", "label": "Recipient name", "placeholder": "e.g. Priya" },
+      { "name": "topic", "label": "What it was about", "placeholder": "e.g. the pilot proposal" },
+      { "name": "timeAgo", "label": "How long ago", "placeholder": "e.g. a week" }
+    ],
+    "category": "Sales",
+    "tags": ["email", "follow-up", "sales"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "handle-the-objection",
+    "title": "Handle the Objection",
+    "description": "Get a calm, honest response to a sales objection that doesn't sound defensive.",
+    "body": "A prospect said: \"{{objection}}\"\n\nMy product is {{product}} and the real value is {{valueProp}}.\n\nGive me a response that (1) acknowledges their concern as legitimate, (2) reframes it around the outcome they actually care about, and (3) ends with a question that moves the conversation forward. Avoid hype and don't be defensive. Give me one short version and one longer version.",
+    "variables": [
+      {
+        "name": "objection",
+        "label": "Their objection",
+        "placeholder": "e.g. it's too expensive for us right now"
+      },
+      { "name": "product", "label": "Your product", "placeholder": "e.g. a scheduling tool" },
+      {
+        "name": "valueProp",
+        "label": "Core value",
+        "placeholder": "e.g. saves each rep 4 hours a week"
+      }
+    ],
+    "category": "Sales",
+    "tags": ["objection-handling", "sales", "negotiation"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "rewrite-clearer",
+    "title": "Rewrite This, Clearer",
+    "description": "Tighten any draft into plain, confident prose without losing your meaning.",
+    "body": "Rewrite the text below to be clearer and easier to read, in a {{tone}} tone:\n\n{{text}}\n\nKeep my meaning and my voice. Cut filler, fix anything clumsy, and prefer plain words over fancy ones. Don't add claims I didn't make. Return only the rewrite, then one line noting the biggest change you made and why.",
+    "variables": [
+      {
+        "name": "text",
+        "label": "Text to rewrite",
+        "placeholder": "Paste the paragraph or message"
+      },
+      { "name": "tone", "label": "Tone", "placeholder": "e.g. warm but professional" }
+    ],
+    "category": "Writing",
+    "tags": ["editing", "clarity", "writing"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "blog-post-outline",
+    "title": "Blog Post Outline",
+    "description": "Turn a topic and an audience into a structured outline you can actually write from.",
+    "body": "I want to write a blog post about {{topic}} for {{audience}}. The one takeaway I want them to leave with is: {{takeaway}}.\n\nGive me a working outline: a headline option (plus one alternate), a one-sentence hook, 4-6 section headers with a line each on what they cover, and a closing that reinforces the takeaway. Mark the one section that will be the hardest to write well so I know where to spend my time.",
+    "variables": [
+      { "name": "topic", "label": "Topic", "placeholder": "e.g. switching careers into tech" },
+      { "name": "audience", "label": "Audience", "placeholder": "e.g. self-taught beginners" },
+      {
+        "name": "takeaway",
+        "label": "Main takeaway",
+        "placeholder": "e.g. you don't need a CS degree to start"
+      }
+    ],
+    "category": "Writing",
+    "tags": ["writing", "content", "outline"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "summarize-and-extract-actions",
+    "title": "Summarize + Pull Action Items",
+    "description": "Condense notes, a thread, or a transcript into a summary and a clear to-do list.",
+    "body": "Summarize the following and pull out what needs to happen next:\n\n{{content}}\n\nReturn two parts. First, a 3-5 bullet summary of what matters. Second, an action-item list where each item is a single clear next step, with an owner if one is named and a due date if one is mentioned. If something important is ambiguous or unresolved, flag it under a short \"Needs a decision\" list.",
+    "variables": [
+      {
+        "name": "content",
+        "label": "Notes / thread / transcript",
+        "placeholder": "Paste the meeting notes or message thread"
+      }
+    ],
+    "category": "Productivity",
+    "tags": ["summary", "meetings", "action-items"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "decision-helper",
+    "title": "Think Through a Decision",
+    "description": "Pressure-test a choice with tradeoffs, risks, and a recommendation you can argue with.",
+    "body": "Help me think through a decision. The choice is: {{decision}}. What matters most to me here is {{priorities}}, and my constraints are {{constraints}}.\n\nLay out the realistic options, the key tradeoffs of each, and the biggest risk I might be underweighting. Then give me a clear recommendation and the single strongest argument against it, so I can stress-test my own thinking.",
+    "variables": [
+      {
+        "name": "decision",
+        "label": "The decision",
+        "placeholder": "e.g. take a new job or stay for the runway"
+      },
+      {
+        "name": "priorities",
+        "label": "What matters most",
+        "placeholder": "e.g. long-term growth and a healthy culture"
+      },
+      {
+        "name": "constraints",
+        "label": "Constraints",
+        "placeholder": "e.g. limited savings, can't relocate"
+      }
+    ],
+    "category": "Productivity",
+    "tags": ["decision-making", "planning", "thinking"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
+  },
+  {
+    "id": "weekly-priorities",
+    "title": "Plan My Week",
+    "description": "Turn a messy task dump into a focused, realistic plan for the week.",
+    "body": "Here's everything on my plate this week:\n\n{{tasks}}\n\nMy most important goal is {{topGoal}} and I realistically have {{capacity}} of focused time.\n\nHelp me plan. Pick the few things that actually move my top goal, suggest what to drop or defer, and lay out a simple day-by-day shape for the week. Be honest if I'm trying to fit more than will fit.",
+    "variables": [
+      {
+        "name": "tasks",
+        "label": "Everything on your plate",
+        "placeholder": "Dump your tasks, one per line"
+      },
+      {
+        "name": "topGoal",
+        "label": "Most important goal",
+        "placeholder": "e.g. ship the portfolio update"
+      },
+      {
+        "name": "capacity",
+        "label": "Focused time available",
+        "placeholder": "e.g. about 10 hours"
+      }
+    ],
+    "category": "Productivity",
+    "tags": ["planning", "prioritization", "productivity"],
+    "createdAt": "2026-06-18",
+    "isSeed": true
   }
 ]
