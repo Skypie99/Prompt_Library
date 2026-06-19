@@ -909,9 +909,16 @@ export function PromptDetail({
                     ? "Template copied"
                     : "Copy the prompt template with unfilled variables"
                 }
-                className="rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
+                className="inline-flex items-center justify-center gap-1 rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
               >
-                {templateCopied ? "Template copied" : "Copy template (with {{variables}})"}
+                {templateCopied ? (
+                  <>
+                    <CheckIcon className="h-3.5 w-3.5" />
+                    Template copied
+                  </>
+                ) : (
+                  "Copy template (with {{variables}})"
+                )}
               </button>
             </div>
 
@@ -955,9 +962,16 @@ export function PromptDetail({
                       </button>
                       <button
                         onClick={handleCopyResponse}
-                        className="text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
                       >
-                        {responseCopied ? "Copied" : "Copy response"}
+                        {responseCopied ? (
+                          <>
+                            <CheckIcon className="h-3.5 w-3.5" />
+                            Copied
+                          </>
+                        ) : (
+                          "Copy response"
+                        )}
                       </button>
                     </div>
                   )}
