@@ -4,6 +4,27 @@ _Started by Will on 2026-05-23 during the fastloop session. New entries on top; 
 
 ---
 
+## 2026-06-18 — Art. 17 gate gap: verify the SHIPPED state, not the recorded state
+
+- **Re-run the check chain on the final merged HEAD, not the pre-recorded branch tip.**
+  The WCAG AA ship (`alex/p3-aa-audit-fixes` → main `b1f011c`) recorded its rollback SHA and
+  ran lint/typecheck/378-tests/build on the **4-commit** branch. A 5th commit (RunHistory 24px
+  touch targets, `14811d1`) was then added to the branch and swept in by the merge, so the
+  *live* state was never independently gated. Re-running the full chain on `b1f011c` afterward
+  confirmed green — but the gate should have caught it before push, not after.
+- **The fix is cheap:** if a branch's HEAD changes between rollback-record and merge, re-record
+  the branch HEAD and re-run the chain on the merged result before `git push`. Low stakes here
+  (the rider was CSS-class-only and lint-clean), but the gate's value is verifying the *exact*
+  bytes that ship.
+- **Branch hygiene compounds.** The repo had drifted to 75 local branches. 55 were fully merged
+  (safe `-d`); 9 unmerged "auto-*" autoloop branches were verified moot before force-delete
+  (e.g. the "critical Rules-of-Hooks" fix `36fc825` and the header-focus a11y fix `ebc1944`
+  were both already present in main, the latter re-implemented in teal during the reskin).
+  Lesson: an unmerged branch is not automatically valuable — but prove it's moot (grep main for
+  the actual fix) before discarding, and record the SHA.
+
+---
+
 ## 2026-05-23 — Night cycle 4 (post-build clean)
 
 Cycle = 3 builds + 1 clean. Features: F-night-10 (auto-link bare URLs
