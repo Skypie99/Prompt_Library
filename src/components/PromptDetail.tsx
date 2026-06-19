@@ -14,7 +14,7 @@ import {
   savePromptModel,
 } from "@/lib/library";
 import { countFilled, extractVariables, parseBody, substituteBody } from "@/lib/variables";
-import { isTypingTarget } from "@/lib/dom";
+import { isTypingTarget, prefersReducedMotion } from "@/lib/dom";
 import { Sheet } from "./ui/Sheet";
 import { AutoGrowTextarea } from "./AutoGrowTextarea";
 import { Markdown } from "./Markdown";
@@ -468,7 +468,11 @@ export function PromptDetail({
     // commits inside runWithValues).
     requestAnimationFrame(() => {
       responsePanelRef.current?.scrollIntoView({
-        behavior: "smooth",
+        // Honor reduced-motion for this JS-driven scroll — the CSS
+        // scroll-behavior override in globals.css can't reach the `behavior`
+        // option passed here, so a reduced-motion user would otherwise still
+        // get an animated scroll the rest of the app promised them it wouldn't.
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
         block: "start",
       });
     });
@@ -1053,6 +1057,25 @@ export function PromptDetail({
                         disabled={running} prevents stacking concurrent requests
                         (Steve hardening 1). */}
                     {error.kind === "overloaded" && (
+                      <div className="mt-2">
+                        <button
+                          onClick={handleRetry}
+                          disabled={running}
+                          aria-label="Retry"
+                          className="font-medium underline underline-offset-2 disabled:opacity-50"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    )}
+                    {/* network + unknown are transient and their messages
+                        invite a retry ("check your connection and try again" /
+                        "Please try again"), but previously offered no button —
+                        the user had to re-click Run and risk losing input. Same
+                        input-preserving handleRetry path as overloaded.
+                        (bad-request is excluded: the request itself is the
+                        problem, so a blind retry won't help.) */}
+                    {(error.kind === "network" || error.kind === "unknown") && (
                       <div className="mt-2">
                         <button
                           onClick={handleRetry}
