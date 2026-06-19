@@ -463,7 +463,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
             <button
               onClick={() => setPaletteOpen(true)}
-              className="group mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out hover:border-desert-400/50 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
+              className="group mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out motion-safe:hover:-translate-y-px hover:border-desert-400/50 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
             >
               <span className="flex-1 font-mono text-sm text-ink-soft dark:text-paper-muted">
                 search prompts...
@@ -482,7 +482,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                   type="button"
                   onClick={() => openPrompt(recentPrompts[0])}
                   aria-label={`Resume the last prompt you opened: ${recentPrompts[0].title}`}
-                  className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                  className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-700 motion-safe:hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                 >
                   <ClockIcon className="h-3.5 w-3.5 shrink-0 text-desert-500" aria-hidden />
                   <span aria-hidden className="shrink-0">
