@@ -49,7 +49,7 @@ import { OnboardingHint } from "./OnboardingHint";
 import { ApiKeyNudge } from "./ApiKeyNudge";
 import { PromptForm, type PromptFormValues } from "./PromptForm";
 import { ShortcutsModal } from "./ShortcutsModal";
-import { ClockIcon, PlusIcon, SearchIcon, SparkleIcon, StarIcon } from "./icons";
+import { ClockIcon, LockIcon, PlusIcon, SearchIcon, SparkleIcon, StarIcon } from "./icons";
 
 interface FormState {
   mode: "create" | "edit";
@@ -459,6 +459,14 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
             <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-muted dark:text-paper-muted sm:text-lg">
               Search, customize, and run your best prompts with Claude — in seconds.
+            </p>
+
+            {/* Quiet trust line — names the WHAT (a private, on-device,
+                bring-your-own-key runner) in the first 5 seconds, the most
+                recruiter-legible fact. Restrained per the utility-app bar. */}
+            <p className="mt-3 flex max-w-xl items-center gap-2 text-sm text-ink-soft dark:text-paper-muted">
+              <LockIcon aria-hidden className="h-3.5 w-3.5 shrink-0" />
+              No account, no backend — your key and prompts never leave your browser.
             </p>
 
             <button

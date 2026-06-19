@@ -12,8 +12,8 @@ export function OnboardingHint({ onDismiss }: { onDismiss: () => void }) {
         <kbd className="rounded border border-desert-300 bg-desert-100 px-1.5 py-0.5 font-sans text-[11px] font-medium dark:border-teal-500/40 dark:bg-teal-500/20">
           ⌘K
         </kbd>{" "}
-        to search · Add your Claude key in <span className="font-medium">Settings</span> to run
-        prompts live.
+        to search · Add your Claude key in <span className="font-medium">Settings</span> to run a
+        prompt and stream Claude&rsquo;s answer inline.
       </p>
       <button
         type="button"

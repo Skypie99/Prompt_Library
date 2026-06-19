@@ -212,3 +212,13 @@ export function SparkleIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+// Padlock — used for the hero's quiet on-device/privacy trust line.
+export function LockIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
