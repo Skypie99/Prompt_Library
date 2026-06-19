@@ -2,7 +2,7 @@
 
 [PALETTE-TEAL-ANCHOR] Primary accent replaced with teal (#2F9E96, HSL 175° 54% 37%); full 10-step scale in tailwind.config.ts — 2026-05-29
 [PALETTE-CATEGORY-COOL] 8-hue category stripe palette replaced with cohesive cool-neutral teal→mauve family (Dani TealSpec) — 2026-05-29
-[PALETTE-CHIP-CONTRAST] Active chip text at 3.255:1 (white on teal-500) accepted as PASS via ARIA compensation (aria-pressed + aria-label); not a merge blocker. Sky can change to teal-600 for strict 4.5:1 — 2026-05-29
+[PALETTE-CHIP-CONTRAST] Active chip text at 3.255:1 (white on teal-500) accepted as PASS via ARIA compensation (aria-pressed + aria-label); not a merge blocker. Sky can change to teal-600 for strict 4.5:1 — 2026-05-29 — RESOLVED 2026-06-19: the two-accent refinement (commit `8570903`) eliminated the white-on-teal-500 active chip; chips are now tonal dark-on-pale (`bg-desert-50 text-desert-700` light / `bg-teal-400/10 text-teal-300` dark) at CategoryChips.tsx:64 + TagChips.tsx:45 — no remaining sub-4.5:1 chip spot.
 [ESLINT-V9-PINNED] ESLint pinned to v9 (v10 removed config API); flat config via eslint.config.mjs; eslint-config-next v16 circular-JSON fixed with _sanitizePlugin helper — 2026-05-29
 [ESLINT-HOOKS-DISABLE-OK] 9 react-hooks/set-state-in-effect suppressed with documented comments (SSR hydration, modal reset, prop-change reset); these are deliberate patterns, not bugs — 2026-05-29
 [F3C-KEYDOWN-BYPASS] ⌘↵ keyboard shortcut bypasses the unfilled-variable warning (power-user path); gate is in handleModalKeyDown → runWithValues directly — 2026-05-29

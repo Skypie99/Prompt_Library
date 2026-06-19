@@ -2,7 +2,7 @@
 _Last compiled: 2026-06-18 by /morgan (AA-fixes + housekeeping closeout). Supersedes 2026-06-18 Phase-4 closeout._
 
 ## Current Status
-**Phases 0–4 + WCAG AA audit fixes ALL SHIPPED + LIVE** on GitHub Pages. **Live main = `7b3f96e`** (rollback `27a8f76`). Brand = **desert-parchment (light) + neon-terminal (dark)**. Host = **GitHub Pages**. URL = **`prompts.skypistudio.com`**.
+**Phases 0–4 + WCAG AA audit fixes + attribution + shopfront + 15 seeds + tech-debt + the deep UI polish sweep ALL SHIPPED + LIVE** on GitHub Pages. **Live main = `52b5e79`** (== origin, deployed 2026-06-19; 14 commits past `7b3f96e`: attribution, shopfront, 15 seeds, tech-debt, the 7-commit polish sweep `8570903..d3b3e7d`). **Rollback = `198b0fd`** (the tech-debt tip, last known-good before the polish sweep). Brand = **desert-parchment (light) + neon-terminal (dark)**. Host = **GitHub Pages**. URL = **`prompts.skypistudio.com`**.
 
 AA fixes (1.4.3 contrast, 2.5.3 label-in-name, 2.5.8 24px touch targets incl. RunHistory `14811d1`) merged `b1f011c`, Sky-authorized; re-verified on live state — typecheck clean / lint 0 errors / 378 tests / build exit 0. Housekeeping 2026-06-18: branches 75→10, `origin` URL typo fixed.
 

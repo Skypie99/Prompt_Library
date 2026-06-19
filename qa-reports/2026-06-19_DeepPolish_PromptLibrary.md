@@ -1,5 +1,7 @@
 # Deep UI Polish Sweep — Prompt Library
 
+> **UPDATE 2026-06-19:** these 7 commits are on origin/main and LIVE (the design/polish-sweep-2026-06-19 branch does not exist); net AA-positive (CTA contrast 2.43:1 -> 8.14:1). The remaining open gate is the real-device a11y/visual check, not a merge.
+
 **Date:** 2026-06-19
 **Surface:** Prompt Library — https://prompts.skypistudio.com
 **Branch:** `design/polish-sweep-2026-06-19` (7 commits) — **Sky-only review + merge**
