@@ -771,7 +771,7 @@ export function PromptDetail({
                 className={clsx(
                   "flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95",
                   copied
-                    ? "border-teal-500 bg-teal-500 text-white"
+                    ? "border-teal-500 bg-teal-500 text-night"
                     : "border-border text-ink hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:text-paper dark:hover:text-teal-300",
                 )}
               >
@@ -799,7 +799,7 @@ export function PromptDetail({
               ) : (
                 <button
                   onClick={handleRun}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-teal-600 active:scale-95"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-night transition-all duration-150 hover:bg-teal-600 active:scale-95"
                 >
                   Run with Claude
                 </button>

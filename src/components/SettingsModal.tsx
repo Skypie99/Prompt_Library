@@ -316,7 +316,7 @@ export function SettingsModal({
             <button
               type="button"
               onClick={handleExport}
-              className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
+              className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-night transition hover:bg-teal-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-offset-night"
             >
               Export library
             </button>
@@ -388,7 +388,7 @@ export function SettingsModal({
                   <button
                     type="button"
                     onClick={handleApplyMerge}
-                    className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-teal-700 active:scale-95"
+                    className="rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-night transition hover:bg-teal-700 active:scale-95"
                   >
                     Merge into my library
                   </button>
@@ -429,7 +429,7 @@ export function SettingsModal({
                       ref={replaceConfirmBtnRef}
                       type="button"
                       onClick={handleApplyReplace}
-                      className="rounded-md bg-teal-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-teal-700 active:scale-95 sm:py-1"
+                      className="rounded-md bg-teal-600 px-3 py-2 text-xs font-medium text-night transition hover:bg-teal-700 active:scale-95 sm:py-1"
                     >
                       Replace
                     </button>
@@ -565,7 +565,7 @@ export function SettingsModal({
         </button>
         <button
           onClick={handleSave}
-          className="rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95"
+          className="rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-night transition hover:bg-teal-600 active:scale-95"
         >
           Save
         </button>

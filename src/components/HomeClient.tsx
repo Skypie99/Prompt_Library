@@ -404,7 +404,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
           SC 2.4.1 — bypass blocks. */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-teal-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-teal-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-night focus:shadow-lg focus:outline-none"
       >
         Skip to content
       </a>
@@ -643,7 +643,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               </div>
               <button
                 onClick={() => setForm({ mode: "create", initial: null })}
-                className="flex items-center gap-1.5 rounded-md border border-desert-300 bg-desert-50 px-3 py-1.5 text-sm font-medium text-desert-700 transition hover:bg-desert-100 active:scale-95 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
+                className="flex items-center gap-1.5 rounded-md border border-teal-200 bg-teal-50 px-3 py-1.5 text-sm font-medium text-teal-700 transition hover:bg-teal-100 active:scale-95 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
               >
                 <PlusIcon className="h-4 w-4" />
                 New prompt
@@ -683,7 +683,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                 <button
                   type="button"
                   onClick={() => setForm({ mode: "create", initial: null })}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-desert-300 bg-desert-50 px-3 py-1.5 text-xs font-medium text-desert-700 transition hover:bg-desert-100 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-teal-200 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 transition hover:bg-teal-100 dark:border-teal-500/40 dark:bg-teal-500/10 dark:text-teal-300 dark:hover:bg-teal-500/20"
                 >
                   <PlusIcon className="h-3.5 w-3.5" />
                   Create your first prompt

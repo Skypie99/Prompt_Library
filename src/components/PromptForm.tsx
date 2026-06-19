@@ -393,7 +393,7 @@ export function PromptForm({
         <button
           onClick={handleSubmit}
           disabled={!canSave}
-          className="rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md bg-teal-500 px-4 py-2 text-sm font-medium text-night transition hover:bg-teal-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {mode === "edit" ? "Save changes" : "Create prompt"}
         </button>

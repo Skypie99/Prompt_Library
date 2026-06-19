@@ -4,6 +4,17 @@ import type { Config } from "tailwindcss";
 //   Light mode = warm sandy parchment, amber/sienna accent
 //   Dark mode  = near-black with electric cyan accent
 // darkMode: "class" — flip a `dark` class on <html>.
+//
+// TWO-ACCENT SYSTEM (the room vs. the button you press):
+//   • desert = AMBIENT / brand / nav / browse — the warm "room": wordmark,
+//     `>_` logo, hero eyebrow + gradient, category chips, tag-filter chips,
+//     the favorite star (gold-star metaphor), header chrome, scrollbars.
+//   • teal   = ACTION — primary CTAs, the run moment, pending selection.
+//     Applies in BOTH themes (light + dark), so a "press me" control reads
+//     teal whether the room is amber or neon.
+//   AA on solid teal: a filled teal button (teal-500/600) carries DARK text
+//   (text-night, ~5–8:1) — never white (white-on-teal-500 is only 2.4:1).
+//   This keeps the neon fill bright AND passes WCAG 1.4.3.
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   darkMode: "class",
