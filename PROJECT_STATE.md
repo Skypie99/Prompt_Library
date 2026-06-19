@@ -1,10 +1,12 @@
 # PROJECT_STATE — prompt-library-tool
-_Last compiled: 2026-06-18 by /morgan (Phase 4 closeout). Supersedes 2026-06-03 rebrand-ship state._
+_Last compiled: 2026-06-18 by /morgan (AA-fixes + housekeeping closeout). Supersedes 2026-06-18 Phase-4 closeout._
 
 ## Current Status
-**Phase 2 SHIPPED + LIVE** on GitHub Pages (2026-06-17, merge `b48ec47`). Brand = **desert-parchment (light) + neon-terminal (dark)**. Host = **GitHub Pages**. URL = **`prompts.skypistudio.com`**.
+**Phases 0–4 + WCAG AA audit fixes ALL SHIPPED + LIVE** on GitHub Pages. **Live main = `7b3f96e`** (rollback `27a8f76`). Brand = **desert-parchment (light) + neon-terminal (dark)**. Host = **GitHub Pages**. URL = **`prompts.skypistudio.com`**.
 
-Phase 3 (WCAG 2.2 AA) + Phase 4 (lint CI, CNAME-in-artifact, P3 fixes B1/B2/B3) on `release/phase3-phase4`, pending Sky device-check + gated ship.
+AA fixes (1.4.3 contrast, 2.5.3 label-in-name, 2.5.8 24px touch targets incl. RunHistory `14811d1`) merged `b1f011c`, Sky-authorized; re-verified on live state — typecheck clean / lint 0 errors / 378 tests / build exit 0. Housekeeping 2026-06-18: branches 75→10, `origin` URL typo fixed.
+
+**Open (Sky-decisions only, nothing blocked):** (1) live-device a11y check (`qa-reports/2026-06-18_Sky_DeviceCheck_Checklist.md`); (2) 9 hand-authored unmerged branches keep/drop; (3) adopt Art.17 gate-tightening (`qa-reports/2026-06-18_Rory_Housekeeping_Final.md`).
 
 ## What Shipped (Phase 2 — 2026-06-17, merge `b48ec47`)
 
