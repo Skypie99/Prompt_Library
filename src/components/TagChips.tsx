@@ -47,21 +47,21 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
             )}
           >
             <span>#{tag}</span>
-            {/* Count is visible to sighted users; aria-hidden because the
-                aria-label above already spells it out for screen readers. */}
+            {/* Count displayed via CSS content:attr(data-count) so the DOM
+                text node stays empty. This keeps innerText = just "#tag",
+                satisfying WCAG 2.5.3 (accessible name contains visible label).
+                Inactive count uses ink-muted (not ink-soft) so rendered text
+                clears AA contrast on bg-cream / dark on bg-night. */}
             <span
-              aria-hidden
+              aria-hidden="true"
+              data-count={count}
               className={clsx(
-                // Inactive count uses ink-muted (not ink-soft) so 10px text
-                // clears AA contrast on bg-cream / dark on bg-night.
-                "ml-1.5 text-[10px] font-normal tabular-nums",
+                "ml-1.5 text-[10px] font-normal tabular-nums before:content-[attr(data-count)]",
                 isActive
                   ? "text-desert-600/60 dark:text-teal-300/70"
                   : "text-ink-muted dark:text-paper-muted",
               )}
-            >
-              {count}
-            </span>
+            />
           </button>
         );
       })}

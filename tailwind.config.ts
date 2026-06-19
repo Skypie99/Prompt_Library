@@ -19,7 +19,10 @@ const config: Config = {
         ink: {
           DEFAULT: "#1A1410",
           muted: "#6E5C4A",
-          soft: "#9E8A74",
+          // Darkened from #9E8A74 to #826D58 for WCAG 1.4.3 AA:
+          // 4.55:1 on cream (#FDF6E3), 4.79:1 on surface (#FFFCF5).
+          // Remains visibly lighter than ink-muted (#6E5C4A, 5.91:1).
+          soft: "#826D58",
         },
 
         // Dark surfaces — near-black with a slight blue cast

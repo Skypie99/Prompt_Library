@@ -536,7 +536,7 @@ export function PromptDetail({
                     type="button"
                     onClick={() => onSelectTag(tag)}
                     aria-label={`Filter by #${tag}`}
-                    className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                    className="inline-flex min-h-[24px] items-center rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                   >
                     #{tag}
                   </button>
