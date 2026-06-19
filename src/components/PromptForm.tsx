@@ -88,7 +88,7 @@ function PromptBodyPreview({ body, sampleFill }: { body: string; sampleFill: boo
           ) : (
             <span
               key={index}
-              className="rounded border border-dashed border-teal-300 px-1 text-teal-600 dark:border-teal-500/50 dark:text-teal-300"
+              className="rounded border border-dashed border-teal-300 px-1 text-teal-700 dark:border-teal-500/50 dark:text-teal-300"
             >
               {segment.raw}
             </span>
@@ -178,7 +178,7 @@ export function PromptForm({
         <button
           onClick={onCancel}
           aria-label="Close"
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-700 dark:border-night-border dark:bg-night dark:text-paper-muted"
         >
           <CloseIcon className="h-[18px] w-[18px]" />
         </button>
@@ -231,7 +231,7 @@ export function PromptForm({
               type="button"
               onClick={insertVariableAtCaret}
               aria-label="Insert a variable placeholder at the cursor"
-              className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
+              className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-teal-300 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
             >
               {"{{}}"}
             </button>

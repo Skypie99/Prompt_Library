@@ -206,7 +206,7 @@ export function SettingsModal({
         <button
           onClick={onClose}
           aria-label="Close"
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-ink-muted transition hover:border-teal-300 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-offset-night"
         >
           <CloseIcon className="h-[18px] w-[18px]" />
         </button>
@@ -297,7 +297,7 @@ export function SettingsModal({
           href="https://console.anthropic.com/"
           target="_blank"
           rel="noreferrer"
-          className="inline-block text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+          className="inline-block text-sm font-medium text-teal-700 hover:text-teal-700 dark:text-teal-400"
         >
           Get an API key from the Anthropic Console →
         </a>
@@ -321,7 +321,7 @@ export function SettingsModal({
               Export library
             </button>
 
-            <label className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-600 focus-within:ring-2 focus-within:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted">
+            <label className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-700 focus-within:ring-2 focus-within:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted">
               Import library
               <input
                 ref={fileInputRef}

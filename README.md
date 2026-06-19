@@ -2,10 +2,12 @@
 
 A fast, private prompt library for the browser. Save your best AI prompts, fill in their `{{variables}}` from a clean form, and run them against the Anthropic API with your own key — all without an account, a backend, or a single byte of your data leaving your machine.
 
+Under the hood it runs on a from-scratch streaming client for the Anthropic Messages API — a typed error taxonomy, `retry-after` backoff with a live countdown, and token-by-token rendering — shipped as a static export with a real WCAG 2.2 AA pass and a full test suite.
+
 **Live:** [prompts.skypistudio.com](https://prompts.skypistudio.com)
 
-<!-- {{SKY: add screenshot}} — drop a real screenshot at docs/screenshot.png (the app on a desktop, light or dark theme), then uncomment the image line below.
-![screenshot](docs/screenshot.png)
+<!-- Add a hero screenshot at docs/screenshot.png (desktop, light or dark theme), then uncomment:
+![Prompt Library — search, customize, and run prompts with Claude, in your browser](docs/screenshot.png)
 -->
 
 ## Privacy model
@@ -35,4 +37,4 @@ Other useful scripts: `npm run build` (static export to `out/`), `npm test` (Vit
 
 ---
 
-Built by Skyler Halisky — [GitHub](https://github.com/skypie99) · [LinkedIn](https://www.linkedin.com/in/skyler-halisky)
+Built by Sky Halisky — [GitHub](https://github.com/skypie99) · [LinkedIn](https://www.linkedin.com/in/skyler-halisky)

@@ -731,7 +731,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                 >
                   Sky Halisky
                 </a>{" "}
-                · Prompt Library v0.1 · All data stays in this browser ·{" "}
+                · All data stays in this browser ·{" "}
                 <a
                   href="https://skypistudio.com/contact/"
                   target="_blank"

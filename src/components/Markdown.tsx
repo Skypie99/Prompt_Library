@@ -130,7 +130,7 @@ function CodeBlock({ value }: { value: string }) {
         type="button"
         onClick={handleCopy}
         aria-label={copied ? "Code copied" : "Copy code"}
-        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-1.5 text-xs font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
+        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-1.5 text-xs font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-700 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
       >
         {copied ? "Copied" : "Copy"}
       </button>

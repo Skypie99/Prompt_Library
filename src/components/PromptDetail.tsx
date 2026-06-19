@@ -78,7 +78,7 @@ function HeaderButton({
       title={label}
       onClick={onClick}
       className={
-        "flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface transition hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:bg-night dark:hover:text-teal-300 " +
+        "flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface transition hover:border-teal-300 hover:text-teal-700 dark:border-night-border dark:bg-night dark:hover:text-teal-300 " +
         (active ? "text-teal-500" : "text-ink-muted dark:text-paper-muted")
       }
     >
@@ -640,7 +640,7 @@ export function PromptDetail({
                 ) : (
                   <span
                     key={index}
-                    className="rounded border border-dashed border-teal-300 px-1 text-teal-600 dark:border-teal-500/50 dark:text-teal-300"
+                    className="rounded border border-dashed border-teal-300 px-1 text-teal-700 dark:border-teal-500/50 dark:text-teal-300"
                   >
                     {segment.raw}
                   </span>
@@ -666,7 +666,7 @@ export function PromptDetail({
                         setValues({});
                         if (prompt) clearValues(prompt.id);
                       }}
-                      className="rounded font-medium text-teal-600 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
+                      className="rounded font-medium text-teal-700 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
                     >
                       Clear
                     </button>
@@ -772,7 +772,7 @@ export function PromptDetail({
                   "flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95",
                   copied
                     ? "border-teal-500 bg-teal-500 text-night"
-                    : "border-border text-ink hover:border-teal-300 hover:text-teal-600 dark:border-night-border dark:text-paper dark:hover:text-teal-300",
+                    : "border-border text-ink hover:border-teal-300 hover:text-teal-700 dark:border-night-border dark:text-paper dark:hover:text-teal-300",
                 )}
               >
                 {copied ? (
@@ -909,7 +909,7 @@ export function PromptDetail({
                     ? "Template copied"
                     : "Copy the prompt template with unfilled variables"
                 }
-                className="inline-flex items-center justify-center gap-1 rounded text-xs font-medium text-teal-600 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
+                className="inline-flex items-center justify-center gap-1 rounded text-xs font-medium text-teal-700 transition hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:text-teal-400 dark:focus-visible:ring-offset-night"
               >
                 {templateCopied ? (
                   <>
@@ -935,7 +935,7 @@ export function PromptDetail({
                     Response
                   </span>
                   {running && (
-                    <span className="flex items-center gap-1.5 text-xs text-teal-600 dark:text-teal-400">
+                    <span className="flex items-center gap-1.5 text-xs text-teal-700 dark:text-teal-400">
                       <span className="h-3 w-3 animate-spin rounded-full border-2 border-teal-300 border-t-teal-600" />
                       Streaming…
                     </span>
@@ -950,7 +950,7 @@ export function PromptDetail({
                         aria-expanded={responseExpanded}
                         aria-controls="response-content"
                         title={responseExpanded ? "Collapse response" : "Expand response"}
-                        className="flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                        className="flex items-center gap-0.5 text-xs font-medium text-teal-700 hover:text-teal-700 dark:text-teal-400"
                       >
                         <ChevronIcon
                           className={clsx(
@@ -962,7 +962,7 @@ export function PromptDetail({
                       </button>
                       <button
                         onClick={handleCopyResponse}
-                        className="inline-flex items-center gap-1 text-xs font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-teal-700 hover:text-teal-700 dark:text-teal-400"
                       >
                         {responseCopied ? (
                           <>
@@ -991,7 +991,14 @@ export function PromptDetail({
 
                 {error ? (
                   <div className="rounded-md border border-danger-300 bg-danger-50 px-3 py-2.5 text-sm text-danger-800 dark:border-danger-300/40 dark:bg-danger-300/10 dark:text-danger-300">
-                    <p>{error.message}</p>
+                    {/* role="alert" on the message only (not the whole container)
+                        so a failed run is announced assertively to screen
+                        readers, WITHOUT re-announcing every time the live
+                        rate-limit countdown below ticks. The error messages
+                        themselves name the recovery ("…in Settings"), and the
+                        Open Settings / Retry buttons follow in DOM + tab order.
+                        Presentation/a11y only — no streaming/key-logic change. */}
+                    <p role="alert">{error.message}</p>
                     {error.kind === "auth" && (
                       <button
                         onClick={() => onOpenSettings("Paste a fresh API key and try again.")}
