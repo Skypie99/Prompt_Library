@@ -8,8 +8,26 @@ import "@fontsource/jetbrains-mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://prompts.skypistudio.com"),
   title: "Prompt Library",
   description: "Search, customize, and run your prompts with Claude in seconds.",
+  // Authorship so the project reads as Sky's work, not an anonymous demo.
+  authors: [{ name: "Sky Halisky", url: "https://skypistudio.com" }],
+  creator: "Sky Halisky",
+  // og:image / twitter:image are auto-wired from src/app/opengraph-image.tsx.
+  openGraph: {
+    type: "website",
+    url: "https://prompts.skypistudio.com",
+    siteName: "Prompt Library",
+    title: "Prompt Library",
+    description: "Search, customize, and run your prompts with Claude in seconds.",
+    locale: "en_CA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Prompt Library",
+    description: "Search, customize, and run your prompts with Claude in seconds.",
+  },
 };
 
 // Mobile viewport. Without this, phones lay the page out at desktop width and

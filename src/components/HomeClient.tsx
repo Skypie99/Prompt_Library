@@ -725,7 +725,18 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               <span aria-hidden className="mx-2">
                 ·
               </span>
-              <span>Prompt Library v0.1 · All data stays in this browser</span>
+              <span>
+                Built by{" "}
+                <a
+                  href="https://skypistudio.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-700 underline underline-offset-2 hover:text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 dark:text-teal-300 dark:hover:text-teal-200"
+                >
+                  Sky Halisky
+                </a>{" "}
+                · Prompt Library v0.1 · All data stays in this browser
+              </span>
             </footer>
           );
         })()}
