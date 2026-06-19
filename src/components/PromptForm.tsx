@@ -231,7 +231,7 @@ export function PromptForm({
               type="button"
               onClick={insertVariableAtCaret}
               aria-label="Insert a variable placeholder at the cursor"
-              className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-[10px] text-ink-muted transition hover:border-teal-300 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
+              className="rounded border border-border bg-cream px-2 py-0.5 font-mono text-2xs text-ink-muted transition hover:border-teal-300 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300"
             >
               {"{{}}"}
             </button>
@@ -261,7 +261,7 @@ export function PromptForm({
               return (
                 <span
                   aria-label={`Prompt body length: ${words} ${words === 1 ? "word" : "words"}, ${chars} ${chars === 1 ? "character" : "characters"}`}
-                  className="shrink-0 whitespace-nowrap text-[11px] tabular-nums text-ink-soft dark:text-paper-muted"
+                  className="shrink-0 whitespace-nowrap text-2xs tabular-nums text-ink-soft dark:text-paper-muted"
                 >
                   {words.toLocaleString()} {words === 1 ? "word" : "words"} ·{" "}
                   {chars.toLocaleString()} chars
@@ -275,8 +275,8 @@ export function PromptForm({
           {body.trim() !== "" && (
             <>
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wider text-ink-soft">Preview</span>
-                <label className="flex items-center gap-1 text-[11px] text-ink-muted dark:text-paper-muted">
+                <span className="text-2xs uppercase tracking-wider text-ink-soft">Preview</span>
+                <label className="flex items-center gap-1 text-2xs text-ink-muted dark:text-paper-muted">
                   <input
                     type="checkbox"
                     checked={sampleFill}
@@ -360,7 +360,7 @@ export function PromptForm({
               const visible = remaining.slice(0, 8);
               return (
                 <div className="mt-1.5">
-                  <span className="text-[10px] uppercase tracking-wider text-ink-soft">
+                  <span className="text-2xs uppercase tracking-wider text-ink-soft">
                     Suggested
                   </span>
                   <div className="mt-1 flex flex-wrap gap-1">
@@ -370,7 +370,7 @@ export function PromptForm({
                         type="button"
                         onClick={() => addTag(tag)}
                         aria-label={`Add tag #${tag}`}
-                        className="rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                        className="rounded bg-cream px-1.5 py-0.5 text-2xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                       >
                         #{tag}
                       </button>

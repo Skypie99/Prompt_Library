@@ -392,7 +392,7 @@ export function RunHistory({
                     {run.status === "errored" ? (
                       <span
                         aria-hidden
-                        className="mt-0.5 inline-block shrink-0 text-[11px] font-bold leading-none text-danger-600"
+                        className="mt-0.5 inline-block shrink-0 text-2xs font-bold leading-none text-danger-600"
                       >
                         ✕
                       </span>
@@ -447,7 +447,7 @@ export function RunHistory({
                               type="button"
                               onClick={() => startEditingLabel(run)}
                               aria-label={`Edit label "${run.label}"`}
-                              className="ml-2 inline-flex min-h-[24px] items-center rounded bg-teal-50 px-1.5 py-0.5 text-[11px] text-teal-700 hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
+                              className="ml-2 inline-flex min-h-[24px] items-center rounded bg-teal-50 px-1.5 py-0.5 text-2xs text-teal-700 hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
                             >
                               {run.label}
                             </button>
@@ -456,7 +456,7 @@ export function RunHistory({
                               type="button"
                               onClick={() => startEditingLabel(run)}
                               aria-label="Add a label to this run"
-                              className="ml-2 text-[11px] text-ink-soft underline-offset-2 opacity-0 transition hover:text-teal-700 hover:underline focus:opacity-100 group-hover/row:opacity-100 dark:text-paper-muted dark:hover:text-teal-300"
+                              className="ml-2 text-2xs text-ink-soft underline-offset-2 opacity-0 transition hover:text-teal-700 hover:underline focus:opacity-100 group-hover/row:opacity-100 dark:text-paper-muted dark:hover:text-teal-300"
                             >
                               + label
                             </button>
@@ -466,7 +466,7 @@ export function RunHistory({
                           Only rendered when tokensUsed is present. */}
                         {run.tokensUsed && (
                           <p
-                            className="text-[11px] text-ink-muted dark:text-paper-muted"
+                            className="text-2xs text-ink-muted dark:text-paper-muted"
                             aria-label={`Token usage: ${formatTokens(run.tokensUsed.input)} input tokens, ${formatTokens(run.tokensUsed.output)} output tokens`}
                           >
                             {formatTokens(run.tokensUsed.input)} in ·{" "}
@@ -558,7 +558,7 @@ export function RunHistory({
                         <div className="mt-2 space-y-3 animate-fade-in">
                           {Object.keys(run.values).length > 0 && (
                             <div>
-                              <div className="mb-1 text-[10px] font-medium uppercase tracking-wider text-ink-soft">
+                              <div className="mb-1 text-2xs font-medium uppercase tracking-wider text-ink-soft">
                                 Inputs
                               </div>
                               <dl className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1 text-xs">
@@ -579,7 +579,7 @@ export function RunHistory({
                           )}
 
                           <div>
-                            <div className="mb-1 text-[10px] font-medium uppercase tracking-wider text-ink-soft">
+                            <div className="mb-1 text-2xs font-medium uppercase tracking-wider text-ink-soft">
                               Response
                             </div>
                             {run.status === "errored" ? (

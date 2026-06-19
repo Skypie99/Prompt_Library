@@ -9,7 +9,7 @@ export function OnboardingHint({ onDismiss }: { onDismiss: () => void }) {
       <SparkleIcon className="h-5 w-5 shrink-0 text-desert-500" />
       <p className="flex-1 text-sm text-desert-900 dark:text-teal-100">
         Press{" "}
-        <kbd className="rounded border border-desert-300 bg-desert-100 px-1.5 py-0.5 font-sans text-[11px] font-medium dark:border-teal-500/40 dark:bg-teal-500/20">
+        <kbd className="rounded border border-desert-300 bg-desert-100 px-1.5 py-0.5 font-sans text-2xs font-medium dark:border-teal-500/40 dark:bg-teal-500/20">
           ⌘K
         </kbd>{" "}
         to search · Add your Claude key in <span className="font-medium">Settings</span> to run a

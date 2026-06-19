@@ -54,7 +54,7 @@ function Highlighted({
 // A tiny keycap used in the footer hints.
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="rounded border border-border bg-cream px-1.5 py-0.5 font-sans text-[11px] font-medium text-ink-soft dark:border-night-border dark:bg-night dark:text-paper-muted">
+    <kbd className="rounded border border-border bg-cream px-1.5 py-0.5 font-sans text-2xs font-medium text-ink-soft dark:border-night-border dark:bg-night dark:text-paper-muted">
       {children}
     </kbd>
   );
@@ -246,7 +246,7 @@ export function CommandPalette({
                     {(() => {
                       const c = categoryColor(result.prompt.category);
                       return (
-                        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted">
+                        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-cream px-2 py-0.5 text-2xs font-medium text-ink-muted dark:bg-night dark:text-paper-muted">
                           <span
                             aria-hidden
                             className="h-2 w-2 rounded-full dark:hidden"

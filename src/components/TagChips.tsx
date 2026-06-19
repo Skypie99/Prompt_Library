@@ -56,7 +56,7 @@ export function TagChips({ tags, active, onSelect }: TagChipsProps) {
               aria-hidden="true"
               data-count={count}
               className={clsx(
-                "ml-1.5 text-[10px] font-normal tabular-nums before:content-[attr(data-count)]",
+                "ml-1.5 text-2xs font-normal tabular-nums before:content-[attr(data-count)]",
                 isActive
                   ? "text-desert-600/60 dark:text-teal-300/70"
                   : "text-ink-muted dark:text-paper-muted",

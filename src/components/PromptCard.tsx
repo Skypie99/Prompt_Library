@@ -91,7 +91,7 @@ export const PromptCard = memo(function PromptCard({
             // it never competes with the category for attention.
             <span
               aria-label={`Run ${runCount} ${runCount === 1 ? "time" : "times"}`}
-              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 font-mono text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
+              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 font-mono text-2xs font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
             >
               &gt;{runCount}
             </span>
@@ -103,7 +103,7 @@ export const PromptCard = memo(function PromptCard({
             // when it's there, but never noise when it's not).
             <span
               aria-label={`${variableCount} ${variableCount === 1 ? "field" : "fields"} to fill`}
-              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
+              className="inline-flex w-fit items-center rounded-full bg-cream px-2 py-0.5 text-2xs font-medium text-ink-muted dark:bg-night dark:text-paper-muted"
             >
               {variableCount} {variableCount === 1 ? "field" : "fields"}
             </span>
@@ -157,7 +157,7 @@ export const PromptCard = memo(function PromptCard({
 
       {/* F-n2-13 — quiet "Last 2hr ago" line under the description. */}
       {lastRunIso && (
-        <p className="mt-1.5 text-[11px] text-ink-soft dark:text-paper-muted">
+        <p className="mt-1.5 text-2xs text-ink-soft dark:text-paper-muted">
           Last run <time dateTime={lastRunIso}>{formatRelativeTime(lastRunIso)}</time>
         </p>
       )}

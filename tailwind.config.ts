@@ -24,6 +24,20 @@ import type { Config } from "tailwindcss";
 //   rounded-lg  (8px)  list rows (e.g. command-palette results)
 //   rounded-xl  (12px) cards, modals, large containers
 //   rounded-full       pills — category/status chips, the resume pill
+//
+// TYPE SCALE (three faces, one Tailwind ladder — no ad-hoc sizes):
+//   • FACES  font-display = Fraunces (opsz-variable, hero + section headings);
+//            font-sans = Inter (body / UI); font-mono = JetBrains Mono (the
+//            terminal eyebrow, kbd keycaps, search placeholder, code).
+//   • SIZES  text-2xs (11px) micro labels — badges/keycaps/counts (the only
+//            step below Tailwind's floor; see fontSize below) · text-xs (12px)
+//            meta / chips · text-sm (14px) body-detail / controls · text-base
+//            (16px) → sm:text-lg (18px) hero subhead · text-2xl section
+//            headings · text-4xl → sm:5xl → md:6xl the hero H1 (opsz auto
+//            gives it Fraunces' display cut; see layout.tsx + globals.css).
+//   • TRACKING  uppercase micro-labels use tracking-wider; the hero brand
+//            eyebrow is the ONE documented exception at tracking-widest
+//            (wordmark moment), intentional — not drift.
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   darkMode: "class",
@@ -109,6 +123,15 @@ const config: Config = {
         sans: ['"Inter Variable"', "system-ui", "sans-serif"],
         display: ['"Fraunces Variable"', "Georgia", "serif"],
         mono: ['"JetBrains Mono"', "Fira Code", "ui-monospace", "monospace"],
+      },
+      // One named micro-step BELOW Tailwind's text-xs (12px) floor, for badges,
+      // keycaps, count chips, and tiny meta labels. 11px is the legibility floor
+      // we accept on real phones — replaces the scattered text-[10px]/[11px]
+      // arbitrary values (and lifts the former 10px sites up to 11px). Font-size
+      // only (no paired line-height) so it drops in without changing the line
+      // rhythm of the labels it replaces.
+      fontSize: {
+        "2xs": "0.6875rem",
       },
       boxShadow: {
         card: "0 1px 3px rgba(0,0,0,0.12), 0 8px 24px -8px rgba(0,0,0,0.16)",

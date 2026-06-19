@@ -707,7 +707,7 @@ export function PromptDetail({
                             onClick={() => setValue(variable.name, lastValue)}
                             aria-label={`Use last value for ${variable.label}: ${lastValue}`}
                             title={lastValue}
-                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-[11px] text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+                            className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-2xs text-ink-muted transition hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
                           >
                             Use last: <span className="font-mono">{display}</span>
                           </button>

@@ -52,7 +52,7 @@ export function Header({
           >
             <SearchIcon className="h-4 w-4" />
             Search
-            <kbd className="rounded border border-border bg-cream px-1.5 py-0.5 font-sans text-[11px] font-medium text-ink-soft dark:border-night-border dark:bg-night">
+            <kbd className="rounded border border-border bg-cream px-1.5 py-0.5 font-sans text-2xs font-medium text-ink-soft dark:border-night-border dark:bg-night">
               ⌘K
             </kbd>
           </button>
