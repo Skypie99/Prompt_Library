@@ -457,7 +457,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               Your prompts, one keystroke away.
             </h1>
 
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-muted dark:text-paper-muted sm:text-lg">
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-muted dark:text-paper-muted sm:text-lg">
               Search, customize, and run your best prompts with Claude — in seconds.
             </p>
 
@@ -465,6 +465,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               onClick={() => setPaletteOpen(true)}
               className="group mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-border bg-surface px-5 py-4 text-left shadow-card transition duration-200 ease-out motion-safe:hover:-translate-y-px hover:border-desert-400/50 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover dark:border-night-border dark:bg-night-surface"
             >
+              <SearchIcon
+                aria-hidden
+                className="h-5 w-5 shrink-0 text-ink-soft transition-colors group-hover:text-desert-500 dark:text-paper-muted dark:group-hover:text-teal-400"
+              />
               <span className="flex-1 font-mono text-sm text-ink-soft dark:text-paper-muted">
                 search prompts...
               </span>
@@ -477,7 +481,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                 prompt; one click opens it. Quiet visual treatment so it
                 augments the hero without competing with the headline. */}
             {recentPrompts.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-3">
                 <button
                   type="button"
                   onClick={() => openPrompt(recentPrompts[0])}
