@@ -692,7 +692,7 @@ export function PromptDetail({
               <div className="space-y-3">
                 {variables.map((variable) => (
                   <div key={variable.name}>
-                    <div className="mb-1 flex items-baseline justify-between gap-2">
+                    <div className="mb-1 flex flex-col items-start gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                       <label
                         htmlFor={`var-${variable.name}`}
                         className="block text-sm font-medium text-ink dark:text-paper"
@@ -831,7 +831,7 @@ export function PromptDetail({
             {showUnfilledWarning && (
               <div
                 role="alert"
-                className="mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
+                className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
               >
                 <span>
                   {variables.length - filledCount === 1
