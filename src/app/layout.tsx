@@ -13,6 +13,14 @@ import { ThemeSync } from "@/components/ThemeSync";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/fraunces/opsz.css";
 import "@fontsource/jetbrains-mono";
+// S10 — resolve (via the next.config.js woff2 rule) to the SAME hashed
+// /_next/static/media/*.woff2 that @fontsource's @font-face src points to, so
+// the <link rel=preload> in <body> below matches byte-for-byte (no double
+// download). Only the two above-the-fold latin faces are preloaded; JetBrains
+// Mono is intentionally left out. These are non-CSS asset imports, so the CSS
+// cascade order (jetbrains-mono → globals.css) is unaffected.
+import interPreloadHref from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2";
+import frauncesPreloadHref from "@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -77,6 +85,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+        {/* S10 — preload the two above-the-fold latin faces so the browser
+            discovers the woff2 before the render-blocking stylesheet parses,
+            collapsing the fallback→webfont reflow on the Fraunces hero H1 and
+            the Inter body. hrefs are the imported asset URLs (never a hardcoded
+            hash) so they match the @font-face src exactly; font-display:swap is
+            untouched. React 19 hoists these into <head>. Fraunces first (LCP). */}
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+          href={frauncesPreloadHref}
+        />
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+          href={interPreloadHref}
+        />
         <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
         <ThemeSync />
         {children}

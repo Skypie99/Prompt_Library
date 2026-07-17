@@ -18,6 +18,24 @@ const nextConfig = {
 
   // Emit trailing-slash directories so the CDN resolves /path/ reliably.
   trailingSlash: true,
+
+  // S10 — let JS/TS modules import a raw .woff2 as an asset URL so layout.tsx
+  // can <link rel=preload> the two above-the-fold latin faces. Scoped to JS/TS
+  // issuers ONLY: the @fontsource CSS url() pipeline (issuer: CSS) never hits
+  // this rule, so the font-loading STRATEGY (font-display:swap, subsets,
+  // fallback stacks) is unchanged. Reuses Next's global asset generator
+  // (static/media/[name].[hash:8][ext]), so the imported URL is byte-identical
+  // to the @font-face src and dedupes to a single emitted file — no double
+  // download. (Applies to `next build`'s webpack; a future --turbopack would
+  // need the Turbopack equivalent.)
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.woff2$/,
+      issuer: /\.(t|j)sx?$/,
+      type: "asset/resource",
+    });
+    return config;
+  },
 };
 
 module.exports = nextConfig;
