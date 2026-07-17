@@ -406,7 +406,11 @@ export function RunHistory({
                       />
                     )}
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
+                      {/* F-n2-11 · S2 — flex-wrap so the shrink-0 action cluster
+                        drops onto its own line under width pressure (matching the
+                        PromptDetail.tsx:873 pattern), instead of squeezing the
+                        min-w-0 meta into a one-word-per-line tower. */}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="min-w-0">
                           <span className="sr-only">{STATUS_LABEL[run.status]}, </span>
                           <time
