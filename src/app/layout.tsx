@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
+import { ThemeSync } from "@/components/ThemeSync";
+
 // Self-hosted variable fonts (no runtime request to Google) — works offline and
 // on a static host. Inter for UI/body, Fraunces for the characterful display.
 // Fraunces is imported via its `opsz` build (carries wght + the optical-size
@@ -60,17 +62,23 @@ export const viewport: Viewport = {
 const noFlashTheme = `(function(){try{var s=localStorage.getItem('promptlib:theme');if(s==='dark'){document.documentElement.classList.add('dark');return;}if(s==='light'){return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark');}}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // `suppressHydrationWarning` is load-bearing here, not cosmetic. The no-flash
-  // script above sets `class="dark"` on <html> before hydration. The JSX has no
-  // className on <html>, so React 19 treats that as a mismatch and resets the
-  // class to "" during hydration — wiping the script's work and dropping a
-  // stored Dark preference back to Light on every reload. Suppressing the
-  // warning tells React to leave the server/script-managed class attribute
-  // alone, so the pre-paint theme survives hydration. F-n2-9.
+  // Theme delivery is a two-part contract (F-n2-9):
+  //   1. The no-flash <script> below sets `class="dark"` on <html> before first
+  //      paint, so a dark-preferring visitor never sees a light flash.
+  //   2. <ThemeSync> re-asserts that class after hydration — because React 19
+  //      treats <html> as a HostSingleton and, on the hydration commit, WIPES
+  //      every attribute on it and re-applies only the JSX props (`lang` — no
+  //      className), deleting the script's `dark` class ~240ms in.
+  // `suppressHydrationWarning` only silences the dev warning for that mismatch;
+  // it does NOT stop the singleton attribute reset (an earlier fix that relied
+  // on it alone did not hold — see design-reviews/fable-audit S1). ThemeSync is
+  // a direct child of <body> so its pre-paint layout-effect runs in the same
+  // hydration commit as the wipe, re-adding the class before any frame paints.
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
+        <ThemeSync />
         {children}
       </body>
     </html>
