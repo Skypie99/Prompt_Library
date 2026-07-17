@@ -512,7 +512,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                   type="button"
                   onClick={() => openPrompt(recentPrompts[0])}
                   aria-label={`Resume the last prompt you opened: ${recentPrompts[0].title}`}
-                  className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-700 motion-safe:hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                  className="group flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-cream/60 px-4 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-700 motion-safe:hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-desert-400 dark:border-night-border dark:bg-night/40 dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                 >
                   <ClockIcon className="h-3.5 w-3.5 shrink-0 text-desert-500" aria-hidden />
                   <span aria-hidden className="shrink-0">
@@ -647,7 +647,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                     setActiveTag(null);
                   }}
                   aria-label="Clear active category and tag filters"
-                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:focus-visible:ring-desert-400 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
                 >
                   Clear filters
                 </button>
@@ -662,7 +662,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                   value={sortMode}
                   onChange={(event) => handleChangeSort(event.target.value as SortMode)}
                   aria-label="Sort prompts"
-                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs text-ink transition hover:border-desert-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-400 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:text-paper dark:focus-visible:ring-offset-night"
+                  className="rounded-md border border-border bg-surface px-2 py-1 text-xs text-ink transition hover:border-desert-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:focus-visible:ring-desert-400 dark:border-night-border dark:bg-night-surface dark:text-paper dark:focus-visible:ring-offset-night"
                 >
                   {(Object.keys(SORT_LABELS) as SortMode[]).map((mode) => (
                     <option key={mode} value={mode}>

@@ -729,7 +729,7 @@ export function PromptDetail({
                         placeholder={variable.placeholder}
                         minRows={5}
                         maxHeightPx={480}
-                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60"
+                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-muted focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60"
                       />
                     ) : (
                       // F-n2-4 — single-line input with an inline × clear
@@ -743,7 +743,7 @@ export function PromptDetail({
                           onChange={(event) => setValue(variable.name, event.target.value)}
                           placeholder={variable.placeholder}
                           className={clsx(
-                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-soft focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60",
+                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60",
                             (values[variable.name] ?? "") !== "" && "pr-8",
                           )}
                         />
