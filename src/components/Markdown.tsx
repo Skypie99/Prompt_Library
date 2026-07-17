@@ -122,7 +122,11 @@ function CodeBlock({ value }: { value: string }) {
     <div className="group/code relative my-3" role="region" aria-label="Code block">
       <pre
         aria-label="Code block"
-        className="overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 pr-14 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper"
+        // S13 — reserve the gutter for the WIDEST button state ("Copied"): pr-20
+        // clears the fixed-width pill (right-2 + min-w-[4rem]) so a one-line
+        // snippet's payload characters stay visible in both the "Copy" and
+        // "Copied" states (the confirmation never overprints code).
+        className="overflow-x-auto rounded-md border border-border bg-cream/60 px-3 py-2 pr-20 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper"
       >
         <code>{value}</code>
       </pre>
@@ -130,7 +134,9 @@ function CodeBlock({ value }: { value: string }) {
         type="button"
         onClick={handleCopy}
         aria-label={copied ? "Code copied" : "Copy code"}
-        className="absolute right-2 top-2 rounded-md border border-border bg-surface px-2 py-1.5 text-xs font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-700 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
+        // min-w-[4rem] + text-center fixes the pill footprint so it does not
+        // grow when the label widens to "Copied" (matched by the pre's pr-20).
+        className="absolute right-2 top-2 min-w-[4rem] rounded-md border border-border bg-surface px-2 py-1.5 text-center text-xs font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-700 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
       >
         {copied ? "Copied" : "Copy"}
       </button>

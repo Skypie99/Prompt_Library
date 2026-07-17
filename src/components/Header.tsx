@@ -20,8 +20,12 @@ export function Header({
   density,
   onChangeDensity,
 }: HeaderProps) {
+  // S13 — firm the sticky-band backing (cream/night alpha only, LOCKED palette
+  // unrecolored) so Recent-card body text stops ghosting through the translucent
+  // glass on scroll. /80 → /90 halves the show-through while backdrop-blur keeps
+  // the restrained glass feel.
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-cream/80 backdrop-blur dark:border-teal-400/30 dark:bg-night/80">
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-cream/90 backdrop-blur dark:border-teal-400/30 dark:bg-night/90">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
         <div className="flex items-center gap-2">
           <span
