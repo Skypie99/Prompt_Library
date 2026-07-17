@@ -29,6 +29,9 @@ interface SettingsModalProps {
   onSave: (next: Settings) => void;
   /** Called after a successful import so HomeClient re-reads from storage. */
   onLibraryImported?: () => void;
+  /** Opens the keyboard-shortcuts sheet — the touch path to shortcuts, since
+   *  the Header "?" button is desktop-only (S16). */
+  onOpenShortcuts?: () => void;
 }
 
 type ImportState =
@@ -56,6 +59,7 @@ export function SettingsModal({
   onClose,
   onSave,
   onLibraryImported,
+  onOpenShortcuts,
 }: SettingsModalProps) {
   const [apiKey, setApiKey] = useState("");
   const [model, setModel] = useState(settings.model);
@@ -301,6 +305,27 @@ export function SettingsModal({
         >
           Get an API key from the Anthropic Console →
         </a>
+
+        {/* S16 — reach the keyboard-shortcuts sheet without a hardware keyboard.
+            The Header "?" is desktop-only; this row is the touch path, opened
+            from the always-visible Settings gear. Rendered only when wired. */}
+        {onOpenShortcuts && (
+          <div className="border-t border-border pt-5 dark:border-night-border">
+            <button
+              type="button"
+              onClick={onOpenShortcuts}
+              className="flex min-h-[44px] w-full items-center justify-between gap-3 rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-ink-muted transition hover:border-teal-300 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:hover:text-teal-300 dark:focus-visible:ring-offset-night"
+            >
+              <span>Keyboard shortcuts</span>
+              <kbd
+                aria-hidden
+                className="rounded border border-border bg-cream px-1.5 py-0.5 font-sans text-2xs font-medium text-ink-soft dark:border-night-border dark:bg-night dark:text-paper-muted"
+              >
+                ?
+              </kbd>
+            </button>
+          </div>
+        )}
 
         {/* ---- Backup / Restore ---- */}
         <div className="border-t border-border pt-5 dark:border-night-border">

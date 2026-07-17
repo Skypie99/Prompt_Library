@@ -20,13 +20,9 @@ const SHORTCUTS: ReadonlyArray<{
 }> = [
   { keys: [["?"]], description: "Show this help" },
   {
-    keys: [
-      ["⌘", "K"],
-      ["Ctrl", "K"],
-    ],
+    keys: [["⌘", "K"], ["Ctrl", "K"], ["/"]],
     description: "Open the search palette",
   },
-  { keys: [["/"]], description: "Open the search palette" },
   { keys: [["Esc"]], description: "Close any open overlay (palette, prompt, modal, form)" },
   {
     keys: [

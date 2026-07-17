@@ -817,6 +817,10 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         onClose={() => setSettingsOpen(false)}
         onSave={updateSettings}
         onLibraryImported={refreshLibraryFromStorage}
+        onOpenShortcuts={() => {
+          setSettingsOpen(false);
+          setShortcutsOpen(true);
+        }}
       />
 
       {form && (
