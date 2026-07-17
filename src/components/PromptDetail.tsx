@@ -797,7 +797,16 @@ export function PromptDetail({
                   onClick={handleStop}
                   className="flex flex-1 items-center justify-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium text-ink transition active:scale-95 dark:border-night-border dark:text-paper"
                 >
-                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-teal-300 border-t-teal-600" />
+                  {/* S8 — RM-safe busy indicator. Under prefers-reduced-motion the
+                      global rule (globals.css:131-142) zeroes ALL animation, so the
+                      spin is gated behind motion-safe: and the border-t asymmetry too
+                      — leaving a STATIC uniform teal-300 ring (a status token) instead
+                      of a frozen half-drawn spinner. The "Stop" text carries the
+                      meaning, so the ring is aria-hidden. */}
+                  <span
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 rounded-full border-2 border-teal-300 motion-safe:border-t-teal-600 motion-safe:animate-spin"
+                  />
                   Stop
                 </button>
               ) : (
@@ -926,6 +935,22 @@ export function PromptDetail({
               </button>
             </div>
 
+            {/* S8 — the SINGLE live region for run/streaming state. Persistent +
+                sr-only: role=status implies aria-live=polite + aria-atomic=true, so a
+                screen reader hears a start cue then one "Response complete" summary,
+                instead of the answer being re-spoken token-by-token as <Markdown>
+                re-parses the whole tree each chunk. Fires on start + success only —
+                the error path is announced by the scoped role=alert below. Mounted
+                here (outside showResponsePanel) so it is already in the DOM before
+                `running` flips, which is what makes the change get announced. */}
+            <div role="status" className="sr-only">
+              {running
+                ? "Claude is responding…"
+                : response.length > 0 && !error
+                  ? "Response complete"
+                  : ""}
+            </div>
+
             {/* Response / error */}
             {showResponsePanel && (
               <div
@@ -940,7 +965,12 @@ export function PromptDetail({
                   </span>
                   {running && (
                     <span className="flex items-center gap-1.5 text-xs text-teal-700 dark:text-teal-400">
-                      <span className="h-3 w-3 animate-spin rounded-full border-2 border-teal-300 border-t-teal-600" />
+                      {/* S8 — RM-safe: motion-safe-gated spin; static uniform ring
+                          under reduced-motion. "Streaming…" text carries meaning. */}
+                      <span
+                        aria-hidden="true"
+                        className="h-3 w-3 rounded-full border-2 border-teal-300 motion-safe:border-t-teal-600 motion-safe:animate-spin"
+                      />
                       Streaming…
                     </span>
                   )}
@@ -1091,8 +1121,11 @@ export function PromptDetail({
                 ) : (
                   <div
                     id="response-content"
-                    aria-live="polite"
-                    aria-atomic="false"
+                    // S8 — no longer a live region. The sr-only role=status above is
+                    // the single announcer; this stays a SILENT, navigable region so
+                    // the finished answer is not re-spoken token-by-token. A screen
+                    // reader reads it on demand after hearing "Response complete".
+                    role="region"
                     aria-label="Claude response"
                     className={clsx(
                       "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper",
@@ -1102,7 +1135,13 @@ export function PromptDetail({
                   >
                     <Markdown source={response} />
                     {running && (
-                      <span className="ml-0.5 inline-block animate-pulse font-semibold text-teal-500">
+                      // S8 — RM-safe streaming caret: motion-safe-gated pulse; under
+                      // reduced-motion it rests as a steady (opaque) block cursor,
+                      // which still reads as "in progress". aria-hidden (decorative).
+                      <span
+                        aria-hidden="true"
+                        className="ml-0.5 inline-block font-semibold text-teal-500 motion-safe:animate-pulse"
+                      >
                         ▋
                       </span>
                     )}
