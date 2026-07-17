@@ -138,7 +138,10 @@ function CodeBlock({ value }: { value: string }) {
         // grow when the label widens to "Copied" (matched by the pre's pr-20).
         className="absolute right-2 top-2 min-w-[4rem] rounded-md border border-border bg-surface px-2 py-1.5 text-center text-xs font-medium text-ink-muted opacity-0 transition hover:border-teal-300 hover:text-teal-700 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group-hover/code:opacity-100 dark:border-night-border dark:bg-night-surface dark:text-paper-muted dark:hover:text-teal-300"
       >
-        {copied ? "Copied" : "Copy"}
+        {/* S12 — the code-block copy joins the unified confirmation: a label
+            cross-fade only (no icon — keeps the S13 fixed min-w-[4rem]/pr-20
+            footprint exactly). motion-safe → static swap under reduced motion. */}
+        {copied ? <span className="motion-safe:animate-fade-in">Copied</span> : "Copy"}
       </button>
     </div>
   );

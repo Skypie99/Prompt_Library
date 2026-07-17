@@ -162,12 +162,22 @@ const config: Config = {
           from: { transform: "translateY(100%)" },
           to: { transform: "translateY(0)" },
         },
+        // S12 — the ONE sanctioned copy-confirmation flourish (Fork 4 = B2, the
+        // review's explicit carve-out to "do not add animations"): a single
+        // off→on blink of the `>_` glyph on copy-confirm. iteration-count 1 in
+        // the animation below → one transient, never a loop, no flash hazard.
+        "blink-once": {
+          "0%": { opacity: "1" },
+          "50%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         "fade-in": "fade-in 180ms ease-out",
         "scale-in": "scale-in 200ms ease-out",
         pop: "pop 250ms ease-out",
         "slide-up": "slide-up 240ms cubic-bezier(0.32, 0.72, 0, 1)",
+        "blink-once": "blink-once 240ms ease-in-out 1",
       },
     },
   },

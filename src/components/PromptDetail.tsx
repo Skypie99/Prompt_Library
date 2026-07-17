@@ -794,8 +794,18 @@ export function PromptDetail({
               >
                 {copied ? (
                   <>
-                    <CheckIcon className="h-4 w-4" />
-                    Copied
+                    <CheckIcon className="h-4 w-4 motion-safe:animate-pop" />
+                    <span className="motion-safe:animate-fade-in">Copied</span>
+                    {/* S12 (Fork 4 = B2) — the ownable signature beat: the
+                        product's own `>_` glyph blinks ONCE on confirm, then
+                        rests until the 1500ms revert unmounts it. aria-hidden
+                        (the button's aria-label already announces the state);
+                        motion-safe so under reduced motion it rests static (no
+                        blink). Lives ONLY on this fixed flex-1 primary → the
+                        added glyph cannot shift layout. */}
+                    <span aria-hidden className="font-mono motion-safe:animate-blink-once">
+                      &gt;_
+                    </span>
                   </>
                 ) : (
                   <>
@@ -939,8 +949,10 @@ export function PromptDetail({
               >
                 {templateCopied ? (
                   <>
-                    <CheckIcon className="h-3.5 w-3.5" />
-                    Template copied
+                    {/* S12 — the flat secondary gains the same considered
+                        confirmation as the primary (motion-safe pop + fade). */}
+                    <CheckIcon className="h-3.5 w-3.5 motion-safe:animate-pop" />
+                    <span className="motion-safe:animate-fade-in">Template copied</span>
                   </>
                 ) : (
                   "Copy template (with {{variables}})"
@@ -1015,8 +1027,10 @@ export function PromptDetail({
                       >
                         {responseCopied ? (
                           <>
-                            <CheckIcon className="h-3.5 w-3.5" />
-                            Copied
+                            {/* S12 — same considered confirmation as the other
+                                copy affordances (motion-safe pop + fade). */}
+                            <CheckIcon className="h-3.5 w-3.5 motion-safe:animate-pop" />
+                            <span className="motion-safe:animate-fade-in">Copied</span>
                           </>
                         ) : (
                           "Copy response"
