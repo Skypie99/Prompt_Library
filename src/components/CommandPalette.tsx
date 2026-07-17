@@ -165,6 +165,21 @@ export function CommandPalette({
             placeholder="Search prompts by title, tag, or content…"
             className="flex-1 bg-transparent text-ink outline-none placeholder:text-ink-soft dark:text-paper"
             aria-label="Search prompts"
+            // S3 — combobox/listbox pattern. Focus stays on the input; the
+            // roving selection is carried by aria-activedescendant, not by
+            // moving DOM focus. The popup attributes are applied only when a
+            // listbox is actually rendered (results.length > 0) so aria-controls
+            // never dangles and aria-expanded reflects real visibility.
+            role="combobox"
+            aria-autocomplete="list"
+            aria-haspopup="listbox"
+            aria-expanded={results.length > 0}
+            aria-controls={results.length > 0 ? "cmdk-listbox" : undefined}
+            aria-activedescendant={
+              results.length > 0 && results[activeIndex]
+                ? `cmdk-option-${results[activeIndex].prompt.id}`
+                : undefined
+            }
           />
           <Kbd>esc</Kbd>
         </div>
@@ -200,12 +215,24 @@ export function CommandPalette({
             )}
           </div>
         ) : (
-          <ul ref={listRef} className="scrollbar-soft max-h-[50vh] overflow-y-auto p-2">
+          <ul
+            ref={listRef}
+            id="cmdk-listbox"
+            role="listbox"
+            aria-label="Prompt search results"
+            className="scrollbar-soft max-h-[50vh] overflow-y-auto p-2"
+          >
             {results.map((result, index) => {
               const isActive = index === activeIndex;
               return (
-                <li key={result.prompt.id}>
+                <li key={result.prompt.id} role="presentation">
                   <button
+                    id={`cmdk-option-${result.prompt.id}`}
+                    role="option"
+                    aria-selected={isActive}
+                    // Options are not tab stops in the activedescendant model —
+                    // focus stays on the input, arrows drive the selection.
+                    tabIndex={-1}
                     data-active={isActive}
                     onMouseMove={() => setActiveIndex(index)}
                     onClick={() => onSelect(result.prompt)}
@@ -270,7 +297,11 @@ export function CommandPalette({
 
         {/* Footer hints */}
         <div className="flex items-center justify-between border-t border-border px-4 py-2.5 text-xs text-ink-soft dark:border-night-border dark:text-paper-muted">
-          <span>
+          {/* S3 — the single polite live region for the palette. Scoped to the
+              count text ONLY (never the option names) so screen readers hear
+              "13 results" / "0 results" as the query changes, while the focused
+              option is announced via aria-activedescendant. */}
+          <span aria-live="polite" aria-atomic="true">
             {results.length} {results.length === 1 ? "result" : "results"}
           </span>
           <span className="hidden items-center gap-3 sm:flex">
