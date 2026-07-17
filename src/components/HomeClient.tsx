@@ -457,7 +457,14 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
       <main id="main-content" className="mx-auto max-w-5xl px-6">
         {/* Hero */}
-        <section className="relative pb-8 pt-10 sm:pb-12 sm:pt-24">
+        {/* S4 — at lg+ the hero becomes a two-column grid so the permanently-
+            empty right ~40% at >=1440 gains one restrained element (the
+            featured card below). Left track = 36rem = the existing max-w-xl
+            content width, so the stack keeps its width and the H1 keeps its
+            wrap; the two absolute aria-hidden bg layers are position:absolute
+            (not grid items) so they still fill the section. Grid is lg-gated:
+            below lg the hero is byte-render-identical. */}
+        <section className="relative pb-8 pt-10 sm:pb-12 sm:pt-24 lg:grid lg:grid-cols-[minmax(0,36rem)_minmax(0,1fr)] lg:items-center lg:gap-x-12">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 bg-desert-hero dark:hidden"
@@ -530,6 +537,64 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                 </button>
               </div>
             )}
+          </div>
+
+          {/* S4 — featured/recent card. Fills the permanently-empty right ~40%
+              of the hero at lg+. A restrained, PromptCard-styled panel of
+              AMBIENT browse content: no teal action fill, no shadow, no lift —
+              only a border-tint hover — so it never competes with the teal
+              hero search box. `relative` lifts it above the two aria-hidden
+              gradient/dot-grid layers (position:absolute, not grid items);
+              `hidden lg:block` keeps the sub-lg hero byte-identical; as grid
+              item 2 it is placed AFTER the search box + Resume pill in DOM, so
+              focus order follows. SSR + first client render both show a seed
+              (favorites/recent hydrate from localStorage after mount, exactly
+              like the Resume pill above), so there is no hydration mismatch —
+              only a post-hydration swap to the user's recent/favorite. */}
+          <div className="relative hidden min-w-0 lg:block">
+            {(() => {
+              const fav = favoritePrompts[0];
+              const recentTop = recentPrompts[0];
+              const featured = fav ?? recentTop ?? seedPrompts[0];
+              if (!featured) return null;
+              const fromRecent = (!fav || fav.id !== featured.id) && recentTop?.id === featured.id;
+              const Kicker = fromRecent ? ClockIcon : SparkleIcon;
+              const kickerLabel = fromRecent ? "Recent" : "Featured";
+              return (
+                <button
+                  type="button"
+                  onClick={() => openPrompt(featured)}
+                  aria-label={`Open ${kickerLabel.toLowerCase()} prompt: ${featured.title}`}
+                  className="group flex w-full flex-col rounded-xl border border-border bg-surface p-5 text-left transition duration-200 ease-out hover:border-desert-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:hover:border-teal-400/40 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
+                >
+                  <span className="flex items-center gap-1.5 text-2xs font-semibold uppercase tracking-wider text-ink-soft dark:text-paper-muted">
+                    <Kicker aria-hidden className="h-3.5 w-3.5 shrink-0" />
+                    {kickerLabel}
+                  </span>
+                  <span className="mt-3 inline-flex w-fit items-center rounded-full bg-desert-100 px-2.5 py-0.5 text-xs font-medium text-desert-700 dark:bg-teal-500/15 dark:text-teal-300">
+                    {featured.category}
+                  </span>
+                  <span className="mt-3 font-display text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-desert-600 dark:text-paper dark:group-hover:text-teal-300">
+                    {featured.title}
+                  </span>
+                  <span className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-ink-muted dark:text-paper-muted">
+                    {featured.description}
+                  </span>
+                  {featured.tags.length > 0 && (
+                    <span className="mt-4 flex flex-wrap gap-1.5">
+                      {featured.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted dark:bg-night dark:text-paper-muted"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </span>
+                  )}
+                </button>
+              );
+            })()}
           </div>
         </section>
 
