@@ -25,7 +25,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://prompts.skypistudio.com"),
-  title: "Prompt Library",
+  // S18 — a light value hook in the tab title / text-only link preview (Fork 5,
+  // Sky pick). openGraph.title / twitter.title below stay bare; they own their
+  // own positioning via the OG card.
+  title: "Prompt Library — run prompts with Claude",
   description: "Search, customize, and run your prompts with Claude in seconds.",
   // Authorship so the project reads as Sky's work, not an anonymous demo.
   authors: [{ name: "Sky Halisky", url: "https://skypistudio.com" }],
