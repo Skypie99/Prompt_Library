@@ -459,11 +459,14 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
         {/* Hero */}
         {/* S4 — at lg+ the hero becomes a two-column grid so the permanently-
             empty right ~40% at >=1440 gains one restrained element (the
-            featured card below). Left track = 36rem = the existing max-w-xl
-            content width, so the stack keeps its width and the H1 keeps its
-            wrap; the two absolute aria-hidden bg layers are position:absolute
-            (not grid items) so they still fill the section. Grid is lg-gated:
-            below lg the hero is byte-render-identical. */}
+            featured card below). Left track = 36rem: the subhead/trust/search
+            (max-w-xl = 36rem) are unchanged; the H1 (max-w-2xl = 42rem) is
+            narrowed to the 36rem track, but its 2-line wrap holds because
+            "keystroke" forces the break well inside 576px — verified at both
+            1024 and 1440 (h1 renders 576px wide, 2 lines). The two absolute
+            aria-hidden bg layers are position:absolute (not grid items) so
+            they still fill the section. Grid is lg-gated: below lg the hero is
+            byte-render-identical. */}
         <section className="relative pb-8 pt-10 sm:pb-12 sm:pt-24 lg:grid lg:grid-cols-[minmax(0,36rem)_minmax(0,1fr)] lg:items-center lg:gap-x-12">
           <div
             aria-hidden
