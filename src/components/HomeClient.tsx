@@ -56,6 +56,22 @@ interface FormState {
   initial: Prompt | null;
 }
 
+// S14 — single source of truth for "should the API key nudge show?": no key
+// saved, not dismissed this session, and no completed run yet (a run proves the
+// key works). Same semantics as the prior inline check; sessionStorage is only
+// read from effects/handlers, never during SSR/render.
+function computeKeyNudge(apiKey: string, counts: Map<string, number>): boolean {
+  if (apiKey) return false;
+  let dismissed = false;
+  try {
+    dismissed = sessionStorage.getItem("promptlib:keyNudgeDismissed") === "1";
+  } catch {
+    dismissed = false;
+  }
+  if (dismissed) return false;
+  return !Array.from(counts.values()).some((c) => c > 0);
+}
+
 export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   // Overlay state
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -122,22 +138,19 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
     setRunCounts(loadedCounts);
     setLastRunIsos(loadAllLastRunIsos());
 
-    // F-r1 — show nudge only when: no API key stored, not session-dismissed,
-    // and no prior runs (a completed run is proof the key works).
-    if (!loadedSettings.apiKey) {
-      const nudgeDismissed = (() => {
-        try {
-          return sessionStorage.getItem("promptlib:keyNudgeDismissed") === "1";
-        } catch {
-          return false;
-        }
-      })();
-      const hasAnyRun = Array.from(loadedCounts.values()).some((c) => c > 0);
-      setShowApiKeyNudge(!nudgeDismissed && !hasAnyRun);
+    // F-r1 / S14 — first-run guidance is sequenced, not stacked. On a fresh
+    // profile the OnboardingHint shows first (below the search box) and the
+    // ApiKeyNudge top banner is held back until the hint is dismissed, so the
+    // two notices never bracket the hero at once (see dismissOnboarding). A
+    // returning user already onboarded but still without a key sees the nudge
+    // immediately, exactly as before.
+    const onboarded = loadOnboarded();
+    setShowOnboarding(!onboarded);
+    if (onboarded) {
+      setShowApiKeyNudge(computeKeyNudge(loadedSettings.apiKey, loadedCounts));
     }
     setDensity(loadDensity());
     setSortMode(loadSort());
-    setShowOnboarding(!loadOnboarded());
 
     return () => {
       setStorageWriteFailureHandler(null);
@@ -252,7 +265,12 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
   const dismissOnboarding = useCallback(() => {
     setShowOnboarding(false);
     saveOnboarded();
-  }, []);
+    // S14 — the hint is gone, so surface the key nudge if it's still warranted.
+    // ApiKeyNudge is role="status" (aria-live polite), so this fresh conditional
+    // mount is announced politely — the same mechanism the nudge already uses
+    // when it appears from the mount effect today.
+    if (computeKeyNudge(settings.apiKey, runCounts)) setShowApiKeyNudge(true);
+  }, [settings.apiKey, runCounts]);
 
   // Called by SettingsModal after a successful F5 import. Re-reads every
   // library-side keyspace from localStorage so the home grid reflects the
