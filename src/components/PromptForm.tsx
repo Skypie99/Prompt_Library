@@ -74,7 +74,11 @@ function PromptBodyPreview({ body, sampleFill }: { body: string; sampleFill: boo
     // Header is now rendered by the parent (so the "Sample fill" toggle
     // can sit next to it). This component is just the body box.
     <div>
-      <pre className="mt-1 max-h-48 overflow-y-auto whitespace-pre-wrap break-words rounded-md border border-border bg-cream/40 px-3 py-2 font-sans text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night/40 dark:text-paper">
+      {/* S9 — the body PREVIEW matches the mono authoring textarea directly
+          above it: you type in mono, you preview in mono. Font-family only;
+          stays text-xs (12px, above the 11px floor) with leading-relaxed, so
+          legibility is unchanged (verified) and contrast is untouched. */}
+      <pre className="mt-1 max-h-48 overflow-y-auto whitespace-pre-wrap break-words rounded-md border border-border bg-cream/40 px-3 py-2 font-mono text-xs leading-relaxed text-ink dark:border-night-border dark:bg-night/40 dark:text-paper">
         {segments.map((segment, index) =>
           segment.type === "text" ? (
             <span key={index}>{segment.value}</span>

@@ -632,7 +632,15 @@ export function PromptDetail({
             <div className="mb-3 text-xs font-medium uppercase tracking-wider text-ink-soft">
               Preview
             </div>
-            <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-ink dark:text-paper">
+            {/* S9 — the PREVIEW of the user's prompt wears the same JetBrains
+                Mono the author types in (the mono variable inputs beside it,
+                the mono authoring textarea in PromptForm), so authored content
+                reads in ONE machine-instruction voice. Font-family only — size
+                (text-sm), color, leading, and the segment render are unchanged.
+                The AI response panel + Markdown prose stay font-sans on
+                purpose (mono = what the user authored, sans = the model's
+                prose). */}
+            <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-ink dark:text-paper">
               {segments.map((segment, index) => {
                 if (segment.type === "text") {
                   return <span key={index}>{segment.value}</span>;
