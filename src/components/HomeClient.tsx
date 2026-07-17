@@ -535,11 +535,54 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
 
         {showOnboarding && <OnboardingHint onDismiss={dismissOnboarding} />}
 
+        {/* S11 — polite results announcer. Persistent + aria-atomic so the
+            live region is registered before its text mutates; role=status ⇒
+            aria-live=polite (the calmer channel; the error path at
+            PromptDetail uses role=alert). Announces the zero-result recovery
+            line AND the filtered count on every filter change — covering the
+            count span, which is hidden below sm and otherwise never spoken
+            (SC 4.1.3). The visible recovery banner is NOT a live region, so
+            nothing double-announces. */}
+        <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+          {activeCategory || activeTag
+            ? visiblePrompts.length === 0
+              ? `No prompts match ${filteredHeading}. Filter still active — clear it or choose another tag.`
+              : `${visiblePrompts.length} ${visiblePrompts.length === 1 ? "prompt" : "prompts"} in ${filteredHeading}.`
+            : ""}
+        </p>
         <CategoryChips
           categories={categoriesWithCounts}
           active={activeCategory}
           onSelect={setActiveCategory}
         />
+        {/* S11 (hoist) — when a filter yields zero matches, lift a compact
+            recovery banner ABOVE the tag cloud so "nothing matched + clear" is
+            reachable without scrolling past the fully-expanded (never trimmed)
+            cloud, and it gives keyboard users an early tab stop. The lower
+            in-context zero tile stays; this is the top-of-cloud shortcut. Room
+            palette only (border/ink/desert) — no teal, no competing CTA. The
+            screen-reader announce is handled by the sr-only live region above,
+            so this banner is not itself a live region (no double-announce). */}
+        {visiblePrompts.length === 0 && (activeCategory || activeTag) && (
+          <div className="mt-4 flex flex-col gap-3 rounded-xl border border-dashed border-border bg-cream/40 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 dark:border-night-border dark:bg-night/40">
+            <p className="text-sm text-ink-muted dark:text-paper-muted">
+              <span className="font-medium text-ink dark:text-paper">
+                No prompts match {filteredHeading}
+              </span>{" "}
+              — pick another tag below, or clear the filter.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveCategory(null);
+                setActiveTag(null);
+              }}
+              className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1 self-start rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-1 focus-visible:ring-offset-cream sm:self-auto dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-desert-400 dark:focus-visible:ring-offset-night"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
         <TagChips tags={tagsWithCounts} active={activeTag} onSelect={setActiveTag} />
 
         {/* Favorites: either the populated grid, or a soft "you haven't
@@ -691,7 +734,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
                     setActiveCategory(null);
                     setActiveTag(null);
                   }}
-                  className="mt-3 inline-flex items-center gap-1 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-600 dark:border-night-border dark:bg-night dark:text-paper-muted"
+                  className="mt-3 inline-flex min-h-[44px] items-center justify-center gap-1 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted transition hover:border-desert-300 hover:text-desert-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night dark:text-paper-muted dark:focus-visible:ring-desert-400 dark:focus-visible:ring-offset-night"
                 >
                   Clear filters
                 </button>
