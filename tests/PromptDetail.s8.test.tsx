@@ -166,4 +166,27 @@ describe("PromptDetail — S8 RM-safe feedback + calmer announce", () => {
     // the scoped alert carries the error
     expect(screen.getByRole("alert").textContent).toContain("Something broke.");
   });
+
+  it("announces 'Response stopped' (not 'complete') when a run is aborted mid-stream", async () => {
+    // Simulate the Stop path: streamClaude rejects with an AbortError after some
+    // partial content has streamed (the common case — the Stop button only shows
+    // while running, by which point onText has usually populated `response`).
+    mockedStreamClaude.mockImplementation(async ({ onText }: { onText: (c: string) => void }) => {
+      onText("partial ");
+      onText("answer");
+      const err = new Error("aborted by user");
+      err.name = "AbortError";
+      throw err;
+    });
+
+    render(<PromptDetail prompt={PROMPT} settings={SETTINGS} {...DEFAULT_CALLBACKS} />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Run with Claude" }));
+    });
+
+    // aborted-with-partial must NOT be announced as a normal completion
+    expect(statusText()).toBe("Response stopped");
+    expect(statusText()).not.toBe("Response complete");
+  });
 });

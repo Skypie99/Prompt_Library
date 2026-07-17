@@ -152,6 +152,9 @@ export function PromptDetail({
   const [running, setRunning] = useState(false);
   const [response, setResponse] = useState("");
   const [error, setError] = useState<ClaudeError | null>(null);
+  // S8 follow-up — distinguishes a user-aborted run from a natural completion so
+  // the sr-only role=status announces "Response stopped", not "Response complete".
+  const [aborted, setAborted] = useState(false);
   const [responseCopied, setResponseCopied] = useState(false);
   // F-r2 — countdown seconds remaining until "Retry" is enabled after a
   // rate-limit error. null when no countdown is active.
@@ -332,6 +335,7 @@ export function PromptDetail({
     setResponse("");
     setCurrentTokensUsed(null);
     pendingUsageRef.current = null;
+    setAborted(false);
     setRunning(true);
 
     const controller = new AbortController();
@@ -376,6 +380,7 @@ export function PromptDetail({
       if ((err as Error)?.name === "AbortError") {
         // User pressed Stop — keep whatever streamed in, show no error.
         status = "aborted";
+        setAborted(true);
       } else if (err instanceof ClaudeError) {
         setError(err);
         status = "errored";
@@ -729,7 +734,7 @@ export function PromptDetail({
                         placeholder={variable.placeholder}
                         minRows={5}
                         maxHeightPx={480}
-                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-muted focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60"
+                        className="w-full resize-y rounded-md border border-border bg-cream/50 px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none transition placeholder:text-ink-muted dark:placeholder:text-paper-muted focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60"
                       />
                     ) : (
                       // F-n2-4 — single-line input with an inline × clear
@@ -743,7 +748,7 @@ export function PromptDetail({
                           onChange={(event) => setValue(variable.name, event.target.value)}
                           placeholder={variable.placeholder}
                           className={clsx(
-                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60",
+                            "w-full rounded-md border border-border bg-cream/50 px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink-muted dark:placeholder:text-paper-muted focus:border-teal-400 focus:ring-2 focus:ring-teal-500 dark:border-night-border dark:bg-night dark:text-paper dark:focus:ring-teal-400/60",
                             (values[variable.name] ?? "") !== "" && "pr-8",
                           )}
                         />
@@ -946,9 +951,11 @@ export function PromptDetail({
             <div role="status" className="sr-only">
               {running
                 ? "Claude is responding…"
-                : response.length > 0 && !error
-                  ? "Response complete"
-                  : ""}
+                : aborted
+                  ? "Response stopped"
+                  : response.length > 0 && !error
+                    ? "Response complete"
+                    : ""}
             </div>
 
             {/* Response / error */}
