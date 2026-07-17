@@ -27,10 +27,12 @@ function Highlighted({
   value,
   matches,
   fieldKey,
+  isActive,
 }: {
   value: string;
   matches: PromptSearchResult["matches"];
   fieldKey: string;
+  isActive: boolean;
 }) {
   const segments = getHighlightSegments(value, matches, fieldKey);
   return (
@@ -39,7 +41,18 @@ function Highlighted({
         segment.highlight ? (
           <mark
             key={index}
-            className="rounded-sm bg-teal-200/70 text-ink dark:bg-teal-500/30 dark:text-paper"
+            className={clsx(
+              "rounded-sm bg-teal-200/70 text-ink dark:bg-teal-500/30 dark:text-paper",
+              // S7 — on the SELECTED row the mark fill vs the active-row tint is
+              // only ~1.08:1 light / 1.74:1 dark (SC 1.4.11 fail), so the "which
+              // words matched" cue vanishes exactly where the user is deciding.
+              // Add a darker-teal underline — a non-color graphical distinction
+              // measuring 4.79:1 light / 10.13:1 dark against the active-row
+              // tint (both ≥ 3:1). Teal identity kept (existing scale steps, no
+              // new hue); inactive rows and the AA text-over-mark pairs unchanged.
+              isActive &&
+                "underline decoration-teal-700 decoration-2 underline-offset-2 dark:decoration-teal-300",
+            )}
           >
             {segment.text}
           </mark>
@@ -256,6 +269,7 @@ export function CommandPalette({
                           value={result.prompt.title}
                           matches={result.matches}
                           fieldKey="title"
+                          isActive={isActive}
                         />
                       </div>
                       <div className="truncate text-xs text-ink-muted dark:text-paper-muted">
@@ -263,6 +277,7 @@ export function CommandPalette({
                           value={result.prompt.description}
                           matches={result.matches}
                           fieldKey="description"
+                          isActive={isActive}
                         />
                       </div>
                     </div>
