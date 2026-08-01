@@ -173,6 +173,14 @@ export function PromptDetail({
   // F-r2 — countdown seconds remaining until "Retry" is enabled after a
   // rate-limit error. null when no countdown is active.
   const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
+  // F9 — the countdown used to tick inside aria-live="polite", so a 30-second
+  // rate limit spoke THIRTY interruptions ("Retry in 29s", "Retry in 28s", …)
+  // and the Retry button's name churned once a second alongside it. The
+  // in-code comment believed updating once per second avoided spam; announcing
+  // once per second IS the spam. The visible counter now ticks silently and
+  // this carries two one-shot messages instead: the wait on entry, and the
+  // fact that retry became available.
+  const [retryAnnouncement, setRetryAnnouncement] = useState("");
   // F3c — true when user clicked Run with unfilled variables; shows inline
   // warning. Cleared on prompt change, dismiss, or when the user proceeds.
   const [showUnfilledWarning, setShowUnfilledWarning] = useState(false);
@@ -370,6 +378,9 @@ export function PromptDetail({
       clearInterval(retryCountdownRef.current);
       retryCountdownRef.current = null;
     }
+    // F9 — and drop its announcement, so a new run can't leave "Retry is now
+    // available" sitting in the live region as if it were current.
+    setRetryAnnouncement("");
     setRetryCountdown(null);
     setResponse("");
     setCurrentTokensUsed(null);
@@ -430,12 +441,19 @@ export function PromptDetail({
           if (retryCountdownRef.current) clearInterval(retryCountdownRef.current);
           let remaining = err.retryAfterSeconds;
           setRetryCountdown(remaining);
+          // F9 — announce the wait ONCE, on entry, with the whole duration.
+          setRetryAnnouncement(
+            `Rate limited — retry available in ${remaining} ${remaining === 1 ? "second" : "seconds"}.`,
+          );
           retryCountdownRef.current = setInterval(() => {
             remaining -= 1;
             if (remaining <= 0) {
               clearInterval(retryCountdownRef.current!);
               retryCountdownRef.current = null;
               setRetryCountdown(null);
+              // F9 — and once more when the wait is actually over, which is the
+              // moment the user needs to hear about.
+              setRetryAnnouncement("Retry is now available.");
             } else {
               setRetryCountdown(remaining);
             }
@@ -1036,6 +1054,12 @@ export function PromptDetail({
               {copyStatus}
             </div>
 
+            {/* F9 — the rate-limit announcer: exactly two messages per limit
+                (the wait, then availability), instead of one per tick. */}
+            <div role="status" className="sr-only">
+              {retryAnnouncement}
+            </div>
+
             {/* Response / error */}
             {showResponsePanel && (
               <div
@@ -1130,26 +1154,26 @@ export function PromptDetail({
                     )}
                     {/* F-r2 — rate-limit retry. When the API gives us a
                         retry-after value, show a countdown; otherwise just
-                        an immediate "Retry now" button. The live region
-                        announces the countdown update to screen readers but
-                        only when the value changes (aria-live="polite"). We
-                        update once per second so SR isn't spammed; the
-                        aria-label on the button carries the remaining time. */}
+                        an immediate "Retry now" button.
+
+                        F9 · SC 4.1.3 — the countdown span is NOT a live region.
+                        It used to be aria-live="polite" aria-atomic="true" and
+                        updated once a second, so a 30-second limit produced 30
+                        spoken interruptions, and the button's accessible name
+                        churned in step. The seconds now tick silently for
+                        sighted users; the two moments that actually matter —
+                        the wait beginning, and retry becoming available — are
+                        announced once each by the sr-only region below. */}
                     {error.kind === "rate-limit" && (
                       <div className="mt-2 flex items-center gap-3">
                         {retryCountdown !== null ? (
                           <>
-                            <span
-                              aria-live="polite"
-                              aria-atomic="true"
-                              className="text-xs tabular-nums text-danger-700 dark:text-danger-300"
-                            >
+                            <span className="text-xs tabular-nums text-danger-700 dark:text-danger-300">
                               Retry in {retryCountdown}s
                             </span>
                             <button
                               onClick={handleRetry}
                               disabled={running}
-                              aria-label={`Retry — available in ${retryCountdown} seconds`}
                               className="font-medium underline underline-offset-2 opacity-60 disabled:opacity-50"
                             >
                               Retry now

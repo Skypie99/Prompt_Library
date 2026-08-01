@@ -198,10 +198,10 @@ describe("PromptDetail — F3a: overloaded error Retry button", () => {
 
     // Countdown text should be present
     expect(screen.getByText("Retry in 30s")).toBeInTheDocument();
-    // The dimmed "Retry now" button (with aria-label carrying the seconds)
-    expect(
-      screen.getByRole("button", { name: /Retry — available in 30 seconds/ }),
-    ).toBeInTheDocument();
+    // The dimmed "Retry now" button. F9 — its name used to be rebuilt every
+    // second from the remaining seconds; that churn was the defect, so the
+    // name is now the stable visible text.
+    expect(screen.getByRole("button", { name: "Retry now" })).toBeInTheDocument();
     // There must NOT be a plain accessible "Retry" button (that's the overloaded path)
     expect(screen.queryByRole("button", { name: "Retry" })).not.toBeInTheDocument();
   });

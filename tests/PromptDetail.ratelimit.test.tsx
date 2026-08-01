@@ -153,13 +153,14 @@ describe("PromptDetail — F-r2 rate-limit retry UI", () => {
 
     await renderAndTriggerError();
 
-    // aria-live span with countdown text
+    // Visible countdown text (F9: no longer a live region — see f9 test file)
     expect(screen.getByText("Retry in 30s")).toBeInTheDocument();
 
-    // "Retry now" button (not the plain "Retry" button)
-    expect(
-      screen.getByRole("button", { name: /Retry — available in 30 seconds/ }),
-    ).toBeInTheDocument();
+    // "Retry now" button (not the plain "Retry" button).
+    // F9 — its name used to be `Retry — available in 30 seconds`, rebuilt once
+    // a second. That churn was the defect; the name is now the stable visible
+    // text.
+    expect(screen.getByRole("button", { name: "Retry now" })).toBeInTheDocument();
   });
 
   // ---------------------------------------------------------------------------
