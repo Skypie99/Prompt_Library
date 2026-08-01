@@ -31,6 +31,60 @@
     background-color: rgba(34, 211, 238, 0.22);
     color: #c9d1e0;
   }
+
+  /* ---------------------------------------------------------------
+     F10 · SC 2.4.11 Focus Not Obscured (Minimum) — new in WCAG 2.2.
+
+     The Header is `sticky top-0 z-40` and measures 73px. Without a
+     scroll margin the browser scrolls a newly-focused element flush to
+     the viewport top — i.e. UNDERNEATH the header. Measured on the
+     audited build: a 26px tag chip and a 32px favorite star ended up
+     ENTIRELY hidden during ordinary Shift+Tab navigation back up the
+     page; focus was somewhere, invisible.
+
+     5.5rem = 88px at the default root size: the 73px header plus 15px
+     of breathing room. Deliberately in `rem`, so when a user scales
+     text (and the header grows with it) the margin scales too.
+
+     `:where()` keeps specificity at 0 — this is a floor, and any
+     component or Tailwind `scroll-mt-*` utility still wins over it.
+     --------------------------------------------------------------- */
+  :where(
+    a[href],
+    area[href],
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    iframe,
+    [contenteditable="true"],
+    [tabindex]:not([tabindex^="-"])
+  ) {
+    scroll-margin-top: 5.5rem;
+  }
+
+  /* ...but NOT inside the app's own nested scroll containers. Every
+     `.scrollbar-soft` scrollport lives inside a fixed-position sheet or
+     modal (the page behind is scroll-locked while they're open), so the
+     sticky header cannot obscure anything in them — and an 88px margin
+     there would just over-scroll short lists. Specificity 0,1,0 beats
+     the `:where()` floor above. */
+  .scrollbar-soft
+    :where(
+      a[href],
+      area[href],
+      button,
+      input,
+      select,
+      textarea,
+      summary,
+      iframe,
+      [contenteditable="true"],
+      [tabindex]:not([tabindex^="-"])
+    ) {
+    scroll-margin-top: 0;
+  }
 }
 
 @layer utilities {
