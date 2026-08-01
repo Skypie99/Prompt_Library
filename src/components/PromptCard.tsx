@@ -46,40 +46,64 @@ export const PromptCard = memo(function PromptCard({
   // F-night-11 — deterministic per-category color for the 3px left stripe.
   // Pure derived; memo because the categoryColor call hashes the string.
   const catColor = useMemo(() => categoryColor(prompt.category), [prompt.category]);
-  // The card itself is the click target; the star is a nested control, so we
-  // use a div with button semantics (a real <button> can't contain a button).
-  function handleKeyDown(event: React.KeyboardEvent) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      onOpen();
-    }
-  }
+  // F-n2-1 — native hover preview of the first ~240 chars of the body. Lives
+  // on the stretched open-button (which covers the card), so hovering
+  // anywhere on the card surfaces it.
+  const bodyPreview =
+    prompt.body.length > 240 ? `${prompt.body.slice(0, 240).trim()}…` : prompt.body;
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={onOpen}
-      onKeyDown={handleKeyDown}
+    // F1/F6 — the card used to be a `div[role="button"]` that CONTAINED the
+    // favorite button and the tag-filter buttons. That is `nested-interactive`
+    // (SC 4.1.2): the card's accessible name computed from its entire
+    // contents — category + badges + title + description + every tag — and a
+    // button-inside-a-button has no defined screen-reader interaction model.
+    // The <h3> sat inside the button too, so heading navigation dropped users
+    // onto button internals (SC 1.3.1).
+    //
+    // Now the card is a plain <article> and the open action is a stretched
+    // button covering it: one concise name, no nesting, the heading back
+    // outside the interactive element. The star and the tag chips are still
+    // real, still keyboard-reachable — they just sit ABOVE the overlay
+    // (relative z-10) instead of inside it.
+    <article
       className={clsx(
-        "group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out motion-safe:hover:-translate-y-px hover:border-desert-200 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover focus:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:border-night-border dark:bg-night-surface dark:hover:border-teal-400/40 dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
+        "group relative flex h-full cursor-pointer flex-col rounded-xl border border-border bg-surface text-left shadow-card transition duration-200 ease-out motion-safe:hover:-translate-y-px hover:border-desert-200 hover:shadow-cardHoverWarm dark:hover:shadow-cardHover dark:border-night-border dark:bg-night-surface dark:hover:border-teal-400/40",
         isCompact ? "p-3.5" : "p-5",
       )}
     >
       {/* F-night-11 — 3px left stripe in the category's deterministic
           color. Aria-hidden because the category chip already names the
           category — this is a sighted-user-only scanning signal, not
-          new information. */}
-      <span
-        aria-hidden
-        className="absolute inset-y-0 left-0 w-[3px] dark:hidden"
-        style={{ backgroundColor: catColor.light }}
+          new information.
+
+          The clip lives HERE rather than on the card root: the root can no
+          longer be `overflow-hidden` or it would clip the open-button's
+          focus ring, and the stripes are the only thing that ever needed
+          clipping to the rounded corners. */}
+      <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+        <span
+          className="absolute inset-y-0 left-0 w-[3px] dark:hidden"
+          style={{ backgroundColor: catColor.light }}
+        />
+        <span
+          className="absolute inset-y-0 left-0 hidden w-[3px] dark:block"
+          style={{ backgroundColor: catColor.dark }}
+        />
+      </span>
+
+      {/* The stretched open action. `-inset-px` reaches the border box, so
+          the focus ring lands exactly where the old root-level ring did.
+          Absolutely-positioned, so it paints above the card's static content
+          without needing a z-index of its own. */}
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`Open prompt: ${prompt.title}`}
+        title={bodyPreview}
+        className="absolute -inset-px rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night"
       />
-      <span
-        aria-hidden
-        className="absolute inset-y-0 left-0 hidden w-[3px] dark:block"
-        style={{ backgroundColor: catColor.dark }}
-      />
+
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="inline-flex w-fit items-center rounded-full bg-desert-100 px-2.5 py-0.5 text-xs font-medium text-desert-700 dark:bg-teal-500/15 dark:text-teal-300">
@@ -113,12 +137,12 @@ export const PromptCard = memo(function PromptCard({
           type="button"
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           aria-pressed={isFavorite}
-          onClick={(event) => {
-            event.stopPropagation();
-            onToggleFavorite();
-          }}
+          onClick={onToggleFavorite}
           className={clsx(
-            "-mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
+            // relative z-10 lifts it above the stretched open-button, so it
+            // stays clickable. (It no longer needs stopPropagation: the open
+            // action is a sibling now, not an ancestor.)
+            "relative z-10 -mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
             isFavorite
               ? "text-desert-500"
               : "text-ink-soft dark:text-paper-muted opacity-0 hover:text-desert-500 focus-visible:opacity-100 group-hover:opacity-100",
@@ -145,12 +169,6 @@ export const PromptCard = memo(function PromptCard({
           "mt-1.5 text-sm leading-relaxed text-ink-muted dark:text-paper-muted",
           isCompact ? "line-clamp-1" : "line-clamp-2",
         )}
-        // F-n2-1 — title attribute gives a native hover preview of the
-        // first ~240 chars of the body (browser-native tooltip; respects
-        // hover delay; keyboard users get it on focus). No custom popover
-        // — the native tooltip is accessible, doesn't add bundle weight,
-        // and matches the OS look.
-        title={prompt.body.length > 240 ? `${prompt.body.slice(0, 240).trim()}…` : prompt.body}
       >
         {prompt.description}
       </p>
@@ -168,13 +186,11 @@ export const PromptCard = memo(function PromptCard({
             <button
               key={tag}
               type="button"
-              onClick={(event) => {
-                // Don't also open the prompt — the user picked the chip, not the card.
-                event.stopPropagation();
-                onSelectTag(tag);
-              }}
+              onClick={() => onSelectTag(tag)}
               aria-label={`Filter by #${tag}`}
-              className="inline-flex min-h-[24px] items-center rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-desert-100 hover:text-desert-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 dark:focus-visible:ring-desert-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
+              // relative z-10 keeps the chip above the stretched open-button,
+              // so picking a tag filters instead of opening the prompt.
+              className="relative z-10 inline-flex min-h-[24px] items-center rounded-md bg-cream px-2 py-0.5 text-xs text-ink-muted transition hover:bg-desert-100 hover:text-desert-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 dark:focus-visible:ring-desert-400 dark:bg-night dark:text-paper-muted dark:hover:bg-teal-500/15 dark:hover:text-teal-300"
             >
               #{tag}
             </button>
@@ -188,6 +204,6 @@ export const PromptCard = memo(function PromptCard({
           ),
         )}
       </div>
-    </div>
+    </article>
   );
 });
