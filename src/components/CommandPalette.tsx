@@ -22,6 +22,10 @@ interface CommandPaletteProps {
   onSelect: (prompt: Prompt) => void;
 }
 
+// F7 — same focusable set Sheet's trap uses, so the two overlays agree on what
+// "inside the dialog" means.
+const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
 // Renders a field value with matched substrings wrapped in <mark>.
 function Highlighted({
   value,
@@ -84,6 +88,8 @@ export function CommandPalette({
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<Element | null>(null);
 
   // Index is built once per prompt list. Search runs on every keystroke — the
   // dataset is small, so this is instant with no debounce needed.
@@ -104,6 +110,23 @@ export function CommandPalette({
     }
     return raw;
   }, [fuse, prompts, query, recentIds]);
+
+  // F7 — return focus to whatever opened the palette. Mirrors Sheet's contract:
+  // the restore lives in the cleanup so it fires however the palette closes
+  // (Escape, scrim click, or picking a result).
+  //
+  // Declared BEFORE the open-reset effect below on purpose: effects run in
+  // declaration order, and that one moves focus into the search input. Capture
+  // the trigger first or `document.activeElement` is already the input, and
+  // closing would restore focus to an element that is being unmounted.
+  useEffect(() => {
+    if (!open) return;
+    triggerRef.current = document.activeElement;
+    return () => {
+      const t = triggerRef.current;
+      if (t instanceof HTMLElement && document.body.contains(t)) t.focus();
+    };
+  }, [open]);
 
   // Fresh start each time the palette opens. State resets are intentional
   // here — they respond to the `open` prop toggling, not to reactive state
@@ -126,6 +149,46 @@ export function CommandPalette({
     const activeEl = listRef.current?.querySelector('[data-active="true"]');
     activeEl?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, results.length]);
+
+  // F7 — confine Tab to the panel. The palette LOOKED modal (fullscreen scrim,
+  // click-blocking) but wasn't: a trusted Tab from the last result walked out
+  // to the "Skip to content" link on the obscured page behind the scrim, with
+  // the palette still open. Same trap grammar as Sheet.
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        // The search input owns Escape (S3's combobox handler, untouched).
+        // This covers focus anywhere ELSE in the panel — e.g. a result row
+        // reached by Tab — without double-firing onClose.
+        if (!(e.target instanceof HTMLInputElement)) onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        (el) =>
+          !el.hasAttribute("disabled") &&
+          el.getClientRects().length > 0 &&
+          !el.closest('[aria-hidden="true"]'),
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
 
   if (!open) return null;
 
@@ -166,7 +229,17 @@ export function CommandPalette({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-xl animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface">
+      {/* F7 — real dialog semantics. `aria-modal` is what confines a screen
+          reader's virtual cursor to the panel; before this, the covered page
+          could be browsed freely while the palette was open. Same approach as
+          Sheet (which likewise relies on aria-modal rather than inert). */}
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search prompts"
+        className="relative w-full max-w-xl animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface"
+      >
         {/* Search input */}
         <div className="flex items-center gap-3 border-b border-border px-4 py-3.5 dark:border-night-border">
           <SearchIcon className="h-5 w-5 shrink-0 text-ink-soft dark:text-paper-muted" />
@@ -221,7 +294,9 @@ export function CommandPalette({
                 />
                 <p className="mt-2 text-sm text-ink-muted dark:text-paper-muted">
                   No prompts match{" "}
-                  <span className="font-medium text-ink dark:text-paper">&ldquo;{query}&rdquo;</span>
+                  <span className="font-medium text-ink dark:text-paper">
+                    &ldquo;{query}&rdquo;
+                  </span>
                 </p>
                 <p className="mt-1 text-xs text-ink-soft dark:text-paper-muted">
                   Try a different word or a tag.
