@@ -62,43 +62,59 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
         </button>
       </div>
 
-      <ul className="scrollbar-soft min-h-0 flex-1 divide-y divide-border overflow-y-auto dark:divide-night-border">
-        {SHORTCUTS.map((row, rowIndex) => {
-          // Build the aria-label so a screen reader reads, e.g.
-          // "Command K or Control K: Open the search palette".
-          const ariaLabel =
-            row.keys.map((combo) => combo.map((k) => prettyForA11y(k)).join(" ")).join(" or ") +
-            ": " +
-            row.description;
+      {/* F4 · SC 2.1.1 — this list scrolls (17 rows) but contains NO focusable
+          child, so a keyboard-only user could not scroll it at all: the rows
+          below the fold were simply unreachable. Making the scroll container
+          itself a labelled, tabbable region gives it a focus stop, and arrow
+          keys then scroll it.
 
-          return (
-            <li
-              key={rowIndex}
-              aria-label={ariaLabel}
-              className="flex items-center justify-between gap-4 px-5 py-3 text-sm"
-            >
-              <span className="text-ink dark:text-paper">{row.description}</span>
-              <span aria-hidden className="flex shrink-0 items-center gap-2">
-                {row.keys.map((combo, comboIndex) => (
-                  <span key={comboIndex} className="flex items-center gap-1">
-                    {combo.map((k, i) => (
-                      <kbd
-                        key={i}
-                        className="rounded-md border border-border bg-cream px-1.5 py-0.5 font-sans text-xs font-medium text-ink-muted dark:border-night-border dark:bg-night dark:text-paper-muted"
-                      >
-                        {k}
-                      </kbd>
-                    ))}
-                    {comboIndex < row.keys.length - 1 && (
-                      <span className="text-xs text-ink-soft dark:text-paper-muted">or</span>
-                    )}
-                  </span>
-                ))}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+          The region wraps the <ul> rather than being applied TO it: putting
+          role="region" on the <ul> would override its list role and cost the
+          "list, 17 items" announcement. */}
+      <div
+        role="region"
+        aria-label="Keyboard shortcuts"
+        tabIndex={0}
+        className="scrollbar-soft min-h-0 flex-1 overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-desert-600 dark:focus-visible:ring-teal-400"
+      >
+        <ul className="divide-y divide-border dark:divide-night-border">
+          {SHORTCUTS.map((row, rowIndex) => {
+            // Build the aria-label so a screen reader reads, e.g.
+            // "Command K or Control K: Open the search palette".
+            const ariaLabel =
+              row.keys.map((combo) => combo.map((k) => prettyForA11y(k)).join(" ")).join(" or ") +
+              ": " +
+              row.description;
+
+            return (
+              <li
+                key={rowIndex}
+                aria-label={ariaLabel}
+                className="flex items-center justify-between gap-4 px-5 py-3 text-sm"
+              >
+                <span className="text-ink dark:text-paper">{row.description}</span>
+                <span aria-hidden className="flex shrink-0 items-center gap-2">
+                  {row.keys.map((combo, comboIndex) => (
+                    <span key={comboIndex} className="flex items-center gap-1">
+                      {combo.map((k, i) => (
+                        <kbd
+                          key={i}
+                          className="rounded-md border border-border bg-cream px-1.5 py-0.5 font-sans text-xs font-medium text-ink-muted dark:border-night-border dark:bg-night dark:text-paper-muted"
+                        >
+                          {k}
+                        </kbd>
+                      ))}
+                      {comboIndex < row.keys.length - 1 && (
+                        <span className="text-xs text-ink-soft dark:text-paper-muted">or</span>
+                      )}
+                    </span>
+                  ))}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </Sheet>
   );
 }

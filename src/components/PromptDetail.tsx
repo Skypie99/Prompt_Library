@@ -627,8 +627,18 @@ export function PromptDetail({
 
         {/* Split body */}
         <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-          {/* Left: live preview of the final prompt */}
-          <div className="scrollbar-soft overflow-y-auto border-b border-border p-6 md:border-b-0 md:border-r dark:border-night-border">
+          {/* Left: live preview of the final prompt.
+              F4 · SC 2.1.1 — this column scrolls but its content is entirely
+              non-interactive text, so there was no focus stop inside it and a
+              keyboard-only user could not scroll to the rest of the prompt.
+              Labelled tabbable region, matching the "Claude response" and
+              "Code block" regions already in the app. */}
+          <div
+            role="region"
+            aria-label="Prompt preview"
+            tabIndex={0}
+            className="scrollbar-soft overflow-y-auto border-b border-border p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-desert-600 md:border-b-0 md:border-r dark:border-night-border dark:focus-visible:ring-teal-400"
+          >
             <div className="mb-3 text-xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted">
               Preview
             </div>
@@ -1156,8 +1166,13 @@ export function PromptDetail({
                     // reader reads it on demand after hearing "Response complete".
                     role="region"
                     aria-label="Claude response"
+                    // F4 · SC 2.1.1 — the region was already named, but had no
+                    // focus stop: a long answer scrolls (max-h-72) and its
+                    // content is plain prose, so keyboard users could not reach
+                    // past the fold. Same fix as the shortcuts list.
+                    tabIndex={0}
                     className={clsx(
-                      "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink dark:border-night-border dark:bg-night dark:text-paper",
+                      "scrollbar-soft overflow-y-auto break-words rounded-md border border-border bg-cream/40 px-3 py-2.5 text-sm leading-relaxed text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-desert-600 dark:border-night-border dark:bg-night dark:text-paper dark:focus-visible:ring-teal-400",
                       // F3d — collapse to max-h-72 by default; remove cap when expanded.
                       responseExpanded ? "" : "max-h-72",
                     )}
