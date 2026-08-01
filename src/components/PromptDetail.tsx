@@ -140,6 +140,20 @@ export function PromptDetail({
 }: PromptDetailProps) {
   const [values, setValues] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState(false);
+  // F8 — all three copy affordances confirmed VISUALLY (the "Copied" flash +
+  // S12's `>_` blink) but the only screen-reader mechanism was a name swap on
+  // the button: "Copy filled prompt" -> "Filled prompt copied". A name change
+  // on an already-focused control is announced inconsistently across AT —
+  // usually by VoiceOver, often not by NVDA or TalkBack — and "Copy response"
+  // swapped visible text only, so it was never announced at all. This carries
+  // the confirmations through the same persistent sr-only role=status pattern
+  // S8 established for the run/stream chain (a separate region, so a copy
+  // can't collide with a streaming announcement).
+  //
+  // F12 rides here too: a clipboard write that REJECTS (permission denied,
+  // an older browser, a non-secure context) used to produce no feedback of
+  // any kind — no text, no announcement, nothing.
+  const [copyStatus, setCopyStatus] = useState("");
   // F-fast-4 — separate confirm flash for the "Copy template" link so the
   // two copy actions don't share a single toast.
   const [templateCopied, setTemplateCopied] = useState(false);
@@ -171,6 +185,7 @@ export function PromptDetail({
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const templateCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const responseCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copyStatusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   // F-r2 — interval that ticks the rate-limit countdown; cleared on unmount,
   // dismiss, or when the countdown reaches zero.
@@ -237,6 +252,7 @@ export function PromptDetail({
       if (copyTimer.current) clearTimeout(copyTimer.current);
       if (templateCopyTimer.current) clearTimeout(templateCopyTimer.current);
       if (responseCopyTimer.current) clearTimeout(responseCopyTimer.current);
+      if (copyStatusTimer.current) clearTimeout(copyStatusTimer.current);
       // F-r2 — clear countdown interval to avoid a state update after unmount.
       if (retryCountdownRef.current) clearInterval(retryCountdownRef.current);
       abortRef.current?.abort();
@@ -284,10 +300,25 @@ export function PromptDetail({
     });
   }
 
+  // F8/F12 — announce a copy outcome through the sr-only status region. The
+  // message is cleared after a beat so the region doesn't sit holding stale
+  // text that a later screen-reader pass would read as current.
+  function announceCopy(message: string) {
+    setCopyStatus(message);
+    if (copyStatusTimer.current) clearTimeout(copyStatusTimer.current);
+    copyStatusTimer.current = setTimeout(() => setCopyStatus(""), 5000);
+  }
+
+  const COPY_FAILED = "Couldn't copy to the clipboard — select the text and copy manually.";
+
   async function handleCopy() {
     const ok = await copyToClipboard(finalText);
-    if (!ok) return;
+    if (!ok) {
+      announceCopy(COPY_FAILED);
+      return;
+    }
     setCopied(true);
+    announceCopy("Filled prompt copied to clipboard");
     if (copyTimer.current) clearTimeout(copyTimer.current);
     copyTimer.current = setTimeout(() => setCopied(false), 1500);
   }
@@ -299,16 +330,24 @@ export function PromptDetail({
   async function handleCopyTemplate() {
     if (!prompt) return;
     const ok = await copyToClipboard(prompt.body);
-    if (!ok) return;
+    if (!ok) {
+      announceCopy(COPY_FAILED);
+      return;
+    }
     setTemplateCopied(true);
+    announceCopy("Template copied to clipboard");
     if (templateCopyTimer.current) clearTimeout(templateCopyTimer.current);
     templateCopyTimer.current = setTimeout(() => setTemplateCopied(false), 1500);
   }
 
   async function handleCopyResponse() {
     const ok = await copyToClipboard(response);
-    if (!ok) return;
+    if (!ok) {
+      announceCopy(COPY_FAILED);
+      return;
+    }
     setResponseCopied(true);
+    announceCopy("Response copied to clipboard");
     if (responseCopyTimer.current) clearTimeout(responseCopyTimer.current);
     responseCopyTimer.current = setTimeout(() => setResponseCopied(false), 1500);
   }
@@ -986,6 +1025,15 @@ export function PromptDetail({
                   : response.length > 0 && !error
                     ? "Response complete"
                     : ""}
+            </div>
+
+            {/* F8/F12 — the copy announcer. Deliberately a SECOND region rather
+                than folding copy text into the run/stream one above: copying
+                while a response streams would otherwise clobber "Claude is
+                responding…" and mis-report the run's state. Persistent + empty
+                by default, so the change is what gets announced. */}
+            <div role="status" className="sr-only">
+              {copyStatus}
             </div>
 
             {/* Response / error */}
