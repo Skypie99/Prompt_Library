@@ -246,7 +246,7 @@ export function RunHistory({
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
             aria-controls={listId}
-            className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
+            className="group flex items-center gap-1.5 rounded text-xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted transition hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream dark:hover:text-paper dark:focus-visible:ring-offset-night"
           >
             <ClockIcon className="h-3.5 w-3.5" />
             <span>{headerLabel}</span>
@@ -562,7 +562,7 @@ export function RunHistory({
                         <div className="mt-2 space-y-3 animate-fade-in">
                           {Object.keys(run.values).length > 0 && (
                             <div>
-                              <div className="mb-1 text-2xs font-medium uppercase tracking-wider text-ink-soft">
+                              <div className="mb-1 text-2xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted">
                                 Inputs
                               </div>
                               <dl className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1 text-xs">
@@ -573,7 +573,9 @@ export function RunHistory({
                                     </dt>
                                     <dd className="break-words text-ink dark:text-paper">
                                       {value || (
-                                        <span className="italic text-ink-soft">(empty)</span>
+                                        <span className="italic text-ink-soft dark:text-paper-muted">
+                                          (empty)
+                                        </span>
                                       )}
                                     </dd>
                                   </div>
@@ -583,7 +585,7 @@ export function RunHistory({
                           )}
 
                           <div>
-                            <div className="mb-1 text-2xs font-medium uppercase tracking-wider text-ink-soft">
+                            <div className="mb-1 text-2xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted">
                               Response
                             </div>
                             {run.status === "errored" ? (
@@ -595,7 +597,7 @@ export function RunHistory({
                                 <Markdown source={run.response} />
                               </div>
                             ) : (
-                              <div className="rounded-md border border-border bg-surface px-2.5 py-2 text-xs italic leading-relaxed text-ink-soft dark:border-night-border dark:bg-night">
+                              <div className="rounded-md border border-border bg-surface px-2.5 py-2 text-xs italic leading-relaxed text-ink-soft dark:text-paper-muted dark:border-night-border dark:bg-night">
                                 (no response received)
                               </div>
                             )}

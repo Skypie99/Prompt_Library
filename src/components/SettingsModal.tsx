@@ -329,7 +329,7 @@ export function SettingsModal({
 
         {/* ---- Backup / Restore ---- */}
         <div className="border-t border-border pt-5 dark:border-night-border">
-          <div className="mb-1 text-xs font-medium uppercase tracking-wider text-ink-soft">
+          <div className="mb-1 text-xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted">
             Backup &amp; Restore
           </div>
           <p className="mb-3 text-xs text-ink-muted dark:text-paper-muted">
@@ -393,7 +393,7 @@ export function SettingsModal({
                   • saved variable values for {importState.preview.valuesPromptCount} prompt(s)
                 </li>
                 {importState.preview.exportedAt && (
-                  <li className="mt-1 text-ink-soft">
+                  <li className="mt-1 text-ink-soft dark:text-paper-muted">
                     Exported {new Date(importState.preview.exportedAt).toLocaleString()}
                   </li>
                 )}
@@ -488,7 +488,7 @@ export function SettingsModal({
               <div className="flex items-center justify-between">
                 <h3
                   id="storage-usage-heading"
-                  className="text-xs font-medium uppercase tracking-wider text-ink-soft"
+                  className="text-xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted"
                 >
                   Storage usage
                 </h3>

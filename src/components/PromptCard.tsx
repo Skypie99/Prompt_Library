@@ -121,7 +121,7 @@ export const PromptCard = memo(function PromptCard({
             "-mr-1.5 -mt-1.5 flex h-8 w-8 items-center justify-center rounded-md transition active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-desert-600 focus-visible:ring-offset-1 focus-visible:ring-offset-cream dark:focus-visible:ring-teal-400 dark:focus-visible:ring-offset-night",
             isFavorite
               ? "text-desert-500"
-              : "text-ink-soft opacity-0 hover:text-desert-500 focus-visible:opacity-100 group-hover:opacity-100",
+              : "text-ink-soft dark:text-paper-muted opacity-0 hover:text-desert-500 focus-visible:opacity-100 group-hover:opacity-100",
           )}
         >
           <StarIcon

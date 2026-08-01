@@ -508,7 +508,7 @@ export function HomeClient({ prompts: seedPrompts }: { prompts: Prompt[] }) {
               <span className="flex-1 font-mono text-sm text-ink-soft dark:text-paper-muted">
                 search prompts...
               </span>
-              <kbd className="rounded-md border border-border bg-cream px-2 py-1 font-mono text-xs font-medium text-ink-soft dark:border-night-border dark:bg-night">
+              <kbd className="rounded-md border border-border bg-cream px-2 py-1 font-mono text-xs font-medium text-ink-soft dark:text-paper-muted dark:border-night-border dark:bg-night">
                 ⌘K
               </kbd>
             </button>

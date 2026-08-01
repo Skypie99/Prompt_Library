@@ -629,7 +629,7 @@ export function PromptDetail({
         <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
           {/* Left: live preview of the final prompt */}
           <div className="scrollbar-soft overflow-y-auto border-b border-border p-6 md:border-b-0 md:border-r dark:border-night-border">
-            <div className="mb-3 text-xs font-medium uppercase tracking-wider text-ink-soft">
+            <div className="mb-3 text-xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted">
               Preview
             </div>
             {/* S9 — the PREVIEW of the user's prompt wears the same JetBrains
@@ -669,11 +669,11 @@ export function PromptDetail({
           {/* Right: variable inputs + actions + response */}
           <div ref={panelRef} className="scrollbar-soft flex flex-col overflow-y-auto p-6">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs font-medium uppercase tracking-wider text-ink-soft">
+              <span className="text-xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted">
                 Variables
               </span>
               {variables.length > 0 && (
-                <span className="flex items-center gap-2 text-xs text-ink-soft">
+                <span className="flex items-center gap-2 text-xs text-ink-soft dark:text-paper-muted">
                   <span>
                     {filledCount}/{variables.length} filled
                   </span>
@@ -766,7 +766,7 @@ export function PromptDetail({
                             onClick={() => setValue(variable.name, "")}
                             aria-label={`Clear ${variable.label}`}
                             tabIndex={-1}
-                            className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-ink-soft transition hover:bg-cream hover:text-ink dark:hover:bg-night-border dark:hover:text-paper"
+                            className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-ink-soft dark:text-paper-muted transition hover:bg-cream hover:text-ink dark:hover:bg-night-border dark:hover:text-paper"
                           >
                             <span aria-hidden className="text-base leading-none">
                               ×
@@ -987,7 +987,7 @@ export function PromptDetail({
                 className="mt-5 border-t border-border pt-4 focus:outline-none dark:border-night-border"
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs font-medium uppercase tracking-wider text-ink-soft">
+                  <span className="text-xs font-medium uppercase tracking-wider text-ink-soft dark:text-paper-muted">
                     Response
                   </span>
                   {running && (

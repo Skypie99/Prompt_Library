@@ -279,7 +279,9 @@ export function PromptForm({
           {body.trim() !== "" && (
             <>
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-2xs uppercase tracking-wider text-ink-soft">Preview</span>
+                <span className="text-2xs uppercase tracking-wider text-ink-soft dark:text-paper-muted">
+                  Preview
+                </span>
                 <label className="flex items-center gap-1 text-2xs text-ink-muted dark:text-paper-muted">
                   <input
                     type="checkbox"
@@ -364,7 +366,7 @@ export function PromptForm({
               const visible = remaining.slice(0, 8);
               return (
                 <div className="mt-1.5">
-                  <span className="text-2xs uppercase tracking-wider text-ink-soft">
+                  <span className="text-2xs uppercase tracking-wider text-ink-soft dark:text-paper-muted">
                     Suggested
                   </span>
                   <div className="mt-1 flex flex-wrap gap-1">

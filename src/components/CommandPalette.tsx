@@ -169,7 +169,7 @@ export function CommandPalette({
       <div className="relative w-full max-w-xl animate-scale-in overflow-hidden rounded-xl border border-border bg-surface shadow-palette dark:border-night-border dark:bg-night-surface">
         {/* Search input */}
         <div className="flex items-center gap-3 border-b border-border px-4 py-3.5 dark:border-night-border">
-          <SearchIcon className="h-5 w-5 shrink-0 text-ink-soft" />
+          <SearchIcon className="h-5 w-5 shrink-0 text-ink-soft dark:text-paper-muted" />
           <input
             ref={inputRef}
             value={query}
@@ -209,7 +209,7 @@ export function CommandPalette({
                 <p className="mt-2 text-sm text-ink-muted dark:text-paper-muted">
                   No prompts in your library yet.
                 </p>
-                <p className="mt-1 text-xs text-ink-soft">
+                <p className="mt-1 text-xs text-ink-soft dark:text-paper-muted">
                   Create a custom prompt to get started.
                 </p>
               </>
@@ -223,7 +223,9 @@ export function CommandPalette({
                   No prompts match{" "}
                   <span className="font-medium text-ink dark:text-paper">&ldquo;{query}&rdquo;</span>
                 </p>
-                <p className="mt-1 text-xs text-ink-soft">Try a different word or a tag.</p>
+                <p className="mt-1 text-xs text-ink-soft dark:text-paper-muted">
+                  Try a different word or a tag.
+                </p>
               </>
             )}
           </div>

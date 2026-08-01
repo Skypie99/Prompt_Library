@@ -90,7 +90,7 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
                       </kbd>
                     ))}
                     {comboIndex < row.keys.length - 1 && (
-                      <span className="text-xs text-ink-soft">or</span>
+                      <span className="text-xs text-ink-soft dark:text-paper-muted">or</span>
                     )}
                   </span>
                 ))}
