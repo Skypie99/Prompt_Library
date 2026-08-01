@@ -259,7 +259,13 @@ export function RunHistory({
           </button>
 
           {expanded && !confirmingClear && (
-            <div className="flex items-center gap-2">
+            // F20 · SC 1.4.10 Reflow — this row (Show: filter, Last 24h,
+            // Export, Clear all) did not wrap, so at 320px "Export" and
+            // "Clear all" sat ~98px past the viewport and could only be
+            // reached by scrolling the page sideways. `flex-wrap` only
+            // engages when the row would overflow, so wider viewports render
+            // exactly as before. Same grammar as S6's run-anyway alert.
+            <div className="flex flex-wrap items-center gap-2">
               {/* F-night-4 — status filter. */}
               <div className="flex items-center gap-1 text-xs text-ink-soft dark:text-paper-muted">
                 <span aria-hidden>Show:</span>
