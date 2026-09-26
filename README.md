@@ -6,9 +6,7 @@ Under the hood it runs on a from-scratch streaming client for the Anthropic Mess
 
 **Live:** [prompts.skypistudio.com](https://prompts.skypistudio.com)
 
-<!-- Add a hero screenshot at docs/screenshot.png (desktop, light or dark theme), then uncomment:
 ![Prompt Library — search, customize, and run prompts with Claude, in your browser](docs/screenshot.png)
--->
 
 ## Privacy model
 
