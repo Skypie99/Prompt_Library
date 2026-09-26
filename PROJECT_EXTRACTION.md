@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> **HISTORICAL PROJECT EXTRACTION — SUPERSEDED SNAPSHOT.** This extraction was written on 2026-05-23, before this repository had a README, a test suite, lint configuration or CI. It is kept below, unchanged, as a record of the project's starting point.
+>
+> Several statements below are no longer true. These include the "no README, no docs, and no Git history" premise, "Three seed prompts" (the app now ships 15), and "no test framework, no ESLint/Prettier config files, no CI configuration" (it now has a Vitest suite, ESLint and Prettier configs, and GitHub Actions CI and deploy workflows).
+>
+> **Current authority:** [`README.md`](README.md), the source in [`src/`](src/), and CI in [`.github/workflows/`](.github/workflows/).
+
 # Project Extraction — Prompt Library Tool
 
 > **Purpose of this document.** This is a comprehensive, structured extraction of the *Prompt Library Tool* project, prepared so an external AI assistant can author a detailed automated quality-assurance and continuous-improvement prompt. It covers all eleven requested areas, and the **full source of every key file is reproduced verbatim in Appendix A**.
