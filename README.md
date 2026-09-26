@@ -33,6 +33,10 @@ Then open [http://localhost:3000](http://localhost:3000).
 
 Other useful scripts: `npm run build` (static export to `out/`), `npm test` (Vitest), `npm run typecheck`, and `npm run lint`.
 
+## Project records
+
+This README, the source in `src/`, and CI in `.github/workflows/` describe the current app. The other root logs and snapshots (`PROJECT_STATE.md`, `DECISIONS_LOG.md`, `FEATURES.md`, `LEARNINGS.md`, `CYCLE_LOG*.md`, `MERGE_ORDER.txt`, `TASK_GRAPH.json`, the `*.yaml` files), plus `qa-reports/` and `specs/`, are dated working records. They come from an AI-assisted build run under [Claude Corp](https://github.com/Skypie99/Claude_Corp) governance, where release decisions stay with the owner. `PROJECT_EXTRACTION.md` is a superseded May 2026 snapshot, kept for history.
+
 ## License
 
 MIT — see [LICENSE](LICENSE). Use it, fork it, ship it.
