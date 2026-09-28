@@ -43,4 +43,4 @@ MIT — see [LICENSE](LICENSE). Use it, fork it, ship it.
 
 ---
 
-Built by Sky Halisky — [GitHub](https://github.com/skypie99) · [LinkedIn](https://www.linkedin.com/in/skyler-halisky)
+Built by Skyler Halisky — [GitHub](https://github.com/skypie99) · [LinkedIn](https://www.linkedin.com/in/skyler-halisky)
