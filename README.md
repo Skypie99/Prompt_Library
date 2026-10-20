@@ -2,7 +2,7 @@
 
 A fast, private prompt library for the browser. Save your best AI prompts, fill in their `{{variables}}` from a clean form, and run them against the Anthropic API with your own key — all without an account or a backend of mine in the middle. When you run a prompt, your browser sends it and your key straight to Anthropic; that's the one intentional network call in the app.
 
-Under the hood it runs on a from-scratch streaming client for the Anthropic Messages API — a typed error taxonomy, `retry-after` backoff with a live countdown, and token-by-token rendering — shipped as a static export with a real WCAG 2.2 AA pass and a full test suite.
+Under the hood it runs on a from-scratch streaming client for the Anthropic Messages API — a typed error taxonomy, `retry-after` backoff with a live countdown, and token-by-token rendering — shipped as a static export built and tested against WCAG 2.2 AA (self-assessed; not certified), with a full test suite.
 
 **Live:** [prompts.skypistudio.com](https://prompts.skypistudio.com)
 
